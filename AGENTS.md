@@ -53,10 +53,10 @@ if result.status == "FAIL":
 
 ---
 
-## Phase 2: Business Metric Engine & Analysis Agent ✅
+## Phase 2: Business Metric Engine & Analysis Agents ✅
 
 **Status**: Complete  
-**Location**: `analytics/metrics_engine.py`, `analytics/analysis_agent.py`
+**Location**: `analytics/metrics_engine.py`, `analytics/analysis_agent.py`, `analytics/llm_analysis_agent.py`
 
 ---
 
@@ -262,6 +262,168 @@ for finding in critical:
 
 ---
 
+### LLMAnalysisAgent (Claude-Powered)
+
+**Location**: `analytics/llm_analysis_agent.py`  
+**Model**: Claude (configurable, defaults to Opus)  
+**Role**: Generate business insights from pre-calculated metrics
+
+#### System Prompt
+
+The agent uses a carefully crafted system prompt that:
+
+1. **Constrains the LLM**: "NEVER calculate financial metrics"
+2. **Enforces evidence**: All claims must use only supplied data
+3. **Clarifies causation**: "Distinguish correlation from confirmed causation"
+4. **Defines output format**: Structured JSON schema
+5. **Sets priorities**: Focus on material business impact
+6. **Specifies severity levels**: Critical → High → Medium → Low
+
+#### AnalysisInput Model
+
+Provides complete context to the LLM:
+
+```python
+analysis_input = AnalysisInput(
+    analysis_date=date(2026, 8, 21),
+    analysis_type="product",  # product | platform | daily | portfolio
+    
+    product_metrics=ProductMetrics(...),
+    
+    current_day_comparisons=[
+        MetricComparison("profit_margin", 38.42, 35.0),
+        MetricComparison("units_sold", 100, 95),
+    ],
+    week_comparisons=[...],
+    month_comparisons=[...],
+    
+    trend_metrics=TrendMetrics(...),
+    
+    detected_anomalies=["Return rate elevated"],
+    rule_based_findings=[...],
+    
+    context_notes="Summer season - expect higher demand",
+)
+
+# Agent converts to natural language context for LLM
+context = analysis_input.to_prompt_context()
+```
+
+#### Safe JSON Integration
+
+The agent implements **three-layer safety** for LLM output:
+
+**Layer 1: JSON Parsing**
+- Extracts JSON from Claude's response
+- Handles text before/after JSON gracefully
+- Uses regex to locate structure
+
+**Layer 2: JSON Repair**
+- Automatically fixes common malformations:
+  - Trailing commas: `{...,"key":value,}` → `{...,"key":value}`
+  - Python booleans: `True` → `true`, `None` → `null`
+  - Missing closing braces/brackets
+
+**Layer 3: Fallback Result**
+- If all repairs fail, returns safe default
+- Low confidence, zero completeness
+- Flags issue: "Analysis could not be completed"
+- Preserves detected anomalies from rule-based analysis
+
+#### Retry Logic
+
+```python
+for attempt in range(3):
+    try:
+        response = claude.messages.create(...)
+        result = parse_response(response)
+        return result
+    except (JSONDecodeError, ValueError):
+        if attempt < 2:
+            try:
+                repaired = repair_json(response)
+                result = parse_response(repaired)
+                return result
+            except:
+                continue
+        else:
+            return fallback_result()
+```
+
+#### Usage Example
+
+```python
+from analytics.llm_analysis_agent import LLMAnalysisAgent
+from analytics.analysis_input import AnalysisInput
+
+agent = LLMAnalysisAgent(api_key="sk-...")
+
+result = agent.analyze(analysis_input)
+
+print(f"Summary: {result.summary}")
+print(f"Confidence: {result.confidence}")
+print(f"Completeness: {result.data_completeness * 100}%")
+
+for finding in result.performance_findings:
+    if finding.severity == "critical":
+        print(f"🚨 {finding.description}")
+        print(f"   → {finding.recommendation}")
+
+print(f"\nRecommended Actions:")
+for action in result.recommended_actions:
+    print(f"  • {action}")
+```
+
+#### Example Output
+
+```json
+{
+  "period_start": "2026-08-21",
+  "period_end": "2026-08-21",
+  "analysis_type": "product",
+  "summary": "SLP-1001 shows strong profitability with healthy margins, but return rate warrants investigation.",
+  "key_metrics": {
+    "profit_margin_pct": 38.42,
+    "roas": 5.7,
+    "return_rate_pct": 5.0
+  },
+  "performance_findings": [
+    {
+      "finding_type": "profitability",
+      "severity": "low",
+      "sku": "SLP-1001",
+      "metric_name": "profit_margin",
+      "metric_value": 38.42,
+      "threshold": 15.0,
+      "description": "Healthy profit margin of 38.42%, well above 15% threshold",
+      "recommendation": "Maintain current pricing and ad spend strategy"
+    },
+    {
+      "finding_type": "quality",
+      "severity": "medium",
+      "sku": "SLP-1001",
+      "metric_name": "return_rate",
+      "metric_value": 5.0,
+      "threshold": 15.0,
+      "description": "Return rate is elevated at 5.0% (5 units returned from 100 sold)",
+      "recommendation": "Investigate product quality or fit issues through customer feedback"
+    }
+  ],
+  "anomalies_detected": [],
+  "risks_identified": ["Return rate elevated - may indicate quality issue"],
+  "opportunities": ["Organic sales strong (40% of mix) - consider reducing ad spend"],
+  "recommended_actions": [
+    "Monitor return rate trend over next 7 days",
+    "Review customer feedback for quality concerns",
+    "Consider A/B testing different product descriptions"
+  ],
+  "confidence": "high",
+  "data_completeness": 1.0
+}
+```
+
+---
+
 ## What LLMs Can Do ✅
 
 With validated metrics from these agents, an LLM can:
@@ -334,14 +496,24 @@ React Dashboard / LLM Chat
 - Trend analysis
 - Edge cases (zero values, high profitability)
 
-### Analysis Agent Tests (10 tests)
+### Rule-Based Analysis Agent Tests (10 tests)
 - Product performance analysis
 - Platform analysis
 - Trend detection (upward, downward, volatile)
 - Anomaly detection
 - Result synthesis
 
-**Total**: 32 tests, all passing ✅
+### LLM Analysis Agent Tests (12 tests)
+- JSON parsing and extraction
+- Malformed JSON repair
+- Python bool/None to JSON conversion
+- Integration with mocked Claude
+- Product and platform analysis
+- Fallback error handling
+- Prompt building with context
+- Safety constraint verification
+
+**Total**: 44 tests, all passing ✅
 
 ---
 
