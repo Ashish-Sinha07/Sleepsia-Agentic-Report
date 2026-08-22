@@ -1,0 +1,56 @@
+{
+  "run_id": "37817254-eff5-4562-8283-02a6364c7ae9",
+  "workflow_id": "workflow1",
+  "business_date": "2026-08-21",
+  "status": "pending",
+  "start_time": "2026-08-21T17:15:38.634006",
+  "end_time": null,
+  "duration_seconds": null,
+  "failed_sources": [],
+  "partial_sources": [],
+  "error_message": null,
+  "metadata": {},
+  "stage_results": {
+    "ingestion": {
+      "stage": "ingestion",
+      "status": "success",
+      "start_time": "2026-08-21T17:15:38.634850",
+      "end_time": "2026-08-21T17:15:38.634910",
+      "duration_seconds": 6e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": null
+    },
+    "validation": {
+      "stage": "validation",
+      "status": "success",
+      "start_time": "2026-08-21T17:15:38.636067",
+      "end_time": "2026-08-21T17:15:38.636079",
+      "duration_seconds": 1.2e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": null
+    },
+    "metrics": {
+      "stage": "metrics",
+      "status": "failed",
+      "start_time": "2026-08-21T17:15:38.637084",
+      "end_time": "2026-08-21T17:15:38.637118",
+      "duration_seconds": 3.4e-05,
+      "attempt": 1,
+      "error_message": "Calculation error",
+      "error_type": "Unknown",
+      "warning_messages": [],
+      "idempotency_key": null
+    }
+  },
+  "checkpoints": {
+    "ingestion": "2026-08-21T17:15:38.634948",
+    "validation": "2026-08-21T17:15:38.636090"
+  },
+  "idempotency_keys": {}
+}

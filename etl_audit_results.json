@@ -1,0 +1,118 @@
+{
+  "row_counts": {
+    "products": 8,
+    "platforms": 5,
+    "warehouses": 5,
+    "daily_sales": 744,
+    "advertising": 744,
+    "daily_costs": 744,
+    "returns": 275,
+    "cancellations": 142,
+    "inventory_daily": 930,
+    "regional_sales": 930,
+    "replenishment_alerts": 11
+  },
+  "date_ranges": {
+    "daily_sales": {
+      "min": "2026-06-21",
+      "max": "2026-08-21"
+    },
+    "advertising": {
+      "min": "2026-06-21",
+      "max": "2026-08-21"
+    },
+    "daily_costs": {
+      "min": "2026-06-21",
+      "max": "2026-08-21"
+    },
+    "returns": {
+      "min": "2026-06-21",
+      "max": "2026-08-21"
+    },
+    "cancellations": {
+      "min": "2026-06-21",
+      "max": "2026-08-21"
+    },
+    "inventory_daily": {
+      "min": "2026-06-21",
+      "max": "2026-08-21"
+    },
+    "regional_sales": {
+      "min": "2026-06-21",
+      "max": "2026-08-21"
+    }
+  },
+  "sku_counts": {
+    "daily_sales": 3,
+    "advertising": 3,
+    "daily_costs": 3,
+    "inventory_daily": 3,
+    "regional_sales": 3,
+    "products": 8
+  },
+  "platform_counts": {
+    "daily_sales": 4,
+    "advertising": 4,
+    "daily_costs": 4,
+    "returns": 4,
+    "cancellations": 4,
+    "platforms": 5
+  },
+  "orphan_checks": {
+    "orphan_skus_daily_sales": 0,
+    "orphan_platforms_daily_sales": 0,
+    "orphan_warehouses_inventory": 0
+  },
+  "duplicate_checks": {
+    "daily_sales": {
+      "total": 744,
+      "unique": 744,
+      "duplicates": 0
+    },
+    "advertising": {
+      "total": 744,
+      "unique": 744,
+      "duplicates": 0
+    },
+    "inventory_daily": {
+      "total": 930,
+      "unique": 930,
+      "duplicates": 0
+    }
+  },
+  "null_checks": {
+    "null_sku_daily_sales": 0,
+    "null_sku_inventory": 0,
+    "null_platform_daily_sales": 0
+  },
+  "invalid_dates": {
+    "out_of_range_daily_sales": 0
+  },
+  "negative_checks": {
+    "negative_sales": 0,
+    "negative_units": 0,
+    "negative_gross": 0,
+    "negative_discount": 0,
+    "negative_cost": 0,
+    "negative_ad_spend": 0
+  },
+  "view_test": {
+    "status": "OK",
+    "row_count": 10
+  },
+  "aggregations": {
+    "total_gross_sales": 6864730.0,
+    "total_net_sales": 6490253.01,
+    "total_units_sold": 6070.0,
+    "total_ad_spend": 603699.73,
+    "total_refund_amount": 294673.5,
+    "total_units_returned": 277.0,
+    "total_units_cancelled": 142.0,
+    "total_inventory_units": 255946.0
+  },
+  "date_coverage": {
+    "min": "2026-06-21",
+    "max": "2026-08-21",
+    "days": 61
+  }
+}

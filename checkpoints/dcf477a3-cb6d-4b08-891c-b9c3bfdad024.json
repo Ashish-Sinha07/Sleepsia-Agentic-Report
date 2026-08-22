@@ -1,0 +1,131 @@
+{
+  "run_id": "dcf477a3-cb6d-4b08-891c-b9c3bfdad024",
+  "workflow_id": "test_workflow",
+  "business_date": "2026-08-21",
+  "status": "success",
+  "start_time": "2026-08-21T17:12:10.552199",
+  "end_time": "2026-08-21T17:12:10.568416",
+  "duration_seconds": 0.016217,
+  "failed_sources": [],
+  "partial_sources": [],
+  "error_message": null,
+  "metadata": {},
+  "stage_results": {
+    "ingestion": {
+      "stage": "ingestion",
+      "status": "success",
+      "start_time": "2026-08-21T17:12:10.554422",
+      "end_time": "2026-08-21T17:12:10.554462",
+      "duration_seconds": 4e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "dea58cb919409e4c"
+    },
+    "validation": {
+      "stage": "validation",
+      "status": "success",
+      "start_time": "2026-08-21T17:12:10.556070",
+      "end_time": "2026-08-21T17:12:10.556144",
+      "duration_seconds": 7.4e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "beb4eed9c44656be"
+    },
+    "metrics": {
+      "stage": "metrics",
+      "status": "success",
+      "start_time": "2026-08-21T17:12:10.557301",
+      "end_time": "2026-08-21T17:12:10.557381",
+      "duration_seconds": 8e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "25ab63c3e96770d2"
+    },
+    "analysis": {
+      "stage": "analysis",
+      "status": "success",
+      "start_time": "2026-08-21T17:12:10.558502",
+      "end_time": "2026-08-21T17:12:10.558524",
+      "duration_seconds": 2.2e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "06ffbf2c89dec0b9"
+    },
+    "insights": {
+      "stage": "insights",
+      "status": "success",
+      "start_time": "2026-08-21T17:12:10.559758",
+      "end_time": "2026-08-21T17:12:10.559799",
+      "duration_seconds": 4.1e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "3224cf8566047bbc"
+    },
+    "report": {
+      "stage": "report",
+      "status": "success",
+      "start_time": "2026-08-21T17:12:10.561565",
+      "end_time": "2026-08-21T17:12:10.561610",
+      "duration_seconds": 4.5e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "a197c3b7cd9d3b04"
+    },
+    "distribution": {
+      "stage": "distribution",
+      "status": "success",
+      "start_time": "2026-08-21T17:12:10.564225",
+      "end_time": "2026-08-21T17:12:10.564256",
+      "duration_seconds": 3.1e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "ec9a7267cba3cc77"
+    },
+    "audit": {
+      "stage": "audit",
+      "status": "success",
+      "start_time": "2026-08-21T17:12:10.566961",
+      "end_time": "2026-08-21T17:12:10.566988",
+      "duration_seconds": 2.7e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "da840a1f7f714556"
+    }
+  },
+  "checkpoints": {
+    "ingestion": "2026-08-21T17:12:10.554480",
+    "validation": "2026-08-21T17:12:10.556157",
+    "metrics": "2026-08-21T17:12:10.557396",
+    "analysis": "2026-08-21T17:12:10.558559",
+    "insights": "2026-08-21T17:12:10.559833",
+    "report": "2026-08-21T17:12:10.561632",
+    "distribution": "2026-08-21T17:12:10.564272",
+    "audit": "2026-08-21T17:12:10.567002"
+  },
+  "idempotency_keys": {
+    "ingestion": "dea58cb919409e4c",
+    "validation": "beb4eed9c44656be",
+    "metrics": "25ab63c3e96770d2",
+    "analysis": "06ffbf2c89dec0b9",
+    "insights": "3224cf8566047bbc",
+    "report": "a197c3b7cd9d3b04",
+    "distribution": "ec9a7267cba3cc77",
+    "audit": "da840a1f7f714556"
+  }
+}
