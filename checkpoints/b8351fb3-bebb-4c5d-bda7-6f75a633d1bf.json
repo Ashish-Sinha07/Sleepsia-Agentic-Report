@@ -1,0 +1,56 @@
+{
+  "run_id": "b8351fb3-bebb-4c5d-bda7-6f75a633d1bf",
+  "workflow_id": "workflow1",
+  "business_date": "2026-08-21",
+  "status": "pending",
+  "start_time": "2026-08-21T17:12:09.908596",
+  "end_time": null,
+  "duration_seconds": null,
+  "failed_sources": [],
+  "partial_sources": [],
+  "error_message": null,
+  "metadata": {},
+  "stage_results": {
+    "ingestion": {
+      "stage": "ingestion",
+      "status": "success",
+      "start_time": "2026-08-21T17:12:09.909446",
+      "end_time": "2026-08-21T17:12:09.909463",
+      "duration_seconds": 1.7e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": null
+    },
+    "validation": {
+      "stage": "validation",
+      "status": "success",
+      "start_time": "2026-08-21T17:12:09.910636",
+      "end_time": "2026-08-21T17:12:09.910651",
+      "duration_seconds": 1.5e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": null
+    },
+    "metrics": {
+      "stage": "metrics",
+      "status": "failed",
+      "start_time": "2026-08-21T17:12:09.911641",
+      "end_time": "2026-08-21T17:12:09.911654",
+      "duration_seconds": 1.3e-05,
+      "attempt": 1,
+      "error_message": "Calculation error",
+      "error_type": "Unknown",
+      "warning_messages": [],
+      "idempotency_key": null
+    }
+  },
+  "checkpoints": {
+    "ingestion": "2026-08-21T17:12:09.909480",
+    "validation": "2026-08-21T17:12:09.910663"
+  },
+  "idempotency_keys": {}
+}

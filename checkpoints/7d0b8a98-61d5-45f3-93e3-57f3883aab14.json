@@ -1,0 +1,31 @@
+{
+  "run_id": "7d0b8a98-61d5-45f3-93e3-57f3883aab14",
+  "workflow_id": "workflow1",
+  "business_date": "2026-08-21",
+  "status": "pending",
+  "start_time": "2026-08-21T17:27:56.882509",
+  "end_time": null,
+  "duration_seconds": null,
+  "failed_sources": [],
+  "partial_sources": [],
+  "error_message": null,
+  "metadata": {},
+  "stage_results": {
+    "ingestion": {
+      "stage": "ingestion",
+      "status": "success",
+      "start_time": "2026-08-21T17:27:56.883190",
+      "end_time": "2026-08-21T17:27:56.883201",
+      "duration_seconds": 1.1e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": null
+    }
+  },
+  "checkpoints": {
+    "ingestion": "2026-08-21T17:27:56.883211"
+  },
+  "idempotency_keys": {}
+}

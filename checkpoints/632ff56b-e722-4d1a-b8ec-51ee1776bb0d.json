@@ -1,0 +1,131 @@
+{
+  "run_id": "632ff56b-e722-4d1a-b8ec-51ee1776bb0d",
+  "workflow_id": "test_workflow",
+  "business_date": "2026-08-21",
+  "status": "success",
+  "start_time": "2026-08-21T17:27:56.959370",
+  "end_time": "2026-08-21T17:27:56.969333",
+  "duration_seconds": 0.009963,
+  "failed_sources": [],
+  "partial_sources": [],
+  "error_message": null,
+  "metadata": {},
+  "stage_results": {
+    "ingestion": {
+      "stage": "ingestion",
+      "status": "success",
+      "start_time": "2026-08-21T17:27:56.961377",
+      "end_time": "2026-08-21T17:27:56.961396",
+      "duration_seconds": 1.9e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "dea58cb919409e4c"
+    },
+    "validation": {
+      "stage": "validation",
+      "status": "success",
+      "start_time": "2026-08-21T17:27:56.962534",
+      "end_time": "2026-08-21T17:27:56.962544",
+      "duration_seconds": 1e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "beb4eed9c44656be"
+    },
+    "metrics": {
+      "stage": "metrics",
+      "status": "success",
+      "start_time": "2026-08-21T17:27:56.963337",
+      "end_time": "2026-08-21T17:27:56.963346",
+      "duration_seconds": 9e-06,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "25ab63c3e96770d2"
+    },
+    "analysis": {
+      "stage": "analysis",
+      "status": "success",
+      "start_time": "2026-08-21T17:27:56.964204",
+      "end_time": "2026-08-21T17:27:56.964213",
+      "duration_seconds": 9e-06,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "06ffbf2c89dec0b9"
+    },
+    "insights": {
+      "stage": "insights",
+      "status": "success",
+      "start_time": "2026-08-21T17:27:56.965095",
+      "end_time": "2026-08-21T17:27:56.965104",
+      "duration_seconds": 9e-06,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "3224cf8566047bbc"
+    },
+    "report": {
+      "stage": "report",
+      "status": "success",
+      "start_time": "2026-08-21T17:27:56.966026",
+      "end_time": "2026-08-21T17:27:56.966035",
+      "duration_seconds": 9e-06,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "a197c3b7cd9d3b04"
+    },
+    "distribution": {
+      "stage": "distribution",
+      "status": "success",
+      "start_time": "2026-08-21T17:27:56.967039",
+      "end_time": "2026-08-21T17:27:56.967048",
+      "duration_seconds": 9e-06,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "ec9a7267cba3cc77"
+    },
+    "audit": {
+      "stage": "audit",
+      "status": "success",
+      "start_time": "2026-08-21T17:27:56.968207",
+      "end_time": "2026-08-21T17:27:56.968217",
+      "duration_seconds": 1e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "da840a1f7f714556"
+    }
+  },
+  "checkpoints": {
+    "ingestion": "2026-08-21T17:27:56.961418",
+    "validation": "2026-08-21T17:27:56.962562",
+    "metrics": "2026-08-21T17:27:56.963354",
+    "analysis": "2026-08-21T17:27:56.964221",
+    "insights": "2026-08-21T17:27:56.965112",
+    "report": "2026-08-21T17:27:56.966043",
+    "distribution": "2026-08-21T17:27:56.967057",
+    "audit": "2026-08-21T17:27:56.968225"
+  },
+  "idempotency_keys": {
+    "ingestion": "dea58cb919409e4c",
+    "validation": "beb4eed9c44656be",
+    "metrics": "25ab63c3e96770d2",
+    "analysis": "06ffbf2c89dec0b9",
+    "insights": "3224cf8566047bbc",
+    "report": "a197c3b7cd9d3b04",
+    "distribution": "ec9a7267cba3cc77",
+    "audit": "da840a1f7f714556"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "run_id": "cf701ede-5d91-4b74-8bd0-803a55fdbb91",
+  "workflow_id": "workflow1",
+  "business_date": "2026-08-21",
+  "status": "pending",
+  "start_time": "2026-08-22T04:57:49.394312",
+  "end_time": null,
+  "duration_seconds": null,
+  "failed_sources": [
+    "amazon"
+  ],
+  "partial_sources": [],
+  "error_message": null,
+  "metadata": {},
+  "stage_results": {},
+  "checkpoints": {},
+  "idempotency_keys": {}
+}
