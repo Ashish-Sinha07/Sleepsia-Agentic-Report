@@ -1,4 +1,4 @@
-"""Business Analytics module - Metrics Engine and Analysis Agent."""
+"""Business Analytics module - Metrics Engine and Analysis Agents."""
 
 from analytics.models import (
     ProductMetrics,
@@ -9,7 +9,7 @@ from analytics.models import (
     PerformanceFinding,
 )
 from analytics.metrics_engine import MetricsEngine
-from analytics.analysis_agent import DataAnalysisAgent
+from analytics.analysis_input import AnalysisInput, MetricComparison
 
 __all__ = [
     "ProductMetrics",
@@ -20,4 +20,20 @@ __all__ = [
     "PerformanceFinding",
     "MetricsEngine",
     "DataAnalysisAgent",
+    "AnalysisInput",
+    "MetricComparison",
+    "LLMAnalysisAgent",
 ]
+
+
+def __getattr__(name: str):
+    """Load agent exports lazily to avoid a package initialization cycle."""
+    if name == "DataAnalysisAgent":
+        from agents.analysis_agent import DataAnalysisAgent
+
+        return DataAnalysisAgent
+    if name == "LLMAnalysisAgent":
+        from agents.llm_analysis_agent import LLMAnalysisAgent
+
+        return LLMAnalysisAgent
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

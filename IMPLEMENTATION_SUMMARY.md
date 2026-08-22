@@ -43,7 +43,7 @@ Calculates all 16+ business metrics with zero LLM involvement:
 - Trend level (metric over time)
 
 ### 2. **Rule-Based Analysis Agent** ✅
-**File**: `analytics/analysis_agent.py`
+**File**: `agents/analysis_agent.py`
 
 Identifies business patterns using configurable thresholds:
 
@@ -57,7 +57,7 @@ Identifies business patterns using configurable thresholds:
 - Trend anomalies (volatility)
 
 ### 3. **Claude-Powered LLM Analysis Agent** ✅
-**File**: `analytics/llm_analysis_agent.py`
+**File**: `agents/llm_analysis_agent.py`
 
 Generates business insights from pre-calculated metrics:
 
@@ -190,7 +190,7 @@ print(f"ROAS: {metrics.roas:.2f}x")
 ### Analyze with LLM
 
 ```python
-from analytics.llm_analysis_agent import LLMAnalysisAgent
+from agents.llm_analysis_agent import LLMAnalysisAgent
 from analytics.analysis_input import AnalysisInput
 
 agent = LLMAnalysisAgent(api_key="sk-...")
@@ -225,13 +225,15 @@ analytics/
 ├── __init__.py                  # Module exports
 ├── models.py                    # Pydantic data models (metrics, results)
 ├── metrics_engine.py            # Deterministic calculations (250+ lines)
-├── analysis_agent.py            # Rule-based insights (300+ lines)
 ├── analysis_input.py            # Input model with formatting (150+ lines)
-└── llm_analysis_agent.py        # Claude integration (250+ lines)
+
+agents/
+├── analysis_agent.py            # Rule-based insights (300+ lines)
+├── llm_analysis_agent.py        # Claude integration (250+ lines)
+└── validation_agent.py          # Schema validation framework
 
 database/
-├── __init__.py                  # Module exports
-├── validation.py                # Schema validation framework
+├── __init__.py                  # Database package
 └── validation_specs.py          # Business validation rules
 
 tests/

@@ -5,7 +5,7 @@ from datetime import date
 from unittest.mock import Mock, patch, MagicMock
 import json
 
-from analytics.llm_analysis_agent import LLMAnalysisAgent
+from agents.llm_analysis_agent import LLMAnalysisAgent
 from analytics.analysis_input import AnalysisInput, MetricComparison
 from analytics.metrics_engine import MetricsEngine
 from analytics.models import AnalysisResult

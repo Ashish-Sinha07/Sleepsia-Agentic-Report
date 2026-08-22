@@ -1,6 +1,6 @@
 """Business validation specifications for each Sleepsia data table."""
 
-from database.validation import DatasetSpec
+from agents.validation_agent import DatasetSpec
 
 PRODUCT_MASTER_SPEC = DatasetSpec(
     required_columns=(

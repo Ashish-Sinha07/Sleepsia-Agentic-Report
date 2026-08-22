@@ -33,6 +33,9 @@ class DataAnalysisAgent:
         "high_cancellation_rate": 10.0,
         "poor_roas": 2.0,
         "poor_acos": 50.0,
+
+
+        
         "high_organic_share": 70.0,
     }
 

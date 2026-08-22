@@ -2,7 +2,7 @@
 
 import pytest
 from datetime import date
-from analytics.analysis_agent import DataAnalysisAgent
+from agents.analysis_agent import DataAnalysisAgent
 from analytics.metrics_engine import MetricsEngine
 from analytics.models import ProductMetrics, PlatformMetrics
 

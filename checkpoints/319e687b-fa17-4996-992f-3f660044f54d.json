@@ -1,0 +1,131 @@
+{
+  "run_id": "319e687b-fa17-4996-992f-3f660044f54d",
+  "workflow_id": "test_workflow",
+  "business_date": "2026-08-21",
+  "status": "success",
+  "start_time": "2026-08-21T17:35:09.305330",
+  "end_time": "2026-08-21T17:35:09.327536",
+  "duration_seconds": 0.022206,
+  "failed_sources": [],
+  "partial_sources": [],
+  "error_message": null,
+  "metadata": {},
+  "stage_results": {
+    "ingestion": {
+      "stage": "ingestion",
+      "status": "success",
+      "start_time": "2026-08-21T17:35:09.310593",
+      "end_time": "2026-08-21T17:35:09.310672",
+      "duration_seconds": 7.9e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "dea58cb919409e4c"
+    },
+    "validation": {
+      "stage": "validation",
+      "status": "success",
+      "start_time": "2026-08-21T17:35:09.313458",
+      "end_time": "2026-08-21T17:35:09.313509",
+      "duration_seconds": 5.1e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "beb4eed9c44656be"
+    },
+    "metrics": {
+      "stage": "metrics",
+      "status": "success",
+      "start_time": "2026-08-21T17:35:09.316190",
+      "end_time": "2026-08-21T17:35:09.316223",
+      "duration_seconds": 3.3e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "25ab63c3e96770d2"
+    },
+    "analysis": {
+      "stage": "analysis",
+      "status": "success",
+      "start_time": "2026-08-21T17:35:09.318084",
+      "end_time": "2026-08-21T17:35:09.318117",
+      "duration_seconds": 3.3e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "06ffbf2c89dec0b9"
+    },
+    "insights": {
+      "stage": "insights",
+      "status": "success",
+      "start_time": "2026-08-21T17:35:09.320228",
+      "end_time": "2026-08-21T17:35:09.320261",
+      "duration_seconds": 3.3e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "3224cf8566047bbc"
+    },
+    "report": {
+      "stage": "report",
+      "status": "success",
+      "start_time": "2026-08-21T17:35:09.322012",
+      "end_time": "2026-08-21T17:35:09.322037",
+      "duration_seconds": 2.5e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "a197c3b7cd9d3b04"
+    },
+    "distribution": {
+      "stage": "distribution",
+      "status": "success",
+      "start_time": "2026-08-21T17:35:09.323764",
+      "end_time": "2026-08-21T17:35:09.323836",
+      "duration_seconds": 7.2e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "ec9a7267cba3cc77"
+    },
+    "audit": {
+      "stage": "audit",
+      "status": "success",
+      "start_time": "2026-08-21T17:35:09.326045",
+      "end_time": "2026-08-21T17:35:09.326067",
+      "duration_seconds": 2.2e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "da840a1f7f714556"
+    }
+  },
+  "checkpoints": {
+    "ingestion": "2026-08-21T17:35:09.310709",
+    "validation": "2026-08-21T17:35:09.313540",
+    "metrics": "2026-08-21T17:35:09.316242",
+    "analysis": "2026-08-21T17:35:09.318137",
+    "insights": "2026-08-21T17:35:09.320281",
+    "report": "2026-08-21T17:35:09.322051",
+    "distribution": "2026-08-21T17:35:09.323858",
+    "audit": "2026-08-21T17:35:09.326080"
+  },
+  "idempotency_keys": {
+    "ingestion": "dea58cb919409e4c",
+    "validation": "beb4eed9c44656be",
+    "metrics": "25ab63c3e96770d2",
+    "analysis": "06ffbf2c89dec0b9",
+    "insights": "3224cf8566047bbc",
+    "report": "a197c3b7cd9d3b04",
+    "distribution": "ec9a7267cba3cc77",
+    "audit": "da840a1f7f714556"
+  }
+}

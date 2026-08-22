@@ -1,0 +1,18 @@
+{
+  "run_id": "8ae513b8-bec1-425f-90d4-f1415d1b264e",
+  "workflow_id": "workflow1",
+  "business_date": "2026-08-21",
+  "status": "pending",
+  "start_time": "2026-08-21T17:22:34.638808",
+  "end_time": null,
+  "duration_seconds": null,
+  "failed_sources": [],
+  "partial_sources": [
+    "flipkart"
+  ],
+  "error_message": null,
+  "metadata": {},
+  "stage_results": {},
+  "checkpoints": {},
+  "idempotency_keys": {}
+}

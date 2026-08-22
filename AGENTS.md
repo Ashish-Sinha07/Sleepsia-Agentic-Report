@@ -3,7 +3,7 @@
 ## Phase 1: Data Validation Agent ✅
 
 **Status**: Complete  
-**Location**: `database/validation.py`
+**Location**: `agents/validation_agent.py`
 
 The Validation Agent performs deterministic, schema-based quality checks on source data before ingestion.
 
@@ -31,7 +31,7 @@ Returns structured output:
 ### Example Usage
 
 ```python
-from database.validation import DataValidationAgent, DatasetSpec
+from agents.validation_agent import DataValidationAgent, DatasetSpec
 import pandas as pd
 
 agent = DataValidationAgent()
@@ -56,7 +56,7 @@ if result.status == "FAIL":
 ## Phase 2: Business Metric Engine & Analysis Agents ✅
 
 **Status**: Complete  
-**Location**: `analytics/metrics_engine.py`, `analytics/analysis_agent.py`, `analytics/llm_analysis_agent.py`
+**Location**: `analytics/metrics_engine.py`, `agents/analysis_agent.py`, `agents/llm_analysis_agent.py`
 
 ---
 
@@ -240,7 +240,7 @@ Returns: `AnalysisResult` with:
 #### Example Usage
 
 ```python
-from analytics.analysis_agent import DataAnalysisAgent
+from agents.analysis_agent import DataAnalysisAgent
 from analytics.metrics_engine import MetricsEngine
 
 agent = DataAnalysisAgent()
@@ -264,7 +264,7 @@ for finding in critical:
 
 ### LLMAnalysisAgent (Claude-Powered)
 
-**Location**: `analytics/llm_analysis_agent.py`  
+**Location**: `agents/llm_analysis_agent.py`
 **Model**: Claude (configurable, defaults to Opus)  
 **Role**: Generate business insights from pre-calculated metrics
 
@@ -353,7 +353,7 @@ for attempt in range(3):
 #### Usage Example
 
 ```python
-from analytics.llm_analysis_agent import LLMAnalysisAgent
+from agents.llm_analysis_agent import LLMAnalysisAgent
 from analytics.analysis_input import AnalysisInput
 
 agent = LLMAnalysisAgent(api_key="sk-...")
@@ -549,11 +549,711 @@ python -m pytest tests/test_metrics_engine.py::TestMetricsEngineCalculations::te
 
 ---
 
-## Next Steps (Phase 3)
+## Phase 3: Insight & Recommendation Agent ✅
+
+**Status**: Complete  
+**Location**: `analytics/business_rules.py`, `analytics/insight_models.py`, `analytics/priority_engine.py`, `analytics/insight_engine.py`, `analytics/recommendation_engine.py`, `analytics/summary_generator.py`, `agents/insight_recommendation_agent.py`
+
+The Insight & Recommendation Agent converts analyzed metrics into management-ready insights and evidence-based recommendations.
+
+### Core Components
+
+#### 1. BusinessRules Configuration
+
+Configurable thresholds for alerts and recommendations:
+
+```python
+from analytics.business_rules import BusinessRules
+
+rules = BusinessRules(
+    minimum_roas=2.0,
+    maximum_acos_pct=50.0,
+    minimum_profit_margin_pct=15.0,
+    maximum_return_rate_pct=15.0,
+    maximum_cancellation_rate_pct=10.0,
+)
+
+# Evaluate a metric
+passes, threshold = rules.evaluate_roas(3.5)
+
+# Platform-specific overrides
+amazon_rules = BusinessRules(minimum_roas=1.8)
+rules.platform_overrides["amazon"] = amazon_rules
+```
+
+#### 2. Priority Engine
+
+Deterministic priority assignment based on business rules:
+
+```python
+from analytics.priority_engine import PriorityEngine
+
+engine = PriorityEngine(rules)
+
+priority = engine.determine_profitability_priority(
+    margin_pct=-5.0,  # Returns Priority.CRITICAL
+)
+
+priority = engine.determine_trend_priority(
+    trend_direction="downward",
+    trend_strength=0.35,  # Returns Priority.CRITICAL
+)
+```
+
+Priority Levels:
+- **CRITICAL**: Immediate action required (unprofitable, quality crisis, revenue collapse)
+- **HIGH**: Significant concern (poor ROAS, high returns/cancellations)
+- **MEDIUM**: Monitor closely (volatility, minor inefficiencies)
+- **LOW**: Positive trends (margin improvement, growth)
+- **INFO**: Informational (reference points, strong performance)
+
+#### 3. Insight Engine
+
+Generates structured business insights from analysis results:
+
+```python
+from analytics.insight_engine import InsightEngine
+
+engine = InsightEngine(rules)
+
+insights = engine.generate_insights_from_analysis(
+    analysis_result=analysis_result,
+    product_metrics=metrics,
+)
+
+# Insights contain:
+# - insight_id (unique identifier)
+# - category (SALES, ADVERTISING, PROFITABILITY, etc.)
+# - priority (deterministic, rule-based)
+# - title, description
+# - evidence (supporting data points)
+# - confidence_pct
+# - business_impact (estimated financial impact)
+```
+
+Insight Categories:
+- SALES
+- ADVERTISING
+- PROFITABILITY
+- RETURNS
+- CANCELLATIONS
+- PLATFORM
+- PRODUCT
+- TREND
+- ANOMALY
+
+#### 4. Recommendation Engine
+
+Generates evidence-based recommendations from insights:
+
+```python
+from analytics.recommendation_engine import RecommendationEngine
+
+engine = RecommendationEngine(rules)
+
+recommendations = engine.generate_recommendations(insights)
+
+# Recommendations contain:
+# - recommendation_id
+# - action (specific, actionable)
+# - rationale (evidence-based)
+# - expected_impact
+# - owner (who should execute)
+# - priority
+# - timeline
+# - estimated_financial_impact_inr
+# - evidence (traceability to insights)
+```
+
+#### 5. Management Summary Generator
+
+Creates executive-level summaries:
+
+```python
+from analytics.summary_generator import ManagementSummaryGenerator
+
+summary = ManagementSummaryGenerator.generate_summary(
+    period_start=date(2026, 8, 1),
+    period_end=date(2026, 8, 31),
+    insights=insights,
+    recommendations=recommendations,
+)
+
+# Summary contains:
+# - executive_summary (2-3 sentences)
+# - critical_issues (list)
+# - high_priority_items (list)
+# - key_opportunities (list)
+# - top_recommendations (list)
+# - overall_health_score (0-100)
+# - data_completeness_pct
+```
+
+#### 6. Insight & Recommendation Agent (Orchestrator)
+
+Coordinates all components:
+
+```python
+from agents.insight_recommendation_agent import InsightRecommendationAgent
+
+agent = InsightRecommendationAgent(business_rules=rules)
+
+result = agent.analyze(
+    analysis_result=analysis_result,
+    product_metrics=metrics,
+    data_completeness=0.95,
+)
+
+# Result contains:
+# - insights (list[BusinessInsight])
+# - recommendations (list[Recommendation])
+# - management_summary (ManagementSummary)
+# - overall_confidence ("high" | "medium" | "low")
+# - data_completeness (0.0-1.0)
+# - issues_count
+# - opportunities_count
+
+# Export for LLM refinement
+export_dict = agent.export_for_llm_refinement(result)
+```
+
+### Architecture Constraints
+
+1. **Never recalculates metrics**: Receives pre-calculated metrics only
+2. **Deterministic priorities**: All priorities come from BusinessRules, not LLM judgment
+3. **Evidence-based**: Every insight and recommendation has supporting evidence
+4. **Traceable**: Recommendations link back to specific insights
+5. **No invented data**: Clearly states when evidence is insufficient
+6. **Structured output**: All results are validated with Pydantic models
+
+### Example Usage
+
+```python
+from agents.insight_recommendation_agent import InsightRecommendationAgent
+from analytics.business_rules import BusinessRules
+from agents.analysis_agent import DataAnalysisAgent
+from analytics.metrics_engine import MetricsEngine
+
+# Initialize components
+rules = BusinessRules()
+agent = InsightRecommendationAgent(rules)
+metrics_engine = MetricsEngine()
+analysis_agent = DataAnalysisAgent()
+
+# Calculate metrics
+product_metrics = metrics_engine.calculate_product_metrics(...)
+
+# Analyze
+findings = analysis_agent.analyze_product_performance(product_metrics)
+analysis_result = analysis_agent.generate_analysis_result(
+    period_start=date(2026, 8, 1),
+    period_end=date(2026, 8, 31),
+    analysis_type="product",
+    findings=findings,
+    anomalies=[],
+    key_metrics={...},
+)
+
+# Generate insights and recommendations
+result = agent.analyze(
+    analysis_result=analysis_result,
+    product_metrics=product_metrics,
+)
+
+# Print management summary
+print(result.management_summary.executive_summary)
+
+# Iterate through critical insights
+for insight in result.critical_insights():
+    print(f"⚠️  {insight.title}: {insight.description}")
+    for rec in result.recommendations:
+        if insight.insight_id in rec.insight_sources:
+            print(f"   → Action: {rec.action}")
+```
+
+### Output Models
+
+#### BusinessInsight
+- `insight_id`: Unique identifier
+- `category`: InsightCategory (enum)
+- `priority`: Priority level (deterministic)
+- `title`: Short description
+- `description`: Detailed explanation
+- `metric_name`: Which metric (optional)
+- `metric_value`: Current value (optional)
+- `threshold`: Business rule threshold (optional)
+- `sku`, `product_name`, `platform_id`, `platform_name`: Dimensions
+- `evidence`: List of supporting facts
+- `finding_sources`: Links to source findings
+- `confidence_pct`: 0-100
+- `business_impact`: Financial impact statement
+
+#### Recommendation
+- `recommendation_id`: Unique identifier
+- `action`: Specific, actionable step
+- `rationale`: Why it matters
+- `expected_impact`: Predicted outcome
+- `owner`: Who executes
+- `priority`: Priority level (from insight)
+- `evidence`: Supporting data points
+- `insight_sources`: Links to source insights
+- `timeline`: Expected execution timeframe
+- `estimated_financial_impact_inr`: Potential benefit
+- `risk_level`: "low" | "medium" | "high"
+
+#### ManagementSummary
+- `executive_summary`: Concise overview
+- `critical_issues`: List of critical problems
+- `high_priority_items`: List of high-priority concerns
+- `key_opportunities`: List of opportunities
+- `top_recommendations`: Prioritized action items
+- `overall_health_score`: 0-100 composite score
+- `data_completeness_pct`: Data availability percentage
+
+---
+
+## Test Coverage
+
+### Phase 3 Tests (35 tests)
+- **BusinessRules**: 7 tests (threshold evaluation, overrides)
+- **PriorityEngine**: 13 tests (all priority scenarios)
+- **InsightEngine**: 3 tests (generation, evidence, confidence)
+- **RecommendationEngine**: 3 tests (generation, priority mapping, evidence)
+- **ManagementSummaryGenerator**: 3 tests (summary generation, health score, formatting)
+- **InsightRecommendationAgent**: 3 tests (full pipeline, structure, export)
+- **Error Handling**: 3 tests (empty findings, low completeness, evidence chain)
+
+**Total Test Coverage**: 79 tests (44 existing + 35 new), all passing ✅
+
+---
+
+## Architecture Rules (Phase 3)
+
+1. **Deterministic everything**: No probabilistic thresholds, no "maybe" in priorities
+2. **Threshold-based decisions**: All rules come from BusinessRules, not heuristics
+3. **Evidence chains**: Every recommendation traces back to specific insights/findings
+4. **Never override metrics**: Accept pre-calculated values as ground truth
+5. **Structured output**: All results validated by Pydantic
+6. **Transparent confidence**: Report confidence, completeness, and data quality
+
+---
+
+## Phase 4: Report Generation ✅
+
+**Status**: Complete  
+**Location**: `analytics/report_models.py`, `analytics/report_builder.py`, `analytics/html_renderer.py`, `analytics/excel_renderer.py`, `analytics/pdf_renderer.py`, `agents/report_agent.py`
+
+Converts structured business metrics, analysis results, and insights into management-ready reports in multiple formats.
+
+### Core Components
+
+#### 1. Report Models (Canonical Report)
+
+Complete, deterministic report structure:
+
+```python
+from analytics.report_models import Report, ReportType
+
+report = Report(
+    report_id="RPT-ABC123",
+    report_date=date(2026, 8, 21),
+    report_type=ReportType.PRODUCT_DAILY,
+    title="Product Daily Report",
+    executive_summary="...",
+    overall_metrics=OverallMetrics(...),
+    product_sections=[ProductSection(...)],
+    platform_sections=[PlatformSection(...)],
+    advertising_section=AdvertisingSection(...),
+    profitability_section=ProfitabilitySection(...),
+    quality_section=QualitySection(...),
+    insights=[Insight(...)],
+    recommendations=[Recommendation(...)],
+)
+```
+
+Report contains:
+- **report_id**: Unique identifier
+- **report_date**: Date of analysis
+- **report_type**: PRODUCT_DAILY | PLATFORM_DAILY | PRODUCT_PLATFORM_DAILY | MANAGEMENT_DAILY_SUMMARY
+- **title**: Report title
+- **executive_summary**: 2-3 sentence overview
+- **overall_metrics**: Aggregate KPIs
+- **product_sections**: Product-level details
+- **platform_sections**: Platform-level details
+- **advertising_section**: Advertising performance
+- **profitability_section**: Profitability analysis
+- **quality_section**: Returns/cancellations
+- **insights**: Key business insights
+- **recommendations**: Actionable recommendations
+
+#### 2. Report Builder
+
+Deterministically constructs Report objects from metrics:
+
+```python
+from analytics.report_builder import ReportBuilder
+
+# Build product report
+report = ReportBuilder.build_product_report(
+    report_date=date(2026, 8, 21),
+    sku="SLP-1001",
+    product_name="Contour Pillow",
+    product_metrics=metrics,
+    insight_result=insights,
+)
+
+# Build platform report
+report = ReportBuilder.build_platform_report(
+    report_date=date(2026, 8, 21),
+    platform_metrics=platform_metrics,
+    product_metrics_list=[...],
+    insight_result=insights,
+)
+```
+
+Key features:
+- No metric recalculation
+- Automatic section population
+- Evidence-based insights integration
+- Consistent aggregations
+
+#### 3. HTML Renderer
+
+Professional HTML report generation:
+
+```python
+from analytics.html_renderer import HTMLRenderer
+
+html = HTMLRenderer.render(report)
+# Returns: Complete HTML document with styles
+```
+
+Features:
+- Responsive design
+- Print-friendly CSS
+- Professional styling
+- All sections formatted
+- Mobile-compatible
+
+#### 4. Excel Renderer
+
+Multi-sheet Excel workbook generation:
+
+```python
+from analytics.excel_renderer import ExcelRenderer
+
+excel_bytes = ExcelRenderer.render(report)
+# Returns: Binary Excel file (openpyxl required)
+```
+
+Sheets created:
+- Summary (overview, timestamps)
+- Products (product details)
+- Platforms (platform details)
+- Advertising (ad performance)
+- Profitability (margin analysis)
+- Quality (returns/cancellations)
+- Insights (key insights)
+- Recommendations (action items)
+- Metrics (overall KPIs)
+
+#### 5. PDF Renderer
+
+Professional PDF report generation:
+
+```python
+from analytics.pdf_renderer import PDFRenderer
+
+pdf_bytes = PDFRenderer.render(report)
+# Returns: Binary PDF file (reportlab required)
+```
+
+Features:
+- Professional formatting
+- Executive-ready appearance
+- All sections included
+- Table of contents
+- Proper pagination
+
+#### 6. Report Agent
+
+LLM-powered narrative refinement (narrative only, never metrics):
+
+```python
+from agents.report_agent import ReportAgent
+
+agent = ReportAgent()
+
+narratives = agent.refine_report_narrative(report)
+# Returns: {
+#   "executive_summary": "...",
+#   "executive_narrative": "...",
+#   "product_insights": "...",
+#   "advertising_insights": "...",
+#   "profitability_insights": "...",
+#   "key_risks": "...",
+#   "key_opportunities": "..."
+# }
+```
+
+LLM is used ONLY for:
+- Narrative summaries
+- Insight explanations
+- Business impact descriptions
+- Recommendations rationale
+
+LLM NEVER:
+- Calculates financial metrics
+- Modifies metric values
+- Invents trends
+- Creates false data
+
+### Complete Example
+
+```python
+from analytics.report_builder import ReportBuilder
+from analytics.html_renderer import HTMLRenderer
+from analytics.excel_renderer import ExcelRenderer
+from agents.report_agent import ReportAgent
+
+# Build report from metrics and insights
+report = ReportBuilder.build_product_report(
+    report_date=date(2026, 8, 21),
+    sku="SLP-1001",
+    product_name="Contour Pillow",
+    product_metrics=metrics,
+    insight_result=insights,
+)
+
+# Optionally refine narratives with LLM
+agent = ReportAgent()
+narratives = agent.refine_report_narrative(report)
+
+# Render to multiple formats
+html = HTMLRenderer.render(report)
+excel_bytes = ExcelRenderer.render(report)
+
+# Save
+with open("report.html", "w") as f:
+    f.write(html)
+
+with open("report.xlsx", "wb") as f:
+    f.write(excel_bytes)
+```
+
+### Supported Report Types
+
+1. **PRODUCT_PLATFORM_DAILY**: Single product on single platform
+2. **PRODUCT_DAILY**: Single product across platforms
+3. **PLATFORM_DAILY**: Single platform with all products
+4. **MANAGEMENT_DAILY_SUMMARY**: Multi-platform, multi-product overview
+
+### Architecture Constraints (Phase 4)
+
+1. **Report is source of truth**: All values come from pre-calculated metrics
+2. **Never recalculate**: Use metric values exactly as provided
+3. **LLM for narrative only**: Never for calculations or data creation
+4. **Deterministic structure**: Same input produces same output
+5. **Traceable metrics**: Every KPI links to its source
+6. **Safe rendering**: Missing data handled gracefully
+7. **Validation**: Report objects validated by Pydantic
+
+---
+
+## Test Coverage
+
+### Phase 4 Tests (16 tests, 2 skipped)
+- **ReportModels**: 3 tests (model creation, structure)
+- **ReportBuilder**: 4 tests (building, aggregations, unprofitable)
+- **HTMLRenderer**: 2 tests (rendering, content)
+- **ExcelRenderer**: 2 tests (available, rendering)
+- **PDFRenderer**: 2 tests (skipped - requires reportlab)
+- **ReportAgent**: 2 tests (fallback, structure)
+- **ErrorHandling**: 3 tests (empty data, metric preservation)
+
+**Total Test Coverage**: 95 tests (79 existing + 16 new), all passing ✅
+
+---
+
+---
+
+## Phase 7: Workflow Orchestration Engine ✅
+
+**Status**: Complete  
+**Location**: `analytics/orchestration/`
+
+A deterministic workflow orchestrator that executes the complete reporting pipeline with dependency management, retries, checkpointing, resumability, and idempotency.
+
+### Key Components
+
+#### 1. WorkflowDefinition
+
+Declarative pipeline configuration:
+- Ordered stages (INGESTION → VALIDATION → METRICS → ANALYSIS → INSIGHTS → REPORT → DISTRIBUTION → AUDIT)
+- Required vs optional sources
+- Retry policy with exponential backoff
+- Checkpoint and idempotency settings
+
+#### 2. WorkflowOrchestrator
+
+Main execution controller:
+- Executes stages in sequence
+- Manages dependencies and retries
+- Handles required vs optional source failures
+- Caches results for idempotency
+- Creates and tracks run state
+
+#### 3. RunManager
+
+Persistence and recovery:
+- Creates and tracks workflow runs
+- Persists state to checkpoints (JSON files)
+- Supports resumability from last successful stage
+- Tracks failed and partial sources
+- Records stage results and timing
+
+#### 4. Service Interfaces
+
+Loose coupling via abstract interfaces:
+- `IngestionService` - Load data
+- `ValidationService` - Validate data
+- `MetricService` - Calculate metrics
+- `AnalysisService` - Analyze metrics
+- `InsightService` - Generate insights
+- `ReportService` - Generate reports
+- `DistributionService` - Distribute reports
+- `MonitoringService` - Audit and monitoring
+
+#### 5. IdempotencyKeyManager
+
+Deterministic key generation:
+- Same inputs always produce same key
+- Stage-specific key generators
+- Support for context (platform, product, etc.)
+- Prevents duplicate processing
+
+#### 6. IdempotencyCache
+
+In-memory result caching:
+- Prevents redundant stage execution
+- Cleared on orchestrator reset
+- Survives within-session retries
+
+### Workflow Execution Flow
+
+**Successful Run**:
+```
+PENDING → INGESTION → VALIDATION → METRICS → ANALYSIS → 
+INSIGHTS → REPORT → DISTRIBUTION → AUDIT → SUCCESS
+```
+
+**Required Source Failure**:
+```
+PENDING → INGESTION → VALIDATION [FAILED] → FAILED
+(Downstream stages don't execute)
+```
+
+**Optional Source Failure**:
+```
+PENDING → ... → DISTRIBUTION [WARNING] → AUDIT → PARTIAL
+(Continues with warning, marked as partial)
+```
+
+**Resumable Failure**:
+```
+Run 1: PENDING → INGESTION → VALIDATION → METRICS [FAILED] → FAILED
+(Checkpoint saved)
+
+Run 2: Resume from checkpoint
+       → METRICS [RETRY] → ANALYSIS → ... → SUCCESS
+```
+
+### Retry Logic
+
+Transient failures are automatically retried:
+- Configurable max retries (default: 3)
+- Exponential backoff (default: 60s × 2^n)
+- Permanent failures fail immediately
+- Optional stages warn instead of failing
+
+### Key Features
+
+1. **Deterministic**: No LLM-based orchestration, pure logic
+2. **Idempotent**: Same inputs produce same output, no duplicates
+3. **Recoverable**: Can resume from last successful stage via checkpoint
+4. **Loosely Coupled**: All stages implement interfaces, easily testable
+5. **Clear Error Handling**: Distinguishes required vs optional failures
+6. **Observable**: Full timing, status, and error tracking
+7. **Persistent**: Run state saved to disk for recovery
+
+### Example Usage
+
+```python
+from analytics.orchestration import WorkflowOrchestrator, WorkflowDefinition
+from datetime import date
+
+# Define workflow
+definition = WorkflowDefinition(
+    workflow_id="daily_report",
+    name="Daily Business Report",
+)
+
+# Create orchestrator with services
+orchestrator = WorkflowOrchestrator(
+    workflow_definition=definition,
+    ingestion_service=...,
+    validation_service=...,
+    metric_service=...,
+    analysis_service=...,
+    insight_service=...,
+    report_service=...,
+    distribution_service=...,
+    monitoring_service=...,
+)
+
+# Execute workflow
+result = orchestrator.execute(date(2026, 8, 21))
+
+if result.status == RunStatus.SUCCESS:
+    print(f"✅ Completed: {result.report_path}")
+elif result.status == RunStatus.PARTIAL:
+    print(f"⚠️  Partial: {result.partial_sources}")
+    print(f"   Report: {result.report_path}")
+else:
+    print(f"❌ Failed: {result.error_message}")
+    # Resume when ready
+    result2 = orchestrator.resume(result.run_id)
+```
+
+### Test Coverage
+
+**Phase 7 Tests** (33 tests):
+- **IdempotencyKeyManager**: 6 tests (deterministic key generation)
+- **IdempotencyCache**: 4 tests (caching operations)
+- **RunManager**: 8 tests (run lifecycle, checkpoint persistence)
+- **WorkflowOrchestrator**: 15 tests (complete pipeline, retries, failures, resumability)
+
+**Total Test Coverage**: 128 tests (95 existing + 33 new), all passing ✅
+
+### Files
+
+- `analytics/orchestration/__init__.py` - Package exports
+- `analytics/orchestration/models.py` - Domain models
+- `analytics/orchestration/service_interfaces.py` - Abstract service interfaces
+- `analytics/orchestration/idempotency.py` - Idempotency management
+- `analytics/orchestration/run_manager.py` - Run state persistence
+- `analytics/orchestration/workflow_engine.py` - Main orchestrator
+- `tests/test_orchestration.py` - Comprehensive test suite
+- `ORCHESTRATION.md` - Detailed documentation
+
+---
+
+## Next Steps (Post-Phase 7)
 
 - **Database Integration**: Load validated data into MySQL schema
-- **FastAPI Endpoints**: Expose metrics and analysis results via REST API
-- **React Dashboard**: Display metrics, alerts, and analysis results
-- **LLM Integration**: Connect chat interface for business questions
-- **Report Generation**: PDF/Excel reporting with analysis
-- **Automation**: Scheduled metric calculation and report distribution
+- **FastAPI Endpoints**: Expose metrics, analysis, and insights via REST API
+- **React Dashboard**: Display metrics, alerts, insights, and recommendations
+- **LLM Chat Interface**: Claude-powered business assistant with controlled tools
+- **Scheduled Execution**: Run workflows on schedule via APScheduler
+- **Alerts**: Real-time notifications for critical insights
+- **Distributed Execution**: Scale to multiple machines (future enhancement)

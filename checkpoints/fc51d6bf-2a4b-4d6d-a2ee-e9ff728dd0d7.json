@@ -1,0 +1,46 @@
+{
+  "run_id": "fc51d6bf-2a4b-4d6d-a2ee-e9ff728dd0d7",
+  "workflow_id": "test_workflow",
+  "business_date": "2026-08-21",
+  "status": "failed",
+  "start_time": "2026-08-21T17:42:19.799585",
+  "end_time": "2026-08-21T17:42:19.804793",
+  "duration_seconds": 0.005208,
+  "failed_sources": [],
+  "partial_sources": [],
+  "error_message": "Required stages failed: validation",
+  "metadata": {},
+  "stage_results": {
+    "ingestion": {
+      "stage": "ingestion",
+      "status": "success",
+      "start_time": "2026-08-21T17:42:19.801630",
+      "end_time": "2026-08-21T17:42:19.801670",
+      "duration_seconds": 4e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "dea58cb919409e4c"
+    },
+    "validation": {
+      "stage": "validation",
+      "status": "failed",
+      "start_time": "2026-08-21T17:42:19.803148",
+      "end_time": "2026-08-21T17:42:19.803183",
+      "duration_seconds": 3.5e-05,
+      "attempt": 2,
+      "error_message": "Permanent failure",
+      "error_type": "Exception",
+      "warning_messages": [],
+      "idempotency_key": "beb4eed9c44656be"
+    }
+  },
+  "checkpoints": {
+    "ingestion": "2026-08-21T17:42:19.801692"
+  },
+  "idempotency_keys": {
+    "ingestion": "dea58cb919409e4c",
+    "validation": "beb4eed9c44656be"
+  }
+}

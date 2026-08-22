@@ -1,0 +1,131 @@
+{
+  "run_id": "edeeacff-6a2d-432d-97b0-dac9dff22e70",
+  "workflow_id": "test_workflow",
+  "business_date": "2026-08-21",
+  "status": "success",
+  "start_time": "2026-08-22T05:00:49.562634",
+  "end_time": "2026-08-22T05:00:49.571125",
+  "duration_seconds": 0.008491,
+  "failed_sources": [],
+  "partial_sources": [],
+  "error_message": null,
+  "metadata": {},
+  "stage_results": {
+    "ingestion": {
+      "stage": "ingestion",
+      "status": "success",
+      "start_time": "2026-08-22T05:00:49.564136",
+      "end_time": "2026-08-22T05:00:49.564176",
+      "duration_seconds": 4e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "dea58cb919409e4c"
+    },
+    "validation": {
+      "stage": "validation",
+      "status": "success",
+      "start_time": "2026-08-22T05:00:49.564881",
+      "end_time": "2026-08-22T05:00:49.564916",
+      "duration_seconds": 3.5e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "beb4eed9c44656be"
+    },
+    "metrics": {
+      "stage": "metrics",
+      "status": "success",
+      "start_time": "2026-08-22T05:00:49.565753",
+      "end_time": "2026-08-22T05:00:49.565767",
+      "duration_seconds": 1.4e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "25ab63c3e96770d2"
+    },
+    "analysis": {
+      "stage": "analysis",
+      "status": "success",
+      "start_time": "2026-08-22T05:00:49.566588",
+      "end_time": "2026-08-22T05:00:49.566600",
+      "duration_seconds": 1.2e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "06ffbf2c89dec0b9"
+    },
+    "insights": {
+      "stage": "insights",
+      "status": "success",
+      "start_time": "2026-08-22T05:00:49.567370",
+      "end_time": "2026-08-22T05:00:49.567411",
+      "duration_seconds": 4.1e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "3224cf8566047bbc"
+    },
+    "report": {
+      "stage": "report",
+      "status": "success",
+      "start_time": "2026-08-22T05:00:49.568215",
+      "end_time": "2026-08-22T05:00:49.568227",
+      "duration_seconds": 1.2e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "a197c3b7cd9d3b04"
+    },
+    "distribution": {
+      "stage": "distribution",
+      "status": "success",
+      "start_time": "2026-08-22T05:00:49.569113",
+      "end_time": "2026-08-22T05:00:49.569125",
+      "duration_seconds": 1.2e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "ec9a7267cba3cc77"
+    },
+    "audit": {
+      "stage": "audit",
+      "status": "success",
+      "start_time": "2026-08-22T05:00:49.570037",
+      "end_time": "2026-08-22T05:00:49.570050",
+      "duration_seconds": 1.3e-05,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "da840a1f7f714556"
+    }
+  },
+  "checkpoints": {
+    "ingestion": "2026-08-22T05:00:49.564207",
+    "validation": "2026-08-22T05:00:49.564923",
+    "metrics": "2026-08-22T05:00:49.565775",
+    "analysis": "2026-08-22T05:00:49.566606",
+    "insights": "2026-08-22T05:00:49.567419",
+    "report": "2026-08-22T05:00:49.568234",
+    "distribution": "2026-08-22T05:00:49.569155",
+    "audit": "2026-08-22T05:00:49.570089"
+  },
+  "idempotency_keys": {
+    "ingestion": "dea58cb919409e4c",
+    "validation": "beb4eed9c44656be",
+    "metrics": "25ab63c3e96770d2",
+    "analysis": "06ffbf2c89dec0b9",
+    "insights": "3224cf8566047bbc",
+    "report": "a197c3b7cd9d3b04",
+    "distribution": "ec9a7267cba3cc77",
+    "audit": "da840a1f7f714556"
+  }
+}
