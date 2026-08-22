@@ -95,19 +95,59 @@ export const mockAlerts = [
 ];
 
 export const mockWarehouseData = [
-  { id: 1, name: 'Gurgaon Hub', city: 'Gurgaon', region: 'North', lat: 28.4595, lng: 77.0266, totalInventory: 24520, skuCount: 132, lowStockSkus: 8, stockoutSkus: 2, daysOfCover: 6.4, status: 'LOW' },
-  { id: 2, name: 'Bangalore Central', city: 'Bangalore', region: 'South', lat: 12.9716, lng: 77.5946, totalInventory: 31250, skuCount: 145, lowStockSkus: 5, stockoutSkus: 0, daysOfCover: 8.2, status: 'HEALTHY' },
-  { id: 3, name: 'Mumbai West', city: 'Mumbai', region: 'West', lat: 19.0760, lng: 72.8777, totalInventory: 18900, skuCount: 98, lowStockSkus: 12, stockoutSkus: 1, daysOfCover: 4.8, status: 'CRITICAL' },
-  { id: 4, name: 'Delhi North', city: 'Delhi', region: 'North', lat: 28.7041, lng: 77.1025, totalInventory: 22100, skuCount: 128, lowStockSkus: 6, stockoutSkus: 0, daysOfCover: 7.1, status: 'HEALTHY' },
-  { id: 5, name: 'Kolkata Hub', city: 'Kolkata', region: 'East', lat: 22.5726, lng: 88.3639, totalInventory: 14200, skuCount: 76, lowStockSkus: 15, stockoutSkus: 3, daysOfCover: 3.2, status: 'CRITICAL' },
+  // Latest snapshot from final_sleepsia_report_data.xlsx (Warehouse_Master,
+  // Inventory_Daily and Supply_Chain_Summary).
+  { id: 'WH-NCR', name: 'Delhi NCR Warehouse', city: 'Gurugram', region: 'Delhi NCR', lat: 28.4595, lng: 77.0266, totalInventory: 1291, capacity: 5000, skuCount: 3, lowStockSkus: 0, stockoutSkus: 0, daysOfCover: 71.6, status: 'HEALTHY' },
+  { id: 'WH-JPR', name: 'Jaipur Warehouse', city: 'Jaipur', region: 'Jaipur', lat: 26.9124, lng: 75.7873, totalInventory: 862, capacity: 3500, skuCount: 3, lowStockSkus: 1, stockoutSkus: 0, daysOfCover: 53, status: 'AT RISK' },
+  { id: 'WH-MUM', name: 'Mumbai Warehouse', city: 'Mumbai', region: 'Mumbai', lat: 19.076, lng: 72.8777, totalInventory: 1142, capacity: 4500, skuCount: 3, lowStockSkus: 0, stockoutSkus: 0, daysOfCover: 61.7, status: 'HEALTHY' },
+  { id: 'WH-BLR', name: 'Bengaluru Warehouse', city: 'Bengaluru', region: 'Bengaluru', lat: 12.9716, lng: 77.5946, totalInventory: 916, capacity: 4500, skuCount: 3, lowStockSkus: 0, stockoutSkus: 0, daysOfCover: 50.4, status: 'HEALTHY' },
+  { id: 'WH-HYD', name: 'Hyderabad Warehouse', city: 'Hyderabad', region: 'Hyderabad', lat: 17.385, lng: 78.4867, totalInventory: 1129, capacity: 3000, skuCount: 3, lowStockSkus: 0, stockoutSkus: 0, daysOfCover: 64.1, status: 'HEALTHY' },
 ];
 
 export const mockInventoryData = [
-  { warehouse: 'Gurgaon Hub', city: 'Gurgaon', sku: 'SLEEP-001', product: 'Sleep Pro Mattress', currentStock: 450, avgDailyDemand: 70, daysOfCover: 6.4, reorderPoint: 210, recommendedReorderQty: 840, status: 'LOW' },
-  { warehouse: 'Bangalore Central', city: 'Bangalore', sku: 'SLEEP-002', product: 'Pillow Deluxe', currentStock: 1200, avgDailyDemand: 145, daysOfCover: 8.3, reorderPoint: 435, recommendedReorderQty: 1450, status: 'HEALTHY' },
-  { warehouse: 'Mumbai West', city: 'Mumbai', sku: 'SLEEP-003', product: 'Bedsheet Premium', currentStock: 0, avgDailyDemand: 95, daysOfCover: 0, reorderPoint: 285, recommendedReorderQty: 950, status: 'STOCKOUT' },
-  { warehouse: 'Delhi North', city: 'Delhi', sku: 'SLEEP-004', product: 'Comforter King', currentStock: 165, avgDailyDemand: 50, daysOfCover: 3.3, reorderPoint: 150, recommendedReorderQty: 600, status: 'CRITICAL' },
+  { warehouse: 'Delhi NCR Warehouse', city: 'Gurugram', sku: 'SLP-1001', product: 'Contour Memory Foam Cervical Pillow', currentStock: 271, avgDailyDemand: 7, daysOfCover: 38.7, reorderPoint: 70, recommendedReorderQty: 0, status: 'HEALTHY' },
+  { warehouse: 'Delhi NCR Warehouse', city: 'Gurugram', sku: 'SLP-1002', product: 'Travel Neck Memory Foam Pillow', currentStock: 371, avgDailyDemand: 8, daysOfCover: 46.4, reorderPoint: 80, recommendedReorderQty: 0, status: 'HEALTHY' },
+  { warehouse: 'Jaipur Warehouse', city: 'Jaipur', sku: 'SLP-1002', product: 'Travel Neck Memory Foam Pillow', currentStock: 34, avgDailyDemand: 8, daysOfCover: 4.2, reorderPoint: 80, recommendedReorderQty: 86, status: 'LOW STOCK' },
+  { warehouse: 'Mumbai Warehouse', city: 'Mumbai', sku: 'SLP-1003', product: 'Alpha Kids Memory Foam Pillow', currentStock: 486, avgDailyDemand: 5, daysOfCover: 97.2, reorderPoint: 50, recommendedReorderQty: 0, status: 'HEALTHY' },
+  { warehouse: 'Bengaluru Warehouse', city: 'Bengaluru', sku: 'SLP-1002', product: 'Travel Neck Memory Foam Pillow', currentStock: 321, avgDailyDemand: 8, daysOfCover: 40.1, reorderPoint: 80, recommendedReorderQty: 0, status: 'HEALTHY' },
+  { warehouse: 'Hyderabad Warehouse', city: 'Hyderabad', sku: 'SLP-1003', product: 'Alpha Kids Memory Foam Pillow', currentStock: 617, avgDailyDemand: 5, daysOfCover: 123.4, reorderPoint: 50, recommendedReorderQty: 0, status: 'HEALTHY' },
 ];
+
+// Aggregated from Daily_KPI and Advertising in final_sleepsia_report_data.xlsx.
+export const profitabilitySummary = {
+  netSales: 6490253.01,
+  contribution: 1685651.85,
+  margin: 25.97,
+  unitsSold: 6070,
+  platforms: [
+    { name: 'Amazon', netSales: 2054241.02, contribution: 576894.26, margin: 28.08, units: 1913 },
+    { name: 'Flipkart', netSales: 1744209.57, contribution: 481637.86, margin: 27.61, units: 1644 },
+    { name: 'Blinkit', netSales: 1474964.53, contribution: 340104.61, margin: 23.06, units: 1381 },
+    { name: 'Myntra', netSales: 1216837.89, contribution: 287015.12, margin: 23.59, units: 1132 },
+  ],
+  products: [
+    { name: 'Contour Memory Foam Cervical Pillow', netSales: 2971102.59, contribution: 788402.55, margin: 26.53, units: 2097 },
+    { name: 'Travel Neck Memory Foam Pillow', netSales: 2103873.11, contribution: 570845.23, margin: 27.13, units: 2477 },
+    { name: 'Alpha Kids Memory Foam Pillow', netSales: 1415277.31, contribution: 326404.07, margin: 23.06, units: 1496 },
+  ],
+};
+
+export const advertisingSummary = {
+  impressions: 735764,
+  clicks: 32450,
+  attributedSales: 2744179.72,
+  adSpend: 603699.73,
+  orders: 2458,
+  ctr: 4.41,
+  roas: 4.55,
+  acos: 22,
+  platforms: [
+    { name: 'Amazon', impressions: 232888, clicks: 10241, sales: 860860.29, spend: 185405.28, orders: 769, roas: 4.64, ctr: 4.4 },
+    { name: 'Flipkart', impressions: 196650, clicks: 8719, sales: 736171.05, spend: 159377.32, orders: 654, roas: 4.62, ctr: 4.43 },
+    { name: 'Blinkit', impressions: 166418, clicks: 7376, sales: 632540.09, spend: 142117.31, orders: 564, roas: 4.45, ctr: 4.43 },
+    { name: 'Myntra', impressions: 139808, clicks: 6114, sales: 514608.29, spend: 116799.82, orders: 471, roas: 4.41, ctr: 4.37 },
+  ],
+};
 
 // Simulated API delay
 const simulateDelay = (ms = 500) => new Promise((resolve) => setTimeout(resolve, ms));
