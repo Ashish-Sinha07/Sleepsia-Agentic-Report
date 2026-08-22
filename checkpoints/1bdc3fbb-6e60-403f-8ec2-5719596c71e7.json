@@ -1,0 +1,16 @@
+{
+  "run_id": "1bdc3fbb-6e60-403f-8ec2-5719596c71e7",
+  "workflow_id": "workflow1",
+  "business_date": "2026-08-21",
+  "status": "running",
+  "start_time": "2026-08-22T05:14:23.092711",
+  "end_time": null,
+  "duration_seconds": null,
+  "failed_sources": [],
+  "partial_sources": [],
+  "error_message": null,
+  "metadata": {},
+  "stage_results": {},
+  "checkpoints": {},
+  "idempotency_keys": {}
+}
