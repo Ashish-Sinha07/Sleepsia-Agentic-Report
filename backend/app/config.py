@@ -22,14 +22,20 @@ class Settings(BaseSettings):
     API_TITLE: str = "Sleepsia Analytics API"
     API_VERSION: str = "1.0.0"
 
-    # CORS
-    CORS_ORIGINS: list = [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:5173",
-    ]
+    # CORS - comma-separated list of allowed origins, e.g.
+    # CORS_ORIGINS=http://localhost:3000,https://reports.sleepsia.com
+    # (kept as a plain string field, not list, so pydantic-settings doesn't
+    # try to JSON-decode the env var and crash on startup)
+    CORS_ORIGINS_RAW: str = os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:3000,http://localhost:5173,http://localhost:5174,"
+        "http://127.0.0.1:3000,http://127.0.0.1:5173,http://127.0.0.1:5174",
+    )
+
+    @property
+    def CORS_ORIGINS(self) -> list:
+        """Parsed list of allowed CORS origins."""
+        return [origin.strip() for origin in self.CORS_ORIGINS_RAW.split(",") if origin.strip()]
 
     # Logging
     LOG_LEVEL: str = "INFO"

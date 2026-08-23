@@ -3,7 +3,15 @@ import { FilterContext } from '../../context/FilterContext';
 import { format } from 'date-fns';
 import { ChevronDown, RotateCcw } from 'lucide-react';
 
-const PLATFORMS = ['all', 'Amazon', 'Flipkart', 'Myntra', 'Blinkit', 'JioMart'];
+// value must match the platform_id codes seeded in the platforms table (sql/schema.sql)
+const PLATFORMS = [
+  { id: 'all', label: 'All Platforms' },
+  { id: 'AMZ', label: 'Amazon' },
+  { id: 'FLP', label: 'Flipkart' },
+  { id: 'MTR', label: 'Myntra' },
+  { id: 'BLK', label: 'Blinkit' },
+  { id: 'JMT', label: 'JioMart' },
+];
 
 export default function FilterBar() {
   const { filters, updateFilters, resetFilters } = useContext(FilterContext);
@@ -49,8 +57,8 @@ export default function FilterBar() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sleepsia-500 appearance-none"
               >
                 {PLATFORMS.map((platform) => (
-                  <option key={platform} value={platform}>
-                    {platform === 'all' ? 'All Platforms' : platform}
+                  <option key={platform.id} value={platform.id}>
+                    {platform.label}
                   </option>
                 ))}
               </select>

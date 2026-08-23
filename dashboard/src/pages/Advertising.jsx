@@ -1,12 +1,41 @@
+import { useContext, useEffect, useState } from 'react';
 import { BarChart3, Eye, IndianRupee, MousePointerClick, TrendingUp } from 'lucide-react';
+import { FilterContext } from '../context/FilterContext';
+import { analyticsApi } from '../services/analyticsApi';
 import FilterBar from '../components/filters/FilterBar';
+import LoadingState from '../components/common/LoadingState';
+import ErrorState from '../components/common/ErrorState';
 import KpiCard from '../components/common/KpiCard';
 import ChartCard from '../components/common/ChartCard';
 import BarChart from '../components/charts/BarChart';
-import { advertisingSummary } from '../services/mockData';
 import { formatCurrency, formatNumber, formatROAS } from '../utils/formatting';
 
 export default function Advertising() {
+  const { filters } = useContext(FilterContext);
+  const [advertisingSummary, setAdvertisingSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result = await analyticsApi.getAdvertising(filters);
+        setAdvertisingSummary(result);
+      } catch (err) {
+        setError(err.message || 'Failed to load advertising data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [filters]);
+
+  if (loading) return <LoadingState />;
+  if (error) return <ErrorState message={error} />;
+
   return (
     <div className="space-y-6">
       <div>
