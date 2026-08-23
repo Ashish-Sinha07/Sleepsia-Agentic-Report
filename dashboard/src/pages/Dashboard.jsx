@@ -48,7 +48,14 @@ export default function Dashboard() {
           analyticsApi.getTopProducts(filters),
           analyticsApi.getBottomProducts(filters),
         ]);
-        setKpis(kpiRes);
+        const backendKpis = kpiRes?.kpis || kpiRes?.data?.kpis || kpiRes;
+        setKpis({
+          totalRevenue: Number(backendKpis?.totalRevenue ?? backendKpis?.total_revenue ?? 0),
+          contribution: Number(backendKpis?.contribution ?? backendKpis?.total_profit ?? 0),
+          profitMargin: Number(backendKpis?.profitMargin ?? backendKpis?.profit_margin_pct ?? 0),
+          unitsSold: Number(backendKpis?.unitsSold ?? backendKpis?.units_sold ?? 0),
+          orders: Number(backendKpis?.orders || 0),
+        });
         setRevenueData(revenueRes);
         setPlatformData(platformRes);
         setTopProducts(topRes);
