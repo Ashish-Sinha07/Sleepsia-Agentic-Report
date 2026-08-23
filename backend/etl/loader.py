@@ -19,8 +19,10 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from contextlib import contextmanager
 
-# Load environment variables from .env
-load_dotenv()
+# Resolve paths from the repository, rather than from the directory used to
+# launch the script.
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(PROJECT_ROOT / '.env')
 
 # ============================================================================
 # CONFIGURATION
@@ -36,9 +38,9 @@ class Config:
     DB_PASSWORD = os.getenv('DB_PASSWORD', '')
 
     # File paths
-    EXCEL_FILE = os.getenv('EXCEL_FILE', 'data/final_sleepsia_report_data.xlsx')
-    LOG_DIR = 'logs'
-    LOG_FILE = f'logs/etl_{datetime.now().strftime("%Y%m%d_%H%M%S")}.log'
+    EXCEL_FILE = str(PROJECT_ROOT / os.getenv('EXCEL_FILE', 'data/final_sleepsia_report_data.xlsx'))
+    LOG_DIR = str(PROJECT_ROOT / 'logs')
+    LOG_FILE = str(PROJECT_ROOT / 'logs' / f'etl_{datetime.now().strftime("%Y%m%d_%H%M%S")}.log')
 
     # Validation
     BATCH_SIZE = 1000
@@ -651,22 +653,26 @@ class ETLLoader:
             batch = records[i:i + batch_size]
 
             # Use SQLAlchemy's insert with values
-            # For 'replace' mode, use MySQL REPLACE syntax
             from sqlalchemy import MetaData, Table
 
             metadata = MetaData()
             tbl = Table(table, metadata, autoload_with=self.engine)
 
             if if_exists == 'replace':
-                # Use REPLACE INTO for dimension tables (upsert behavior)
+                primary_keys = {column.name for column in tbl.primary_key.columns}
+                update_columns = [
+                    column for column in df.columns if column not in primary_keys
+                ]
                 stmt = text(f"""
-                    REPLACE INTO {table}
+                    INSERT INTO {table}
                     ({', '.join([f'`{col}`' for col in df.columns])})
                     VALUES
                     {', '.join([
                         f"({', '.join([f':{col}_{j}' for col in df.columns])})"
                         for j in range(len(batch))
                     ])}
+                    ON DUPLICATE KEY UPDATE
+                    {', '.join([f'`{col}` = VALUES(`{col}`)' for col in update_columns])}
                 """)
                 # Build parameters dict
                 params = {}
