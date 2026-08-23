@@ -1,10 +1,11 @@
 import apiClient from './api';
 import { mockAnalyticsApi } from './mockData';
 
-// During development, use mock data
-// When backend is ready, switch to real API calls
+// Switch between mock data and real API calls
+// Set to true to use mock data, false to use real backend API
+// The backend must be running on http://localhost:8000
 
-const USE_MOCK = true;
+const USE_MOCK = import.meta.env.VITE_USE_MOCK_DATA !== 'false';
 
 export const analyticsApi = {
   getKPIs: async (filters) => {

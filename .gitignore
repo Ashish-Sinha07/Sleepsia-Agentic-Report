@@ -1,12 +1,47 @@
 .env
+.env.*
+!.env.example
+
+# Python
 .venv/
+venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Editors and operating system files
 .vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Frontend dependencies and build output
 node_modules/
 dist/
 build/
+dashboard/node_modules/
+dashboard/dist/
+
+# Runtime output and generated artifacts
+checkpoints/*.json
+logs/
 reports/generated/
 *.log
+*.tmp
+*.temp
+
+# Local databases, exports, and credentials
+*.db
+*.sqlite
+*.sqlite3
+*.sql.gz
+*.dump
+data/*.xlsx
+data/*.xls
+data/*.csv
+secrets/

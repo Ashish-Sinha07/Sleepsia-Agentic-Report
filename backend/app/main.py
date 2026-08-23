@@ -6,7 +6,7 @@ import logging
 from sqlalchemy import text
 from app.config import settings
 from app.api.errors import SleepsiaException
-from app.api.routes import kpis, platforms, products, warehouses, inventory, alerts
+from app.api.routes import kpis, platforms, products, warehouses, inventory, alerts, ai_assistant, reports
 
 # Configure logging
 logging.basicConfig(
@@ -101,6 +101,8 @@ def create_app() -> FastAPI:
     app.include_router(warehouses.router, prefix="/api")
     app.include_router(inventory.router, prefix="/api")
     app.include_router(alerts.router, prefix="/api")
+    app.include_router(ai_assistant.router, prefix="/api")
+    app.include_router(reports.router, prefix="/api")
 
     logger.info(f"FastAPI app created with {len(app.routes)} routes")
     return app
