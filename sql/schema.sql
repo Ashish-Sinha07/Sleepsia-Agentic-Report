@@ -328,7 +328,7 @@ SELECT
     (
         ds.net_sales
         - COALESCE(ret.refund_amount, 0)
-        - (dc.product_cost * ds.units_sold)
+        - dc.product_cost
         - dc.platform_fee
         - dc.shipping_cost
         - dc.payment_fee
@@ -340,7 +340,7 @@ SELECT
             (
                 ds.net_sales
                 - COALESCE(ret.refund_amount, 0)
-                - (dc.product_cost * ds.units_sold)
+                - dc.product_cost
                 - dc.platform_fee
                 - dc.shipping_cost
                 - dc.payment_fee
@@ -458,7 +458,7 @@ SELECT
     vpd.platform,
     vpd.net_sales,
     (
-        (vpd.product_cost * vpd.units_sold)
+        vpd.product_cost
         + vpd.platform_fee
         + vpd.shipping_cost
         + vpd.payment_fee

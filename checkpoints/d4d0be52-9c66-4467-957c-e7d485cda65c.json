@@ -1,0 +1,129 @@
+{
+  "run_id": "d4d0be52-9c66-4467-957c-e7d485cda65c",
+  "workflow_id": "test_workflow",
+  "business_date": "2026-08-21",
+  "status": "success",
+  "start_time": "2026-08-22T12:45:06.440493",
+  "end_time": "2026-08-22T12:48:06.515796",
+  "duration_seconds": 180.075303,
+  "failed_sources": [],
+  "partial_sources": [],
+  "error_message": "Required stages failed: metrics",
+  "metadata": {},
+  "stage_results": {
+    "ingestion": {
+      "stage": "ingestion",
+      "status": "success",
+      "start_time": "2026-08-22T12:45:06.447844",
+      "end_time": "2026-08-22T12:45:06.449883",
+      "duration_seconds": 0.002039,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "dea58cb919409e4c"
+    },
+    "validation": {
+      "stage": "validation",
+      "status": "success",
+      "start_time": "2026-08-22T12:45:06.454495",
+      "end_time": "2026-08-22T12:45:06.454495",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "beb4eed9c44656be"
+    },
+    "metrics": {
+      "stage": "metrics",
+      "status": "success",
+      "start_time": "2026-08-22T12:48:06.495641",
+      "end_time": "2026-08-22T12:48:06.495641",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "25ab63c3e96770d2"
+    },
+    "analysis": {
+      "stage": "analysis",
+      "status": "success",
+      "start_time": "2026-08-22T12:48:06.503619",
+      "end_time": "2026-08-22T12:48:06.503619",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "06ffbf2c89dec0b9"
+    },
+    "insights": {
+      "stage": "insights",
+      "status": "success",
+      "start_time": "2026-08-22T12:48:06.506044",
+      "end_time": "2026-08-22T12:48:06.506044",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "3224cf8566047bbc"
+    },
+    "report": {
+      "stage": "report",
+      "status": "success",
+      "start_time": "2026-08-22T12:48:06.508513",
+      "end_time": "2026-08-22T12:48:06.508513",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "a197c3b7cd9d3b04"
+    },
+    "distribution": {
+      "stage": "distribution",
+      "status": "success",
+      "start_time": "2026-08-22T12:48:06.509746",
+      "end_time": "2026-08-22T12:48:06.509746",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "ec9a7267cba3cc77"
+    },
+    "audit": {
+      "stage": "audit",
+      "status": "success",
+      "start_time": "2026-08-22T12:48:06.511764",
+      "end_time": "2026-08-22T12:48:06.511764",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "da840a1f7f714556"
+    }
+  },
+  "checkpoints": {
+    "metrics": "2026-08-22T12:48:06.495641",
+    "analysis": "2026-08-22T12:48:06.503619",
+    "insights": "2026-08-22T12:48:06.506044",
+    "report": "2026-08-22T12:48:06.508513",
+    "distribution": "2026-08-22T12:48:06.509746",
+    "audit": "2026-08-22T12:48:06.511764"
+  },
+  "idempotency_keys": {
+    "ingestion": "dea58cb919409e4c",
+    "validation": "beb4eed9c44656be",
+    "metrics": "25ab63c3e96770d2",
+    "analysis": "06ffbf2c89dec0b9",
+    "insights": "3224cf8566047bbc",
+    "report": "a197c3b7cd9d3b04",
+    "distribution": "ec9a7267cba3cc77",
+    "audit": "da840a1f7f714556"
+  }
+}

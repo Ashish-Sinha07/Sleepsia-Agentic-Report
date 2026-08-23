@@ -15,10 +15,11 @@ router = APIRouter(prefix="/kpis", tags=["KPIs"])
 async def get_kpis(
     db: Session = Depends(get_db),
     date_range: tuple[date, date] = Depends(get_date_range),
+    platform_id: Optional[str] = Query(None),
 ):
     """Get aggregate KPIs for selected period."""
     start_date, end_date = date_range
-    return KpiService.get_daily_kpis(db, start_date, end_date)
+    return KpiService.get_daily_kpis(db, start_date, end_date, platform_id)
 
 
 @router.get("/by-date", response_model=DailyKpisResponse)
