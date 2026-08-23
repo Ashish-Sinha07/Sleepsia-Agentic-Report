@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import FilterBar from '../components/filters/FilterBar';
 import { Download, FileText } from 'lucide-react';
+import { FilterContext } from '../context/FilterContext';
+import apiClient from '../services/api';
 
 export default function Reports() {
+  const { filters } = useContext(FilterContext);
   const [reportType, setReportType] = useState('management-summary');
+  const [format, setFormat] = useState('pdf');
   const [generating, setGenerating] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
 
   const reportTypes = [
     { id: 'management-summary', label: 'Management Summary', description: 'Executive summary with key metrics' },
@@ -16,10 +22,21 @@ export default function Reports() {
 
   const handleGenerateReport = async () => {
     setGenerating(true);
-    setTimeout(() => {
+    setError(null);
+    setResult(null);
+    try {
+      const response = await apiClient.post('/api/reports', {
+        report_type: reportType === 'management-summary' ? 'executive_summary' : reportType.replace('-report', '').replace('-', '_'),
+        start_date: filters.startDate.toISOString().slice(0, 10),
+        end_date: filters.endDate.toISOString().slice(0, 10),
+        format,
+      });
+      setResult(response);
+    } catch (err) {
+      setError(err?.error || err?.message || 'Failed to generate report');
+    } finally {
       setGenerating(false);
-      alert('Report generated successfully! (Mock)');
-    }, 2000);
+    }
   };
 
   return (
@@ -86,9 +103,9 @@ export default function Reports() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">Format</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                <option>PDF</option>
-                <option>Excel</option>
+              <select value={format} onChange={(e) => setFormat(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                <option value="pdf">PDF</option>
+                <option value="excel">Excel</option>
               </select>
             </div>
           </div>
@@ -112,6 +129,8 @@ export default function Reports() {
               )}
             </button>
           </div>
+          {error && <p className="text-sm text-red-700">{error}</p>}
+          {result && <p className="text-sm text-green-700">Report {result.report_id} generated successfully.</p>}
         </div>
       </div>
     </div>

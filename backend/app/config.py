@@ -61,8 +61,13 @@ class Settings(BaseSettings):
     REPORT_CC_EMAILS: str = os.getenv("REPORT_CC_EMAILS", "")
     REPORT_BCC_EMAILS: str = os.getenv("REPORT_BCC_EMAILS", "")
 
-    # Anthropic API
-    ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
+    # Automation
+    AUTOMATION_TIMEZONE: str = os.getenv("AUTOMATION_TIMEZONE", "Asia/Kolkata")
+    SEND_REPORT_EMAIL: bool = os.getenv("SEND_REPORT_EMAIL", "false").lower() == "true"
+
+    # Groq API
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
     @property
     def DATABASE_URL(self) -> str:

@@ -11,13 +11,16 @@ Date: 2026-08-23
 import logging
 from datetime import date, datetime
 import pytz
+from sqlalchemy.orm import Session
+from sqlalchemy import text
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
-from automation.report_generator import AutomatedReportGenerator
 from automation.email_service import ReportEmailService
 from backend.app.config import settings
+from backend.app.database import SessionLocal
+from backend.app.services.report_service import ReportService
 
 logger = logging.getLogger(__name__)
 
@@ -27,17 +30,17 @@ class ReportScheduler:
     Schedules autonomous daily report generation and email distribution.
 
     Workflow:
-    1. Generate report (PDF + Excel) using AutomatedReportGenerator
-    2. Send report via email using ReportEmailService
+    1. Read validated data from MySQL
+    2. Generate a deterministic database-backed report
+    3. Optionally send the report via email
     3. Run on configured schedule (default: 6 AM daily, Monday-Friday)
     """
 
     def __init__(self):
         """Initialize the scheduler with all components."""
         self.scheduler = BackgroundScheduler()
-        self.report_generator = AutomatedReportGenerator()
         self.email_service = ReportEmailService()
-        self.timezone = pytz.UTC
+        self.timezone = pytz.timezone(settings.AUTOMATION_TIMEZONE)
 
         logger.info("Report scheduler initialized")
 
@@ -53,20 +56,32 @@ class ReportScheduler:
             logger.info(f"Starting report pipeline at {datetime.now(self.timezone).isoformat()}")
             logger.info("=" * 80)
 
-            # Generate report
-            logger.info("\n[1/2] Generating report...")
-            attachments, gen_success = self.report_generator.generate_daily_report()
+            db: Session = SessionLocal()
+            try:
+                latest_date = db.execute(
+                    text("SELECT MAX(sale_date) FROM daily_sales")
+                ).scalar()
+                report_date = latest_date or date.today()
+                logger.info("\n[1/2] Generating database-backed report...")
+                report = ReportService.generate_report(
+                    db=db,
+                    report_type="executive_summary",
+                    start_date=report_date,
+                    end_date=report_date,
+                    format="json",
+                )
+            finally:
+                db.close()
 
-            if not gen_success or not attachments:
-                logger.error("Report generation failed, aborting email send")
-                return False
+            logger.info(f"✓ Report generated: {report['report_id']}")
 
-            logger.info(f"✓ Report generated with {len(attachments)} attachments")
+            if not settings.SEND_REPORT_EMAIL:
+                logger.info("[2/2] Email disabled; report saved locally")
+                return True
 
-            # Send email
             logger.info("\n[2/2] Sending report via email...")
             email_success = self.email_service.send_report(
-                subject=f"Sleepsia Daily Report - {date.today()}",
+                subject=f"Sleepsia Daily Report - {report_date}",
                 body="""
 Dear Recipient,
 
@@ -87,7 +102,7 @@ Sleepsia Analytics System
                 recipients=[settings.REPORT_RECIPIENT_EMAIL],
                 cc=settings.REPORT_CC_EMAILS.split(",") if settings.REPORT_CC_EMAILS else None,
                 bcc=settings.REPORT_BCC_EMAILS.split(",") if settings.REPORT_BCC_EMAILS else None,
-                attachments=attachments,
+                attachments={},
             )
 
             if email_success:
@@ -119,8 +134,8 @@ Sleepsia Analytics System
             minute: Minute to run (0-59, default from REPORT_SCHEDULE_MINUTE setting)
             day_of_week: Cron day-of-week pattern (default weekdays only)
         """
-        hour = hour or settings.REPORT_SCHEDULE_HOUR
-        minute = minute or settings.REPORT_SCHEDULE_MINUTE
+        hour = settings.REPORT_SCHEDULE_HOUR if hour is None else hour
+        minute = settings.REPORT_SCHEDULE_MINUTE if minute is None else minute
 
         trigger = CronTrigger(
             hour=hour,

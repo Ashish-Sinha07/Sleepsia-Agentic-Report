@@ -1,10 +1,10 @@
-"""Claude-powered Analysis Agent - LLM-driven business insights from pre-calculated metrics."""
+"""Groq-powered analysis agent for pre-calculated business metrics."""
 
 import json
 import re
 from typing import Optional
 from datetime import date
-import anthropic
+from groq import Groq
 from pydantic import BaseModel, ValidationError
 
 from analytics.models import AnalysisResult, PerformanceFinding
@@ -13,7 +13,7 @@ from analytics.analysis_input import AnalysisInput
 
 class LLMAnalysisAgent:
     """
-    Claude-powered business analysis agent.
+    Groq-powered business analysis agent.
 
     CRITICAL CONSTRAINTS:
     1. Never calculates financial metrics (receives them pre-calculated)
@@ -93,15 +93,15 @@ OUTPUT: Return ONLY a valid JSON object matching this schema:
 
 Be concise. Insights should be 1-2 sentences each. Focus on material business impact."""
 
-    def __init__(self, api_key: Optional[str] = None, model: str = "claude-opus-5"):
-        """Initialize with Claude API credentials."""
-        self.client = anthropic.Anthropic(api_key=api_key)
+    def __init__(self, api_key: Optional[str] = None, model: str = "openai/gpt-oss-120b"):
+        """Initialize with Groq API credentials."""
+        self.client = Groq(api_key=api_key)
         self.model = model
         self.max_retries = 3
 
     def analyze(self, analysis_input: AnalysisInput) -> AnalysisResult:
         """
-        Analyze metrics using Claude and return structured result.
+        Analyze metrics using Groq and return structured result.
 
         Args:
             analysis_input: AnalysisInput with all pre-calculated metrics
@@ -113,19 +113,20 @@ Be concise. Insights should be 1-2 sentences each. Focus on material business im
 
         for attempt in range(self.max_retries):
             try:
-                response = self.client.messages.create(
+                response = self.client.chat.completions.create(
                     model=self.model,
-                    max_tokens=2000,
-                    system=self.SYSTEM_PROMPT,
                     messages=[
+                        {"role": "system", "content": self.SYSTEM_PROMPT},
                         {
                             "role": "user",
                             "content": prompt,
                         }
                     ],
+                    max_tokens=2000,
+                    response_format={"type": "json_object"},
                 )
 
-                response_text = response.content[0].text
+                response_text = response.choices[0].message.content
 
                 result = self._parse_response(response_text, analysis_input)
 
@@ -166,7 +167,7 @@ Provide a comprehensive analysis as JSON. Focus on:
 Remember: Use ONLY the data provided. Never invent metrics. Distinguish correlation from causation."""
 
     def _parse_response(self, response_text: str, analysis_input: AnalysisInput) -> AnalysisResult:
-        """Parse and validate Claude's JSON response."""
+        """Parse and validate Groq's JSON response."""
         json_match = re.search(r"\{.*\}", response_text, re.DOTALL)
         if not json_match:
             raise ValueError("No JSON found in response")

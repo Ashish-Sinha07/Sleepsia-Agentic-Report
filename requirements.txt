@@ -8,4 +8,4 @@ openpyxl
 python-dotenv
 httpx
 pytest
-anthropic
+groq

@@ -17,6 +17,7 @@ from decimal import Decimal
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+from backend.app.config import settings
 
 # Import agents
 from agents import (
@@ -444,8 +445,14 @@ class AgentService:
         self.validation_agent = DataValidationAgent()
         self.analysis_agent = DataAnalysisAgent()
         self.insight_agent = InsightRecommendationAgent()
-        self.llm_agent = LLMAnalysisAgent()
-        self.report_agent = ReportAgent()
+        self.llm_agent = LLMAnalysisAgent(
+            api_key=settings.GROQ_API_KEY,
+            model=settings.GROQ_MODEL,
+        )
+        self.report_agent = ReportAgent(
+            api_key=settings.GROQ_API_KEY,
+            model=settings.GROQ_MODEL,
+        )
 
     def get_executive_kpis(
         self,

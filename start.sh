@@ -44,7 +44,7 @@ sleep 3
 
 # Start frontend
 echo ""
-echo "Starting Frontend (React + Vite) on http://localhost:5173..."
+echo "Starting Frontend (React + Vite) on http://localhost:3000..."
 cd dashboard
 
 if [ ! -d "node_modules" ]; then
@@ -59,7 +59,7 @@ echo "=========================================="
 echo "Sleepsia Agentic Reporting System Running"
 echo "=========================================="
 echo ""
-echo "Frontend: http://localhost:5173"
+echo "Frontend: http://localhost:3000"
 echo "Backend:  http://localhost:8000"
 echo "API Docs: http://localhost:8000/docs"
 echo ""

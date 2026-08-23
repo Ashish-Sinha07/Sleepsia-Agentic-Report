@@ -171,11 +171,11 @@ class AIAssistantService:
             query = """
             SELECT
                 platform_name,
-                SUM(total_gross_sales) as revenue,
-                SUM(total_contribution) as profit,
-                SUM(total_gross_sales) > 0 AND SUM(total_contribution) / SUM(total_gross_sales) as profit_margin,
-                COUNT(DISTINCT sku) as product_count
-            FROM vw_daily_kpi_summary
+                SUM(gross_sales) as revenue,
+                SUM(contribution) as profit,
+                SUM(contribution) / NULLIF(SUM(gross_sales), 0) as profit_margin,
+                0 as product_count
+            FROM vw_platform_performance
             GROUP BY platform_name
             ORDER BY revenue DESC
             LIMIT 5
@@ -215,11 +215,10 @@ class AIAssistantService:
             query = """
             SELECT
                 product_name,
-                SUM(total_contribution) as profit,
-                SUM(total_gross_sales) as revenue,
-                COUNT(distinct platform_name) as platforms
-            FROM vw_daily_kpi_summary
-            WHERE total_contribution > 0
+                SUM(contribution) as profit,
+                SUM(gross_sales) as revenue,
+                COUNT(DISTINCT platform_id) as platforms
+            FROM vw_product_performance
             GROUP BY product_name
             ORDER BY profit DESC
             LIMIT 5
@@ -232,9 +231,8 @@ class AIAssistantService:
 
             # Get unprofitable products
             loss_query = """
-            SELECT product_name, SUM(total_contribution) as loss
-            FROM vw_daily_kpi_summary
-            WHERE total_contribution < 0
+            SELECT product_name, SUM(contribution) as loss
+            FROM vw_product_performance
             GROUP BY product_name
             ORDER BY loss ASC
             LIMIT 3
@@ -354,11 +352,11 @@ class AIAssistantService:
         try:
             query = """
             SELECT
-                warehouse_city,
+                city,
                 COUNT(*) as sku_count,
-                SUM(quantity_on_hand) as total_inventory
-            FROM inventory
-            GROUP BY warehouse_city
+                SUM(closing_stock) as total_inventory
+            FROM vw_inventory_health
+            GROUP BY city
             ORDER BY total_inventory ASC
             LIMIT 5
             """

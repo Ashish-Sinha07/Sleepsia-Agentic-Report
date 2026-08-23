@@ -120,7 +120,7 @@ class ReportService:
         """
 
         if platform_filter:
-            kpi_query += f" AND platform_name = :platform_filter"
+            kpi_query += f" AND platform_id = :platform_filter"
 
         result = db.execute(
             text(kpi_query),
@@ -163,13 +163,12 @@ class ReportService:
         query = """
         SELECT
             platform_name,
-            SUM(total_gross_sales) as revenue,
-            SUM(total_contribution) as profit,
-            AVG(overall_profit_margin_pct) as margin,
-            COUNT(DISTINCT sku) as products,
-            SUM(total_orders) as orders
-        FROM vw_daily_kpi_summary
-        WHERE date BETWEEN :start_date AND :end_date
+            gross_sales as revenue,
+            contribution as profit,
+            profit_margin_pct as margin,
+            COUNT(*) as products,
+            orders
+        FROM vw_platform_performance
         GROUP BY platform_name
         ORDER BY revenue DESC
         """
@@ -194,12 +193,11 @@ class ReportService:
         query = """
         SELECT
             product_name,
-            SUM(total_gross_sales) as revenue,
-            SUM(total_contribution) as profit,
-            SUM(total_orders) as orders,
-            COUNT(DISTINCT platform_name) as platforms
-        FROM vw_daily_kpi_summary
-        WHERE date BETWEEN :start_date AND :end_date
+            gross_sales as revenue,
+            contribution as profit,
+            orders as orders,
+            COUNT(DISTINCT platform_id) as platforms
+        FROM vw_product_performance
         GROUP BY product_name
         ORDER BY profit DESC
         LIMIT 20
@@ -299,12 +297,12 @@ class ReportService:
     ) -> Dict[str, Any]:
         """Get inventory and warehouse data."""
         try:
-            query = "SELECT warehouse_city, COUNT(*) as sku_count, SUM(quantity_on_hand) as total_stock FROM inventory"
+            query = "SELECT city, COUNT(*) as sku_count, SUM(closing_stock) as total_stock FROM vw_inventory_health"
 
             if warehouse_filter:
-                query += f" WHERE warehouse_city = :warehouse_filter"
+                query += f" WHERE city = :warehouse_filter"
 
-            query += " GROUP BY warehouse_city ORDER BY total_stock ASC"
+            query += " GROUP BY city ORDER BY total_stock ASC"
 
             results = db.execute(
                 text(query),

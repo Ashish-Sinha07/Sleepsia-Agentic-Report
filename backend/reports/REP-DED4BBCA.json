@@ -1,0 +1,61 @@
+{
+  "report_id": "REP-DED4BBCA",
+  "title": "Platform Performance Analysis",
+  "type": "platform_analysis",
+  "period": "2026-07-24 to 2026-08-23",
+  "generated_at": "2026-08-23T20:22:24.349763",
+  "data": {
+    "period": {
+      "start_date": "2026-07-24",
+      "end_date": "2026-08-23"
+    },
+    "generated_at": "2026-08-23T20:22:24.297832",
+    "kpi_summary": {
+      "revenue": 3216150.0,
+      "net_revenue": 3040955.16,
+      "profit": -9024218.28,
+      "profit_margin_pct": -292.7466931,
+      "orders": 2708,
+      "units_sold": 2850,
+      "roas": 4.53162759,
+      "ad_spend": 278955.96
+    },
+    "platform_data": [
+      {
+        "platform": "Amazon",
+        "revenue": 2171887.0,
+        "profit": -7496905.74,
+        "profit_margin": -364.9477,
+        "products": 1,
+        "orders": 1807
+      },
+      {
+        "platform": "Flipkart",
+        "revenue": 1844956.0,
+        "profit": -5331362.14,
+        "profit_margin": -305.6606,
+        "products": 1,
+        "orders": 1566
+      },
+      {
+        "platform": "Blinkit",
+        "revenue": 1560019.0,
+        "profit": -3896615.39,
+        "profit_margin": -264.1837,
+        "products": 1,
+        "orders": 1312
+      },
+      {
+        "platform": "Myntra",
+        "revenue": 1287868.0,
+        "profit": -2670044.88,
+        "profit_margin": -219.4249,
+        "products": 1,
+        "orders": 1073
+      }
+    ]
+  },
+  "recommendations": [
+    "Focus on Amazon - it has the highest revenue"
+  ]
+}

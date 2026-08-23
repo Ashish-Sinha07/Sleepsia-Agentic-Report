@@ -63,7 +63,7 @@ Start-Sleep -Seconds 3
 # Start frontend
 Write-Host ""
 Write-Host "Starting Frontend (React + Vite)..." -ForegroundColor Cyan
-Write-Host "Frontend will run on: http://localhost:5173" -ForegroundColor Yellow
+Write-Host "Frontend will run on: http://localhost:3000" -ForegroundColor Yellow
 Write-Host ""
 
 cd dashboard
@@ -83,7 +83,7 @@ Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host "Sleepsia Agentic Reporting System Started" -ForegroundColor Cyan
 Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Frontend: http://localhost:5173" -ForegroundColor Green
+Write-Host "Frontend: http://localhost:3000" -ForegroundColor Green
 Write-Host "Backend:  http://localhost:8000" -ForegroundColor Green
 Write-Host "API Docs: http://localhost:8000/docs" -ForegroundColor Green
 Write-Host ""

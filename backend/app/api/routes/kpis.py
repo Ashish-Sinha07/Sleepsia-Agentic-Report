@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/kpis", tags=["KPIs"])
 
 
-@router.get("", response_model=dict)
+@router.get("", response_model=None)
 async def get_kpis(
     db: Session = Depends(get_db),
     date_range: tuple[date, date] = Depends(get_date_range),

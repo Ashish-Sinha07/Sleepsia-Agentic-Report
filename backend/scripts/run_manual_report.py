@@ -27,7 +27,7 @@ from datetime import date, datetime
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from analytics.scheduler import ReportScheduler
+from automation.scheduler import ReportScheduler
 from backend.app.config import settings
 
 # Configure logging
@@ -81,10 +81,7 @@ def main():
         logger.info(f"Send email: {not args.no_send}")
 
         # Create scheduler instance
-        checkpoint_dir = "./checkpoints"
-        Path(checkpoint_dir).mkdir(parents=True, exist_ok=True)
-
-        scheduler = ReportScheduler(checkpoint_dir=checkpoint_dir)
+        scheduler = ReportScheduler()
 
         # Log configuration
         logger.info(f"SMTP Host: {settings.SMTP_HOST}:{settings.SMTP_PORT}")
@@ -93,13 +90,13 @@ def main():
 
         # Execute the report
         logger.info("Executing report generation...")
-        result = scheduler._execute_daily_report()
+        result = scheduler.execute_now()
 
         logger.info("=" * 80)
         logger.info("Report generation complete!")
 
-        if result.get("status") == "failed":
-            logger.error(f"Report generation failed: {result.get('error')}")
+        if not result:
+            logger.error("Report generation failed")
             return 1
 
         logger.info("Report generation successful")
