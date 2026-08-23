@@ -4,9 +4,9 @@ from fastapi.responses import JSONResponse
 from datetime import datetime
 import logging
 from sqlalchemy import text
-from app.config import settings
-from app.api.errors import SleepsiaException
-from app.api.routes import kpis, platforms, products, warehouses, inventory, alerts, ai_assistant, reports
+from backend.app.config import settings
+from backend.app.api.errors import SleepsiaException
+from backend.app.api.routes import kpis, platforms, products, warehouses, inventory, alerts, ai_assistant, reports
 
 # Configure logging
 logging.basicConfig(
@@ -73,7 +73,7 @@ def create_app() -> FastAPI:
     async def readiness_check(request: Request):
         """Readiness check endpoint - verify database connectivity."""
         try:
-            from app.database import SessionLocal
+            from backend.app.database import SessionLocal
 
             db = SessionLocal()
             # Simple query to verify database connection

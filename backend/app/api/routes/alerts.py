@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
-from app.database import get_db
-from app.services.alert_service import AlertService
-from app.schemas.alert_schemas import AlertsResponse
+from backend.app.database import get_db
+from backend.app.services.alert_service import AlertService
+from backend.app.schemas.alert_schemas import AlertsResponse
 
 router = APIRouter(prefix="/alerts", tags=["Alerts"])
 

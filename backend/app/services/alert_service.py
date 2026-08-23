@@ -2,7 +2,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
-from app.schemas.alert_schemas import AlertsResponse, Alert
+from backend.app.schemas.alert_schemas import AlertsResponse, Alert
 
 
 class AlertService:

@@ -1,9 +1,16 @@
 import os
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 
 
 class Settings(BaseSettings):
     """Application configuration loaded from environment variables."""
+
+    model_config = ConfigDict(
+        extra='ignore',  # Ignore extra environment variables
+        env_file=".env",
+        env_file_encoding="utf-8"
+    )
 
     # App
     APP_ENV: str = os.getenv("APP_ENV", "development")
@@ -56,10 +63,6 @@ class Settings(BaseSettings):
 
     # Anthropic API
     ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
 
     @property
     def DATABASE_URL(self) -> str:

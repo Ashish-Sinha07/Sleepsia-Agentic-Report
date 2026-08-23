@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from typing import Optional, List
 from pydantic import BaseModel
 
-from app.database import get_db
-from app.services.ai_assistant_service import AIAssistantService
+from backend.app.database import get_db
+from backend.app.services.ai_assistant_service import AIAssistantService
 
 router = APIRouter(prefix="/ai", tags=["AI Assistant"])
 

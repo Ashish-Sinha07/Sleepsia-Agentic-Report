@@ -4,8 +4,8 @@ from datetime import date
 from typing import Optional, List
 from pydantic import BaseModel
 
-from app.database import get_db
-from app.services.report_service import ReportService
+from backend.app.database import get_db
+from backend.app.services.report_service import ReportService
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
