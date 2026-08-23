@@ -55,7 +55,10 @@ if (Test-Path ".\.venv\Scripts\Activate.ps1") {
 
 # Start backend in a separate window
 Write-Host "Launching backend server..." -ForegroundColor Gray
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$PWD'; python -m uvicorn backend.app:app --reload --host 0.0.0.0 --port 8000"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$PWD'; python -m uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000"
+
+# Start the daily report scheduler. Email remains disabled unless explicitly enabled in .env.
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$PWD'; python backend/scripts/start_report_scheduler.py"
 
 # Wait a moment for backend to start
 Start-Sleep -Seconds 3
@@ -85,5 +88,6 @@ Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Frontend: http://localhost:3000" -ForegroundColor Green
 Write-Host "Backend:  http://localhost:8000" -ForegroundColor Green
+Write-Host "Scheduler: daily report automation enabled" -ForegroundColor Green
 Write-Host "API Docs: http://localhost:8000/docs" -ForegroundColor Green
 Write-Host ""

@@ -10,11 +10,7 @@ Date: 2026-08-23
 
 import logging
 from typing import Dict, List, Optional
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.encoders import encode_base64
-
+from analytics.email_provider import EmailMessage as ProviderEmailMessage
 from analytics.email_provider import SMTPEmailProvider
 from backend.app.config import settings
 
@@ -131,30 +127,17 @@ class ReportEmailService:
             if attachments:
                 logger.info(f"  Attachments: {list(attachments.keys())}")
 
-            # Build MIME message
-            msg = MIMEMultipart()
-            msg["Subject"] = subject
-            msg["From"] = f"{self.from_name} <{self.from_email}>"
-            msg["To"] = ", ".join(recipients)
-
-            if cc:
-                msg["Cc"] = ", ".join(cc)
-
-            # Add body
-            msg.attach(MIMEText(body, "plain"))
-
-            # Add attachments
-            if attachments:
-                for filename, file_bytes in attachments.items():
-                    try:
-                        self._add_attachment(msg, filename, file_bytes)
-                        logger.debug(f"  Added attachment: {filename} ({len(file_bytes)} bytes)")
-                    except Exception as e:
-                        logger.error(f"  Failed to add attachment {filename}: {str(e)}")
-                        return False
+            msg = ProviderEmailMessage(
+                subject=subject,
+                body=body,
+                recipients=recipients,
+                cc_recipients=cc or [],
+                bcc_recipients=bcc or [],
+                attachments=attachments or {},
+            )
 
             # Send to each recipient
-            all_recipients = recipients + cc + bcc
+            all_recipients = recipients + (cc or []) + (bcc or [])
             success_count = 0
             fail_count = 0
 
@@ -198,14 +181,6 @@ class ReportEmailService:
         except Exception as e:
             logger.error(f"Failed to send email: {str(e)}", exc_info=True)
             return False
-
-    def _add_attachment(self, msg: MIMEMultipart, filename: str, file_bytes: bytes):
-        """Add a binary attachment to a MIME message."""
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(file_bytes)
-        encode_base64(part)
-        part.add_header("Content-Disposition", f"attachment; filename= {filename}")
-        msg.attach(part)
 
     def test_connection(self) -> bool:
         """Test SMTP connection without sending an email."""

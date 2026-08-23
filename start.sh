@@ -36,8 +36,12 @@ pip install -r requirements.txt
 # Start backend in background
 echo ""
 echo "Starting Backend (FastAPI) on http://localhost:8000..."
-python -m uvicorn backend.app:app --reload --host 0.0.0.0 --port 8000 &
+python -m uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000 &
 BACKEND_PID=$!
+
+# Start the daily report scheduler. Email remains disabled unless explicitly enabled in .env.
+python backend/scripts/start_report_scheduler.py &
+SCHEDULER_PID=$!
 
 # Wait for backend to start
 sleep 3
@@ -61,10 +65,11 @@ echo "=========================================="
 echo ""
 echo "Frontend: http://localhost:3000"
 echo "Backend:  http://localhost:8000"
+echo "Scheduler: daily at configured report time"
 echo "API Docs: http://localhost:8000/docs"
 echo ""
 echo "Press Ctrl+C to stop all services"
 echo ""
 
 # Wait for both processes
-wait
+wait $BACKEND_PID $SCHEDULER_PID $FRONTEND_PID

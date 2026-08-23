@@ -10,6 +10,7 @@ Date: 2026-08-23
 
 import logging
 from datetime import date, datetime
+from pathlib import Path
 import pytz
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -73,13 +74,14 @@ class ReportScheduler:
             finally:
                 db.close()
 
-            logger.info(f"✓ Report generated: {report['report_id']}")
+            logger.info(f"Report generated: {report['report_id']}")
 
             if not settings.SEND_REPORT_EMAIL:
                 logger.info("[2/2] Email disabled; report saved locally")
                 return True
 
             logger.info("\n[2/2] Sending report via email...")
+            report_path = Path(ReportService.REPORTS_DIR) / f"{report['report_id']}.json"
             email_success = self.email_service.send_report(
                 subject=f"Sleepsia Daily Report - {report_date}",
                 body="""
@@ -102,7 +104,7 @@ Sleepsia Analytics System
                 recipients=[settings.REPORT_RECIPIENT_EMAIL],
                 cc=settings.REPORT_CC_EMAILS.split(",") if settings.REPORT_CC_EMAILS else None,
                 bcc=settings.REPORT_BCC_EMAILS.split(",") if settings.REPORT_BCC_EMAILS else None,
-                attachments={},
+                attachments={report_path.name: report_path.read_bytes()},
             )
 
             if email_success:
