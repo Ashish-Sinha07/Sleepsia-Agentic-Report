@@ -1,7 +1,24 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { useState, createContext, useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { mainRoutes } from './config/routes';
-import { RefreshCw, Download, User, X } from 'lucide-react';
+import { RefreshCw, Download, User, X, MessageSquare, Calendar } from 'lucide-react';
+
+const DateRangeContext = createContext();
+
+const DateRangeProvider = ({ children }) => {
+  const [dateRange, setDateRange] = useState({
+    start: '2026-07-25',
+    end: '2026-08-24',
+  });
+
+  return (
+    <DateRangeContext.Provider value={{ dateRange, setDateRange }}>
+      {children}
+    </DateRangeContext.Provider>
+  );
+};
+
+export const useDateRange = () => useContext(DateRangeContext);
 
 const Sidebar = () => {
   const location = useLocation();
@@ -44,12 +61,17 @@ const Sidebar = () => {
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const currentRoute = mainRoutes.find((r) => r.path === location.pathname);
+  const { dateRange, setDateRange } = useDateRange();
+
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [reportLoading, setReportLoading] = useState(false);
   const [reportError, setReportError] = useState(null);
+  const [tempDateRange, setTempDateRange] = useState({ ...dateRange });
 
   const handleRefresh = () => {
     window.location.reload();
@@ -60,20 +82,14 @@ const Header = () => {
       setReportLoading(true);
       setReportError(null);
 
-      const today = new Date();
-      const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-      const startDate = thirtyDaysAgo.toISOString().split('T')[0];
-      const endDate = today.toISOString().split('T')[0];
-
       const response = await fetch('http://localhost:8000/api/reports/comprehensive/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          start_date: startDate,
-          end_date: endDate,
+          start_date: dateRange.start,
+          end_date: dateRange.end,
           report_type: 'executive_summary',
         }),
       });
@@ -86,7 +102,7 @@ const Header = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `Executive_Report_${endDate}.pdf`);
+      link.setAttribute('download', `Executive_Report_${dateRange.end}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
@@ -98,6 +114,21 @@ const Header = () => {
     } finally {
       setReportLoading(false);
     }
+  };
+
+  const formatDateDisplay = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  const applyDateRange = () => {
+    setDateRange(tempDateRange);
+    setShowDatePicker(false);
+  };
+
+  const resetDateRange = () => {
+    setTempDateRange({ ...dateRange });
+    setShowDatePicker(false);
   };
 
   return (
@@ -113,7 +144,81 @@ const Header = () => {
                 {currentRoute?.description}
               </p>
             </div>
+
             <div className="flex items-center gap-4">
+              {/* Date Range Picker Button */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowDatePicker(!showDatePicker)}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
+                  title="Select date range"
+                >
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-sm font-medium">
+                    {formatDateDisplay(dateRange.start)} - {formatDateDisplay(dateRange.end)}
+                  </span>
+                </button>
+
+                {showDatePicker && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-50 border border-gray-200">
+                    <div className="p-6">
+                      <h3 className="font-semibold text-gray-900 mb-4">Select Date Range</h3>
+
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            From Date
+                          </label>
+                          <input
+                            type="date"
+                            value={tempDateRange.start}
+                            onChange={(e) =>
+                              setTempDateRange({
+                                ...tempDateRange,
+                                start: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            To Date
+                          </label>
+                          <input
+                            type="date"
+                            value={tempDateRange.end}
+                            onChange={(e) =>
+                              setTempDateRange({
+                                ...tempDateRange,
+                                end: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mt-6 flex gap-3">
+                        <button
+                          onClick={applyDateRange}
+                          className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                        >
+                          Apply
+                        </button>
+                        <button
+                          onClick={resetDateRange}
+                          className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Refresh Button */}
               <button
                 onClick={handleRefresh}
@@ -132,6 +237,15 @@ const Header = () => {
                 <Download className="w-5 h-5" />
               </button>
 
+              {/* Chat / AI Assistant Button */}
+              <button
+                onClick={() => navigate('/ai-assistant')}
+                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                title="AI Business Assistant"
+              >
+                <MessageSquare className="w-5 h-5" />
+              </button>
+
               {/* Notifications Button */}
               <div className="relative">
                 <button
@@ -144,29 +258,45 @@ const Header = () => {
                 </button>
 
                 {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-50">
-                    <div className="p-4 border-b">
+                  <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl z-50 border border-gray-200">
+                    <div className="p-4 border-b bg-gray-50">
                       <h3 className="font-semibold text-gray-900">Notifications</h3>
                     </div>
                     <div className="p-4 max-h-96 overflow-y-auto">
                       <div className="space-y-3">
-                        <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                          <p className="font-medium text-sm text-gray-900">New Alerts Available</p>
-                          <p className="text-xs text-gray-600 mt-1">3 new critical alerts detected</p>
+                        <div className="p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
+                          <p className="font-medium text-sm text-gray-900">🚨 Critical Alerts</p>
+                          <p className="text-xs text-gray-600 mt-1">
+                            3 new critical alerts detected in your warehouse inventory
+                          </p>
+                          <p className="text-xs text-red-600 mt-2 font-medium">Just now</p>
                         </div>
                         <div className="p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
-                          <p className="font-medium text-sm text-gray-900">Low Stock Warning</p>
-                          <p className="text-xs text-gray-600 mt-1">5 products are below reorder level</p>
+                          <p className="font-medium text-sm text-gray-900">⚠️ Low Stock Warning</p>
+                          <p className="text-xs text-gray-600 mt-1">
+                            5 products are below reorder level
+                          </p>
+                          <p className="text-xs text-yellow-600 mt-2 font-medium">2 hours ago</p>
+                        </div>
+                        <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                          <p className="font-medium text-sm text-gray-900">📊 Report Ready</p>
+                          <p className="text-xs text-gray-600 mt-1">
+                            Your comprehensive executive report is ready to download
+                          </p>
+                          <p className="text-xs text-blue-600 mt-2 font-medium">4 hours ago</p>
                         </div>
                         <div className="p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
-                          <p className="font-medium text-sm text-gray-900">Report Generated</p>
-                          <p className="text-xs text-gray-600 mt-1">Your executive report is ready to download</p>
+                          <p className="font-medium text-sm text-gray-900">✓ Sales Update</p>
+                          <p className="text-xs text-gray-600 mt-1">
+                            Excellent sales performance on Amazon platform
+                          </p>
+                          <p className="text-xs text-green-600 mt-2 font-medium">1 day ago</p>
                         </div>
                       </div>
                     </div>
                     <button
                       onClick={() => setShowNotifications(false)}
-                      className="w-full p-3 text-sm text-blue-600 font-medium hover:bg-gray-50"
+                      className="w-full p-3 text-sm text-blue-600 font-medium hover:bg-gray-50 border-t"
                     >
                       View All Notifications
                     </button>
@@ -185,20 +315,20 @@ const Header = () => {
                 </button>
 
                 {showProfileMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-50">
-                    <div className="p-4">
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl z-50 border border-gray-200">
+                    <div className="p-4 bg-gray-50 border-b">
                       <p className="font-semibold text-gray-900">Ashish Sinha</p>
-                      <p className="text-sm text-gray-600">ashish.sinha@agileventures.net</p>
+                      <p className="text-xs text-gray-600 mt-1">ashish.sinha@agileventures.net</p>
                     </div>
-                    <div className="border-t">
-                      <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50">
-                        Settings
+                    <div className="py-2">
+                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        ⚙️ Settings
                       </button>
-                      <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50">
-                        Help & Support
+                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        ❓ Help & Support
                       </button>
-                      <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 border-t">
-                        Logout
+                      <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t">
+                        🚪 Logout
                       </button>
                     </div>
                   </div>
@@ -213,8 +343,8 @@ const Header = () => {
       {showReportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-xl font-bold text-gray-900">Generate Report</h2>
+            <div className="flex items-center justify-between p-6 border-b bg-gray-50">
+              <h2 className="text-xl font-bold text-gray-900">Generate Executive Report</h2>
               <button
                 onClick={() => setShowReportModal(false)}
                 className="text-gray-600 hover:text-gray-900"
@@ -225,14 +355,20 @@ const Header = () => {
 
             <div className="p-6">
               {reportError && (
-                <div className="mb-4 p-3 bg-red-50 rounded-lg text-red-700 text-sm">
+                <div className="mb-4 p-3 bg-red-50 rounded-lg text-red-700 text-sm border border-red-200">
                   {reportError}
                 </div>
               )}
 
-              <p className="text-gray-700 text-sm mb-6">
-                Generate an executive summary report for the last 30 days.
-              </p>
+              <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm text-gray-700">
+                  <span className="font-medium">Date Range:</span>{' '}
+                  {formatDateDisplay(dateRange.start)} to {formatDateDisplay(dateRange.end)}
+                </p>
+                <p className="text-xs text-gray-600 mt-2">
+                  Report will include all metrics and insights for the selected period.
+                </p>
+              </div>
 
               <div className="space-y-3">
                 <button
@@ -270,26 +406,28 @@ const Header = () => {
 
 const App = () => {
   return (
-    <Router>
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 ml-64">
-          <Header />
-          <main className="bg-gray-50 min-h-screen">
-            <Routes>
-              {mainRoutes.map((route) => (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={<route.component />}
-                />
-              ))}
-              <Route path="*" element={<div className="p-6">Page not found</div>} />
-            </Routes>
-          </main>
+    <DateRangeProvider>
+      <Router>
+        <div className="flex">
+          <Sidebar />
+          <div className="flex-1 ml-64">
+            <Header />
+            <main className="bg-gray-50 min-h-screen">
+              <Routes>
+                {mainRoutes.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={<route.component />}
+                  />
+                ))}
+                <Route path="*" element={<div className="p-6">Page not found</div>} />
+              </Routes>
+            </main>
+          </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </DateRangeProvider>
   );
 };
 
