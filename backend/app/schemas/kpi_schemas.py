@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from datetime import date
 from typing import Optional, List, Dict, Any
 from decimal import Decimal
-from app.schemas.common import DateRange, KpiMetrics
+from backend.app.schemas.common import DateRange, KpiMetrics
 
 
 class KpiResponse(BaseModel):

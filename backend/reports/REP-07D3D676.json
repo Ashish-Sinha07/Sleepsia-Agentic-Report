@@ -1,0 +1,25 @@
+{
+  "report_id": "REP-07D3D676",
+  "title": "Executive Summary Report",
+  "type": "executive_summary",
+  "period": "2026-07-25 to 2026-08-24",
+  "generated_at": "2026-08-24T10:28:50.105587",
+  "data": {
+    "period": {
+      "start_date": "2026-07-25",
+      "end_date": "2026-08-24"
+    },
+    "generated_at": "2026-08-24T10:28:50.094489",
+    "kpi_summary": {
+      "revenue": 3122333.0,
+      "net_revenue": 2952310.52,
+      "profit": -8842883.57,
+      "profit_margin_pct": -295.89608929,
+      "orders": 2628,
+      "units_sold": 2767,
+      "roas": 4.53276786,
+      "ad_spend": 270126.07
+    }
+  },
+  "recommendations": []
+}

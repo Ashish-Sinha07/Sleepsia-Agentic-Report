@@ -18,6 +18,10 @@ logger = logging.getLogger(__name__)
 
 def create_app() -> FastAPI:
     """Create and configure FastAPI application."""
+    # Initialize database
+    from backend.app.database import init_db
+    init_db()
+
     app = FastAPI(
         title=settings.API_TITLE,
         version=settings.API_VERSION,
@@ -73,7 +77,7 @@ def create_app() -> FastAPI:
     async def readiness_check(request: Request):
         """Readiness check endpoint - verify database connectivity."""
         try:
-            from app.database import SessionLocal
+            from backend.app.database import SessionLocal
 
             db = SessionLocal()
             # Simple query to verify database connection

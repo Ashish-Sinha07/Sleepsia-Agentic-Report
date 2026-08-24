@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
-from app.database import get_db
-from app.services.inventory_service import InventoryService
-from app.schemas.inventory_schemas import InventoryListResponse
+from backend.app.database import get_db
+from backend.app.services.inventory_service import InventoryService
+from backend.app.schemas.inventory_schemas import InventoryListResponse
 
 router = APIRouter(prefix="/inventory", tags=["Inventory"])
 

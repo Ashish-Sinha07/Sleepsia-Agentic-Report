@@ -1,9 +1,9 @@
-"""Report Agent - uses LLM for narrative generation only."""
+"""Report Agent - uses Groq for narrative generation only."""
 
 import json
 import re
 from typing import Optional
-import anthropic
+from groq import Groq
 from analytics.report_models import Report
 
 
@@ -47,9 +47,9 @@ OUTPUT: Return ONLY valid JSON matching this exact schema:
 
 Be direct and specific. Use numbers to support claims."""
 
-    def __init__(self, api_key: Optional[str] = None, model: str = "claude-opus-5"):
-        """Initialize with Claude API credentials."""
-        self.client = anthropic.Anthropic(api_key=api_key)
+    def __init__(self, api_key: Optional[str] = None, model: str = "openai/gpt-oss-120b"):
+        """Initialize with Groq API credentials."""
+        self.client = Groq(api_key=api_key)
         self.model = model
         self.max_retries = 2
 
@@ -67,19 +67,20 @@ Be direct and specific. Use numbers to support claims."""
 
         for attempt in range(self.max_retries):
             try:
-                response = self.client.messages.create(
+                response = self.client.chat.completions.create(
                     model=self.model,
-                    max_tokens=1500,
-                    system=self.SYSTEM_PROMPT,
                     messages=[
+                        {"role": "system", "content": self.SYSTEM_PROMPT},
                         {
                             "role": "user",
                             "content": prompt,
                         }
                     ],
+                    max_tokens=1500,
+                    response_format={"type": "json_object"},
                 )
 
-                response_text = response.content[0].text
+                response_text = response.choices[0].message.content
                 result = self._parse_response(response_text)
                 return result
 

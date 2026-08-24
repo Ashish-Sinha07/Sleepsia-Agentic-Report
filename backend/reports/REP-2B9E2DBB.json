@@ -1,0 +1,25 @@
+{
+  "report_id": "REP-2B9E2DBB",
+  "title": "Executive Summary Report",
+  "type": "executive_summary",
+  "period": "2026-08-24 to 2026-08-24",
+  "generated_at": "2026-08-24T10:16:42.664154",
+  "data": {
+    "period": {
+      "start_date": "2026-08-24",
+      "end_date": "2026-08-24"
+    },
+    "generated_at": "2026-08-24T10:16:42.633240",
+    "kpi_summary": {
+      "revenue": 0,
+      "net_revenue": 0,
+      "profit": 0,
+      "profit_margin_pct": 0,
+      "orders": 0,
+      "units_sold": 0,
+      "roas": 0,
+      "ad_spend": 0
+    }
+  },
+  "recommendations": []
+}

@@ -141,8 +141,10 @@ class SMTPEmailProvider(EmailProvider):
             import smtplib
             from email.mime.text import MIMEText
             from email.mime.multipart import MIMEMultipart
+            from email.mime.base import MIMEBase
+            from email import encoders
 
-            msg = MIMEMultipart("alternative")
+            msg = MIMEMultipart("mixed")
             msg["Subject"] = message.subject
             msg["From"] = f"{self.sender_name} <{self.sender_email}>"
             msg["To"] = recipient
@@ -150,12 +152,25 @@ class SMTPEmailProvider(EmailProvider):
             if message.cc_recipients:
                 msg["Cc"] = ", ".join(message.cc_recipients)
 
+            # Create the body part
+            body_part = MIMEMultipart("alternative")
             text_part = MIMEText(message.body, "plain")
-            msg.attach(text_part)
+            body_part.attach(text_part)
 
             if message.html_body:
                 html_part = MIMEText(message.html_body, "html")
-                msg.attach(html_part)
+                body_part.attach(html_part)
+
+            msg.attach(body_part)
+
+            # Attach files
+            if message.attachments:
+                for filename, file_bytes in message.attachments.items():
+                    part = MIMEBase("application", "octet-stream")
+                    part.set_payload(file_bytes)
+                    encoders.encode_base64(part)
+                    part.add_header("Content-Disposition", f"attachment; filename={filename}")
+                    msg.attach(part)
 
             with smtplib.SMTP(self.smtp_host, self.smtp_port) as server:
                 server.starttls()

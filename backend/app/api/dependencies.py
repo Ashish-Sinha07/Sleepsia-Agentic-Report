@@ -2,9 +2,9 @@ from fastapi import Depends, Query
 from sqlalchemy.orm import Session
 from datetime import date, timedelta
 from typing import Optional
-from app.database import get_db
-from app.config import settings
-from app.api.errors import ValidationError
+from backend.app.database import get_db
+from backend.app.config import settings
+from backend.app.api.errors import ValidationError
 
 
 def get_date_range(

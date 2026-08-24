@@ -1,20 +1,28 @@
 import os
+from pathlib import Path
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 
 
 class Settings(BaseSettings):
     """Application configuration loaded from environment variables."""
+
+    model_config = ConfigDict(
+        extra='ignore',  # Ignore extra environment variables
+        env_file=Path(__file__).resolve().parents[2] / ".env",
+        env_file_encoding="utf-8"
+    )
 
     # App
     APP_ENV: str = os.getenv("APP_ENV", "development")
     DEBUG: bool = os.getenv("APP_ENV", "development") == "development"
 
     # Database
-    DB_HOST: str = os.getenv("DB_HOST", "localhost")
-    DB_PORT: int = int(os.getenv("DB_PORT", "3306"))
-    DB_NAME: str = os.getenv("DB_NAME", "sleepsia_reporting")
-    DB_USER: str = os.getenv("DB_USER", "sleepsia")
-    DB_PASSWORD: str = os.getenv("DB_PASSWORD", "sleepsia")
+    DB_HOST: str = "localhost"
+    DB_PORT: int = 3306
+    DB_NAME: str = "sleepsia"
+    DB_USER: str = "root"
+    DB_PASSWORD: str = ""
 
     # API
     API_HOST: str = os.getenv("API_HOST", "0.0.0.0")
@@ -60,12 +68,13 @@ class Settings(BaseSettings):
     REPORT_CC_EMAILS: str = os.getenv("REPORT_CC_EMAILS", "")
     REPORT_BCC_EMAILS: str = os.getenv("REPORT_BCC_EMAILS", "")
 
-    # Anthropic API
-    ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
+    # Automation
+    AUTOMATION_TIMEZONE: str = os.getenv("AUTOMATION_TIMEZONE", "Asia/Kolkata")
+    SEND_REPORT_EMAIL: bool = os.getenv("SEND_REPORT_EMAIL", "false").lower() == "true"
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    # Groq API
+    GROQ_API_KEY: str = ""
+    GROQ_MODEL: str = "openai/gpt-oss-120b"
 
     @property
     def DATABASE_URL(self) -> str:

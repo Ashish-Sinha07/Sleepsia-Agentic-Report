@@ -1,6 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from app.config import settings
+from backend.app.config import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 engine = create_engine(
     settings.DATABASE_URL,
@@ -25,3 +28,12 @@ def get_db() -> Session:
         yield db
     finally:
         db.close()
+
+
+def init_db():
+    """Initialize database schema and data."""
+    try:
+        from backend.app.db_init import init_database
+        init_database(engine)
+    except Exception as e:
+        logger.error(f"Database initialization failed: {str(e)}", exc_info=True)
