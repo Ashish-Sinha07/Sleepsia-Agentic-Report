@@ -32,8 +32,23 @@ export default function Reports() {
         format,
       });
       setResult(response);
+
+      const reportFile = await apiClient.get(`/api/reports/${response.report_id}/download`, {
+        params: { format },
+        responseType: 'blob',
+      });
+      const downloadUrl = URL.createObjectURL(reportFile);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${response.report_id}.${response.format || format}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(downloadUrl);
     } catch (err) {
-      setError(err?.error || err?.message || 'Failed to generate report');
+      const errorMessage = err?.response?.data?.detail || err?.response?.data?.message || err?.message || 'Failed to generate report';
+      setError(errorMessage);
+      console.error('Report generation error:', err);
     } finally {
       setGenerating(false);
     }
@@ -105,6 +120,7 @@ export default function Reports() {
               <label className="block text-sm font-medium text-gray-900 mb-2">Format</label>
               <select value={format} onChange={(e) => setFormat(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
                 <option value="pdf">PDF</option>
+                <option value="json">JSON</option>
                 <option value="excel">Excel</option>
               </select>
             </div>
