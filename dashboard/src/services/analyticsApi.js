@@ -171,6 +171,7 @@ export const analyticsApi = {
       name: p.product_name,
       revenue: Number(p.revenue),
       units: p.units_sold,
+      contribution: Number(p.contribution) || 0,
       margin: p.profit_margin_pct ? Number(p.profit_margin_pct) : null,
     }));
   },
@@ -191,6 +192,7 @@ export const analyticsApi = {
       name: p.product_name,
       revenue: Number(p.revenue),
       units: p.units_sold,
+      contribution: Number(p.contribution) || 0,
       margin: p.profit_margin_pct ? Number(p.profit_margin_pct) : null,
     }));
   },
