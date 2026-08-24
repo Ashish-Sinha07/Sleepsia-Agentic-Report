@@ -1,24 +1,34 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional, List
 from pydantic import BaseModel
+from io import BytesIO
 
 from backend.app.database import get_db
 from backend.app.services.report_service import ReportService
+from backend.app.services.comprehensive_report_service import ComprehensiveReportService
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
 
 class GenerateReportRequest(BaseModel):
     """Request to generate a business report."""
-    report_type: str  # executive_summary, platform_analysis, product_analysis, profitability, advertising, inventory
+    report_type: str = "executive_summary"
     start_date: date
     end_date: date
-    format: str = "pdf"  # pdf, excel, html
+    format: str = "pdf"
     include_recommendations: bool = True
     platform_filter: Optional[str] = None
     warehouse_filter: Optional[str] = None
+
+
+class ComprehensiveReportRequest(BaseModel):
+    """Request to generate a comprehensive report with insights and recommendations."""
+    start_date: date
+    end_date: date
+    report_type: str = "executive_summary"
 
 
 class ReportMetadata(BaseModel):
@@ -28,7 +38,7 @@ class ReportMetadata(BaseModel):
     created_at: str
     start_date: date
     end_date: date
-    status: str  # pending, completed, failed
+    status: str
     file_size: Optional[int] = None
     download_url: Optional[str] = None
 
@@ -50,7 +60,7 @@ async def list_reports(
     return reports
 
 
-@router.post("", response_model=ReportMetadata)
+@router.post("")
 async def generate_report(
     request: GenerateReportRequest,
     db: Session = Depends(get_db),
@@ -67,7 +77,11 @@ async def generate_report(
     - inventory: Warehouse and stock analysis
     - management_monthly: Comprehensive monthly report
     """
+    import logging
+    logger = logging.getLogger(__name__)
+
     try:
+        logger.info(f"Generating report: type={request.report_type}, format={request.format}")
         report = ReportService.generate_report(
             db=db,
             report_type=request.report_type,
@@ -78,14 +92,102 @@ async def generate_report(
             platform_filter=request.platform_filter,
             warehouse_filter=request.warehouse_filter,
         )
+        logger.info(f"Report generated successfully: {report.get('report_id')}")
         return report
     except ValueError as e:
+        logger.error(f"Validation error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Report generation error: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to generate report: {str(e)}")
+
+
+@router.post("/comprehensive/generate")
+async def generate_comprehensive_report(
+    request: ComprehensiveReportRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Generate a comprehensive professional report with insights and recommendations.
+
+    This endpoint generates a high-quality PDF report that includes:
+    - Executive summary
+    - KPIs and key metrics
+    - Platform performance analysis
+    - Product profitability analysis
+    - Advertising performance analysis
+    - Business insights (using insight engine)
+    - Strategic recommendations (using recommendation engine)
+    - Professional formatting with tables and sections
+
+    Returns: PDF file download
+    """
+    try:
+        service = ComprehensiveReportService(db=db)
+
+        result = service.generate_full_report(
+            start_date=request.start_date,
+            end_date=request.end_date,
+            report_type=request.report_type,
+        )
+
+        if not result.get("success"):
+            raise HTTPException(status_code=500, detail=result.get("error"))
+
+        # Return PDF as download
+        pdf_bytes = result.get("pdf_bytes")
+        report_id = result.get("report_id")
+
+        return StreamingResponse(
+            iter([pdf_bytes]),
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="{report_id}.pdf"'
+            }
+        )
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/{report_id}", response_model=ReportMetadata)
+@router.post("/comprehensive/json")
+async def generate_comprehensive_report_json(
+    request: ComprehensiveReportRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Generate a comprehensive report and return as JSON (for preview/processing).
+
+    Returns: JSON with report metadata, metrics, insights, and recommendations
+    """
+    try:
+        service = ComprehensiveReportService(db=db)
+
+        result = service.generate_full_report(
+            start_date=request.start_date,
+            end_date=request.end_date,
+            report_type=request.report_type,
+        )
+
+        if not result.get("success"):
+            raise HTTPException(status_code=500, detail=result.get("error"))
+
+        # Return JSON response (without PDF bytes)
+        return {
+            "report_id": result.get("report_id"),
+            "start_date": result.get("start_date"),
+            "end_date": result.get("end_date"),
+            "metrics": result.get("metrics"),
+            "insights": result.get("insights"),
+            "recommendations": result.get("recommendations"),
+            "generated_at": result.get("generated_at"),
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/{report_id}")
 async def get_report(
     report_id: str,
     db: Session = Depends(get_db),
@@ -104,16 +206,22 @@ async def download_report(
     db: Session = Depends(get_db),
 ):
     """Download a generated report."""
-    from fastapi.responses import FileResponse
-
     file_path = ReportService.get_report_file(db, report_id, format)
     if not file_path:
         raise HTTPException(status_code=404, detail=f"Report file not found")
 
+    actual_format = file_path.rsplit('.', 1)[-1].lower()
+    media_types = {
+        "json": "application/json",
+        "pdf": "application/pdf",
+        "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "excel": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    }
+
     return FileResponse(
         path=file_path,
-        media_type="application/pdf" if format == "pdf" else "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        filename=f"{report_id}.{format or 'pdf'}"
+        media_type=media_types.get(actual_format, "application/octet-stream"),
+        filename=f"{report_id}.{actual_format}"
     )
 
 
@@ -121,11 +229,13 @@ async def download_report(
 async def email_report(
     report_id: str,
     email_to: str = Query(...),
+    cc: Optional[str] = Query(None),
+    bcc: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ) -> dict:
     """Email a report to recipients."""
     try:
-        result = ReportService.email_report(db, report_id, email_to)
+        result = ReportService.email_report(db, report_id, email_to, cc, bcc)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

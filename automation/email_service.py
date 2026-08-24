@@ -148,13 +148,13 @@ class ReportEmailService:
                         recipient=recipient,
                     )
                     if result.success:
-                        logger.info(f"  ✓ Sent to {recipient}")
+                        logger.info(f"  [OK] Sent to {recipient}")
                         success_count += 1
                     else:
-                        logger.error(f"  ✗ Failed to send to {recipient}: {result.error}")
+                        logger.error(f"  [FAIL] Failed to send to {recipient}: {result.error}")
                         fail_count += 1
                 except Exception as e:
-                    logger.error(f"  ✗ Exception sending to {recipient}: {str(e)}")
+                    logger.error(f"  [FAIL] Exception sending to {recipient}: {str(e)}")
                     fail_count += 1
 
             # Send to CC recipients (if any)
@@ -165,13 +165,13 @@ class ReportEmailService:
                         recipient=cc_recipient,
                     )
                     if result.success:
-                        logger.info(f"  ✓ CC sent to {cc_recipient}")
+                        logger.info(f"  [OK] CC sent to {cc_recipient}")
                         success_count += 1
                     else:
-                        logger.error(f"  ✗ CC failed to {cc_recipient}: {result.error}")
+                        logger.error(f"  [FAIL] CC failed to {cc_recipient}: {result.error}")
                         fail_count += 1
                 except Exception as e:
-                    logger.error(f"  ✗ Exception CC to {cc_recipient}: {str(e)}")
+                    logger.error(f"  [FAIL] Exception CC to {cc_recipient}: {str(e)}")
                     fail_count += 1
 
             # Log result
@@ -188,10 +188,10 @@ class ReportEmailService:
             logger.info(f"Testing SMTP connection to {self.smtp_host}:{self.smtp_port}...")
             result = self.smtp_provider.validate_configuration()
             if result:
-                logger.info("✓ SMTP connection test successful")
+                logger.info("[OK] SMTP connection test successful")
             else:
-                logger.error("✗ SMTP connection test failed — check credentials")
+                logger.error("[FAIL] SMTP connection test failed - check credentials")
             return result
         except Exception as e:
-            logger.error(f"✗ SMTP connection test failed: {str(e)}")
+            logger.error(f"[FAIL] SMTP connection test failed: {str(e)}")
             return False

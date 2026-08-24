@@ -108,9 +108,9 @@ Sleepsia Analytics System
             )
 
             if email_success:
-                logger.info("✓ Email sent successfully")
+                logger.info("[OK] Email sent successfully")
             else:
-                logger.error("✗ Email send failed")
+                logger.error("[FAIL] Email send failed")
 
             logger.info("=" * 80)
             logger.info(f"Report pipeline complete at {datetime.now(self.timezone).isoformat()}")
