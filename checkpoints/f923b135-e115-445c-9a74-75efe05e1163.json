@@ -1,0 +1,131 @@
+{
+  "run_id": "f923b135-e115-445c-9a74-75efe05e1163",
+  "workflow_id": "test_workflow",
+  "business_date": "2026-08-21",
+  "status": "success",
+  "start_time": "2026-08-22T12:50:37.812493",
+  "end_time": "2026-08-22T12:50:37.852596",
+  "duration_seconds": 0.040103,
+  "failed_sources": [],
+  "partial_sources": [],
+  "error_message": null,
+  "metadata": {},
+  "stage_results": {
+    "ingestion": {
+      "stage": "ingestion",
+      "status": "success",
+      "start_time": "2026-08-22T12:50:37.820368",
+      "end_time": "2026-08-22T12:50:37.820368",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "dea58cb919409e4c"
+    },
+    "validation": {
+      "stage": "validation",
+      "status": "success",
+      "start_time": "2026-08-22T12:50:37.822396",
+      "end_time": "2026-08-22T12:50:37.822396",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "beb4eed9c44656be"
+    },
+    "metrics": {
+      "stage": "metrics",
+      "status": "success",
+      "start_time": "2026-08-22T12:50:37.824564",
+      "end_time": "2026-08-22T12:50:37.824564",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "25ab63c3e96770d2"
+    },
+    "analysis": {
+      "stage": "analysis",
+      "status": "success",
+      "start_time": "2026-08-22T12:50:37.828615",
+      "end_time": "2026-08-22T12:50:37.828615",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "06ffbf2c89dec0b9"
+    },
+    "insights": {
+      "stage": "insights",
+      "status": "success",
+      "start_time": "2026-08-22T12:50:37.830638",
+      "end_time": "2026-08-22T12:50:37.830638",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "3224cf8566047bbc"
+    },
+    "report": {
+      "stage": "report",
+      "status": "success",
+      "start_time": "2026-08-22T12:50:37.832682",
+      "end_time": "2026-08-22T12:50:37.832682",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "a197c3b7cd9d3b04"
+    },
+    "distribution": {
+      "stage": "distribution",
+      "status": "success",
+      "start_time": "2026-08-22T12:50:37.845523",
+      "end_time": "2026-08-22T12:50:37.845523",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "ec9a7267cba3cc77"
+    },
+    "audit": {
+      "stage": "audit",
+      "status": "success",
+      "start_time": "2026-08-22T12:50:37.847974",
+      "end_time": "2026-08-22T12:50:37.847974",
+      "duration_seconds": 0.0,
+      "attempt": 1,
+      "error_message": null,
+      "error_type": null,
+      "warning_messages": [],
+      "idempotency_key": "da840a1f7f714556"
+    }
+  },
+  "checkpoints": {
+    "ingestion": "2026-08-22T12:50:37.820368",
+    "validation": "2026-08-22T12:50:37.822396",
+    "metrics": "2026-08-22T12:50:37.824564",
+    "analysis": "2026-08-22T12:50:37.828615",
+    "insights": "2026-08-22T12:50:37.830638",
+    "report": "2026-08-22T12:50:37.832682",
+    "distribution": "2026-08-22T12:50:37.845523",
+    "audit": "2026-08-22T12:50:37.847974"
+  },
+  "idempotency_keys": {
+    "ingestion": "dea58cb919409e4c",
+    "validation": "beb4eed9c44656be",
+    "metrics": "25ab63c3e96770d2",
+    "analysis": "06ffbf2c89dec0b9",
+    "insights": "3224cf8566047bbc",
+    "report": "a197c3b7cd9d3b04",
+    "distribution": "ec9a7267cba3cc77",
+    "audit": "da840a1f7f714556"
+  }
+}

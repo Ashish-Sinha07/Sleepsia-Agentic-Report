@@ -16,18 +16,16 @@ class WarehouseService:
         region: Optional[str] = None,
     ) -> WarehouseListResponse:
         """Get all warehouses with inventory summary."""
-        if filter_date is None:
-            filter_date = date.today()
-
+        # Note: The warehouse summary view aggregates by latest inventory date automatically
         query = """
         SELECT
             w.warehouse_id,
-            w.warehouse_name,
+            ws.warehouse_name,
             w.region,
             w.zone,
             w.city,
-            w.latitude,
-            w.longitude,
+            ws.latitude,
+            ws.longitude,
             COALESCE(ws.healthy_skus, 0) as healthy_skus,
             COALESCE(ws.low_stock_skus, 0) as low_stock_skus,
             COALESCE(ws.critical_skus, 0) as critical_skus,
@@ -45,7 +43,7 @@ class WarehouseService:
             query += " AND w.region = :region"
             params["region"] = region
 
-        query += " ORDER BY w.warehouse_name"
+        query += " ORDER BY w.warehouse_id"
 
         results = db.execute(text(query), params).fetchall()
 

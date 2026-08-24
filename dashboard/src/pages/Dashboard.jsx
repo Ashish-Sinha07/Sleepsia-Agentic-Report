@@ -27,26 +27,26 @@ export default function Dashboard() {
   const [platformData, setPlatformData] = useState(null);
   const [topProducts, setTopProducts] = useState(null);
   const [bottomProducts, setBottomProducts] = useState(null);
+  const [alertCounts, setAlertCounts] = useState({
+    critical: 0,
+    high: 0,
+    medium: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const alertCounts = {
-    critical: 2,
-    high: 3,
-    medium: 1,
-  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const [kpiRes, revenueRes, platformRes, topRes, bottomRes] = await Promise.all([
+        const [kpiRes, revenueRes, platformRes, topRes, bottomRes, alertsRes] = await Promise.all([
           analyticsApi.getKPIs(filters),
           analyticsApi.getRevenueChart(filters),
           analyticsApi.getPlatformPerformance(filters),
           analyticsApi.getTopProducts(filters),
           analyticsApi.getBottomProducts(filters),
+          analyticsApi.getAlerts(filters),
         ]);
         const backendKpis = kpiRes?.kpis || kpiRes?.data?.kpis || kpiRes;
         setKpis({
@@ -60,6 +60,15 @@ export default function Dashboard() {
         setPlatformData(platformRes);
         setTopProducts(topRes);
         setBottomProducts(bottomRes);
+        if (alertsRes) {
+          setAlertCounts({
+            critical: alertsRes.critical || 0,
+            high: alertsRes.high || 0,
+            medium: alertsRes.medium || 0,
+          });
+        } else {
+          setAlertCounts({ critical: 0, high: 0, medium: 0 });
+        }
       } catch (err) {
         setError(err.message || 'Failed to load dashboard data');
       } finally {
@@ -74,8 +83,8 @@ export default function Dashboard() {
   if (error) return <ErrorState message={error} />;
 
   const revenueComposition = [
-    { name: 'Organic Sales', value: 2695000 },
-    { name: 'Ad-Attributed Sales', value: 1155000 },
+    { name: 'Organic Sales', value: kpis?.organicSales || 0 },
+    { name: 'Ad-Attributed Sales', value: kpis?.adAttributedSales || 0 },
   ];
 
   return (

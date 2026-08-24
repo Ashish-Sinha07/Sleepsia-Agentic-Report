@@ -21,8 +21,7 @@ router = APIRouter(prefix="/kpis", tags=["KPIs"])
 async def get_kpis(
     db: Session = Depends(get_db),
     date_range: tuple[date, date] = Depends(get_date_range),
-    platform: Optional[str] = Query(None, description="Filter by platform ID"),
-    include_insights: bool = Query(True, description="Include insights and recommendations"),
+    platform_id: Optional[str] = Query(None),
 ):
     """
     Get aggregate KPIs for selected period with optional insights.
@@ -51,6 +50,7 @@ async def get_kpis(
     - summary: Executive summary
     """
     start_date, end_date = date_range
+    return KpiService.get_daily_kpis(db, start_date, end_date, platform_id)
 
     try:
         if include_insights:
