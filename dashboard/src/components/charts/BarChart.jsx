@@ -17,8 +17,11 @@ function CustomTooltip({ active, payload }) {
 
 export default function BarChart({ data, dataKey, name, color = '#4a9fbd', horizontal = false }) {
   if (horizontal) {
+    // Calculate dynamic height: 50px per item minimum, at least 250px
+    const chartHeight = Math.max(250, (data?.length || 0) * 50);
+
     return (
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={chartHeight}>
         <RechartBarChart data={data} layout="vertical" margin={{ top: 10, right: 30, left: 200, bottom: 10 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis type="number" stroke="#9ca3af" style={{ fontSize: '12px' }} />
