@@ -197,7 +197,6 @@ export default function Dashboard() {
             dataKey="revenue"
             name="Revenue"
             color="#4a9fbd"
-            horizontal={true}
           />
         </ChartCard>
         <ChartCard title="Bottom 5 Products" subtitle="Lowest contribution">
@@ -206,7 +205,6 @@ export default function Dashboard() {
             dataKey="contribution"
             name="Contribution"
             color="#ef4444"
-            horizontal={true}
           />
         </ChartCard>
       </div>
