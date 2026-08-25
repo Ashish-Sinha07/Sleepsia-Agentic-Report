@@ -11,6 +11,7 @@ import {
   FileText,
   X,
   Sparkles,
+  Library,
 } from 'lucide-react';
 
 const navItems = [
@@ -23,6 +24,7 @@ const navItems = [
   { path: '/alerts', label: 'Alerts & Opportunities', icon: AlertCircle, color: 'from-red-500 to-rose-500' },
   { path: '/assistant', label: 'AI Business Assistant', icon: MessageSquare, color: 'from-violet-500 to-purple-500' },
   { path: '/reports', label: 'Reports', icon: FileText, color: 'from-cyan-500 to-blue-500' },
+  { path: '/knowledge', label: 'Knowledge Base', icon: Library, color: 'from-teal-500 to-emerald-500' },
 ];
 
 export default function Sidebar({ isOpen = false, onClose = () => {} }) {
@@ -39,7 +41,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
 
       <aside
         className={`fixed lg:sticky top-0 left-0 h-screen w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-900 border-r border-blue-400/20
-          overflow-y-auto z-50 transform transition-all duration-300 ease-in-out shadow-2xl
+          overflow-y-auto scrollbar-hide z-50 transform transition-all duration-300 ease-in-out shadow-2xl
           ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 backdrop-blur-sm`}
       >
         {/* Animated background blobs */}
@@ -125,6 +127,13 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
       </aside>
 
       <style>{`
+        .scrollbar-hide {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
         @keyframes slideInLeft {
           from {
             opacity: 0;

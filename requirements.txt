@@ -9,3 +9,5 @@ python-dotenv
 httpx
 pytest
 groq
+chromadb
+python-multipart

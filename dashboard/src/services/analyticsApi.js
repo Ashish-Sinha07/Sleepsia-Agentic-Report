@@ -239,12 +239,19 @@ export const analyticsApi = {
       severity: a.severity,
       type: a.alert_type || a.type,
       entity: a.entity,
-      platform: a.platform,
+      product_name: a.product_name,
+      warehouse: a.warehouse,
+      region: a.region,
       metric: a.metric,
-      currentValue: a.current_value,
+      current_value: a.current_value,
       threshold: a.threshold,
+      gap: a.gap,
+      avg_daily_demand: a.avg_daily_demand,
+      days_of_cover: a.days_of_cover,
+      recommended_reorder_qty: a.recommended_reorder_qty,
+      stock_status: a.stock_status,
       recommendation: a.recommendation,
-      createdAt: a.created_at,
+      created_at: a.created_at,
     }));
 
     // Count by severity

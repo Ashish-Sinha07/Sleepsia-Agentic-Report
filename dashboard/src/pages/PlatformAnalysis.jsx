@@ -45,11 +45,23 @@ export default function PlatformAnalysis() {
   if (error) return <ErrorState message={error} />;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Platform Analysis</h1>
-        <p className="text-gray-600 mt-1">Compare performance across all e-commerce platforms</p>
+    <div className="space-y-8 bg-gradient-to-br from-slate-50 via-white to-slate-50 min-h-screen p-0 -m-8 p-8">
+      {/* Animated background blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+        <div className="absolute -bottom-40 left-10 w-80 h-80 bg-pink-300/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
       </div>
+
+      <div className="relative z-10 space-y-6">
+        <div className="group mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-1 h-8 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
+            <h1 className="text-3xl font-black bg-gradient-to-r from-purple-700 via-pink-600 to-purple-800 bg-clip-text text-transparent">
+              Platform Analysis
+            </h1>
+          </div>
+          <p className="text-sm text-gray-700 font-medium ml-4">📊 Compare performance across all e-commerce platforms</p>
+        </div>
 
       <FilterBar />
 
@@ -101,6 +113,7 @@ export default function PlatformAnalysis() {
             </tbody>
           </table>
         </div>
+      </div>
       </div>
     </div>
   );

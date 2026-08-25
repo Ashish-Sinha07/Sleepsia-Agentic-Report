@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useContext } from 'react';
 import { Send, AlertCircle, Loader, Trash2, Copy } from 'lucide-react';
 import { aiAssistantApi } from '../services/aiAssistantApi';
 import { FilterContext } from '../context/FilterContext';
+import ChatMarkdown from '../components/common/ChatMarkdown';
 
 export default function AIAssistant() {
   const [messages, setMessages] = useState([]);
@@ -85,6 +86,8 @@ export default function AIAssistant() {
         startDate: filters.startDate,
         endDate: filters.endDate,
         platform: filters.platform !== 'all' ? filters.platform : null,
+        sku: filters.sku !== 'all' ? filters.sku : null,
+        warehouse: filters.warehouse !== 'all' ? filters.warehouse : null,
       } : null;
 
       const response = await aiAssistantApi.askQuestion(question, context, sessionId);
@@ -94,6 +97,8 @@ export default function AIAssistant() {
       const recommendations = response?.recommendations || response?.data?.recommendations || [];
       const confidence = response?.confidence || response?.data?.confidence || 0;
       const dataSources = response?.data_sources || response?.data?.data_sources || [];
+      const route = response?.route || response?.data?.route || null;
+      const structuredSources = response?.sources || response?.data?.sources || [];
 
       // Build message content with recommendations if available
       let aiContent = answerText;
@@ -107,6 +112,8 @@ export default function AIAssistant() {
         content: aiContent,
         confidence: Math.round(confidence * 100) / 100,
         sources: dataSources,
+        structuredSources,
+        route,
         timestamp: new Date().toLocaleTimeString(),
       };
 
@@ -166,6 +173,23 @@ export default function AIAssistant() {
     setTimeout(() => setCopiedIndex(null), 2000);
   };
 
+  // Builds the subtle "Source: ..." indicator distinguishing live database
+  // facts from retrieved knowledge-base documents (falls back to the plain
+  // data_sources string list if the backend hasn't sent structured sources).
+  const getSourceLabel = (structuredSources, plainSources) => {
+    if (structuredSources && structuredSources.length > 0) {
+      const hasDb = structuredSources.some((s) => s.type === 'database');
+      const hasDoc = structuredSources.some((s) => s.type === 'document');
+      if (hasDb && hasDoc) return 'Sources: Business Database + Business Knowledge';
+      if (hasDb) return 'Source: Business Database';
+      if (hasDoc) return 'Source: Business Knowledge';
+    }
+    if (plainSources && plainSources.length > 0) {
+      return `Sources: ${plainSources.join(', ')}`;
+    }
+    return null;
+  };
+
   const handleClearChat = () => {
     if (window.confirm('Clear all messages? This cannot be undone.')) {
       setMessages([]);
@@ -184,23 +208,35 @@ export default function AIAssistant() {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">AI Business Assistant</h1>
-          <p className="text-gray-600 mt-1">Ask questions about your business performance. Powered by Groq AI for intelligent analysis.</p>
-        </div>
-        {messages.length > 0 && (
-          <button
-            onClick={handleClearChat}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg border border-red-200 transition-colors"
-            title="Clear conversation"
-          >
-            <Trash2 className="w-4 h-4" />
-            Clear Chat
-          </button>
-        )}
+    <div className="space-y-8 bg-gradient-to-br from-slate-50 via-white to-slate-50 min-h-screen p-0 -m-8 p-8">
+      {/* Animated background blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-violet-300/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+        <div className="absolute -bottom-40 left-10 w-80 h-80 bg-purple-300/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
       </div>
+
+      <div className="relative z-10 space-y-6">
+        <div className="flex justify-between items-start">
+          <div>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-1 h-8 bg-gradient-to-b from-violet-600 to-purple-600 rounded-full"></div>
+              <h1 className="text-3xl font-black bg-gradient-to-r from-violet-700 via-purple-600 to-violet-800 bg-clip-text text-transparent">
+                AI Business Assistant
+              </h1>
+            </div>
+            <p className="text-sm text-gray-700 font-medium ml-4">🤖 Ask questions about your business performance powered by intelligent analysis</p>
+          </div>
+          {messages.length > 0 && (
+            <button
+              onClick={handleClearChat}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg border border-red-200 transition-colors"
+              title="Clear conversation"
+            >
+              <Trash2 className="w-4 h-4" />
+              Clear Chat
+            </button>
+          )}
+        </div>
 
       {error && (
         <div className="flex gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -263,7 +299,7 @@ export default function AIAssistant() {
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} group`}
               >
                 <div
-                  className={`max-w-2xl px-4 py-3 rounded-lg ${
+                  className={`${msg.role === 'user' ? 'max-w-2xl' : 'max-w-3xl w-full'} px-4 py-3 rounded-lg ${
                     msg.role === 'user'
                       ? 'bg-sleepsia-600 text-white'
                       : msg.isError
@@ -272,17 +308,24 @@ export default function AIAssistant() {
                   }`}
                 >
                   <div className="flex justify-between items-start gap-2">
-                    <div className="flex-1">
-                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                    <div className="flex-1 min-w-0">
+                      {msg.role === 'assistant' ? (
+                        <ChatMarkdown
+                          content={msg.content}
+                          variant={msg.isError ? 'error' : 'assistant'}
+                        />
+                      ) : (
+                        <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                      )}
                       <div className="flex flex-col gap-1 mt-2">
                         {msg.confidence > 0 && msg.role === 'assistant' && !msg.isError && (
                           <p className="text-xs opacity-70">
                             Confidence: {(msg.confidence * 100).toFixed(0)}%
                           </p>
                         )}
-                        {msg.sources && msg.sources.length > 0 && msg.role === 'assistant' && (
+                        {msg.role === 'assistant' && getSourceLabel(msg.structuredSources, msg.sources) && (
                           <p className="text-xs opacity-70">
-                            Sources: {msg.sources.join(', ')}
+                            {getSourceLabel(msg.structuredSources, msg.sources)}
                           </p>
                         )}
                         {msg.timestamp && (
@@ -347,6 +390,7 @@ export default function AIAssistant() {
             <p className="text-xs text-gray-500 mt-2">Processing your question...</p>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

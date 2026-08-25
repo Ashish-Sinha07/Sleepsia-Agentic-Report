@@ -6,9 +6,15 @@
   box-sizing: border-box;
 }
 
+html {
+  scrollbar-gutter: stable;
+  overflow-x: hidden;
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 @layer components {

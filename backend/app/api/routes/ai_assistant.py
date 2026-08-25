@@ -23,6 +23,13 @@ class ExplainMetricRequest(BaseModel):
     metric: str
 
 
+class SourceRef(BaseModel):
+    """One data source backing an answer - a database query or a knowledge-base document."""
+    type: str  # "database" | "document"
+    source: str
+    sheet: Optional[str] = None
+
+
 class AskQuestionResponse(BaseModel):
     """Response from AI assistant."""
     question: str
@@ -30,6 +37,8 @@ class AskQuestionResponse(BaseModel):
     confidence: float
     data_sources: List[str]
     recommendations: List[str]
+    route: Optional[str] = None  # "SQL" | "RAG" | "HYBRID" | "CLARIFICATION"
+    sources: List[SourceRef] = []
 
 
 class MetricExplanation(BaseModel):
