@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
 from decimal import Decimal
-from backend.app.schemas.inventory_schemas import InventoryListResponse, InventoryItem
+from app.schemas.inventory_schemas import InventoryListResponse, InventoryItem
 
 
 class InventoryService:
@@ -40,10 +40,10 @@ class InventoryService:
             warehouse_name,
             sku,
             product_name,
-            0 as closing_stock,
-            0 as avg_daily_demand_7d,
+            closing_stock,
+            avg_daily_demand_7d,
             days_of_cover,
-            0 as reorder_point,
+            reorder_point,
             recommended_reorder_qty,
             stock_status
         FROM vw_inventory_health

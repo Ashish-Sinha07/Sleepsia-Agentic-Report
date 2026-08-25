@@ -23,23 +23,23 @@ export const getKpisByDate = (startDate, endDate) =>
 
 // Platform endpoints
 export const getPlatformPerformance = (startDate, endDate, platformId = null) =>
-  apiClient.get('/api/platform-performance', {
+  apiClient.get('/api/platforms', {
     params: { start_date: startDate, end_date: endDate, platform_id: platformId },
   });
 
 // Product endpoints
 export const getProductPerformance = (startDate, endDate, platformId = null, sku = null) =>
-  apiClient.get('/api/product-performance', {
+  apiClient.get('/api/products', {
     params: { start_date: startDate, end_date: endDate, platform_id: platformId, sku },
   });
 
 export const getTopProducts = (startDate, endDate, limit = 10, sortBy = 'revenue') =>
-  apiClient.get('/api/product-performance/top', {
+  apiClient.get('/api/products', {
     params: { start_date: startDate, end_date: endDate, limit, sort_by: sortBy },
   });
 
 export const getBottomProducts = (startDate, endDate, limit = 10) =>
-  apiClient.get('/api/product-performance/bottom', {
+  apiClient.get('/api/products', {
     params: { start_date: startDate, end_date: endDate, limit },
   });
 

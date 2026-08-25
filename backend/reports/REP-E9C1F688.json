@@ -1,0 +1,80 @@
+{
+  "report_id": "REP-E9C1F688",
+  "title": "Executive Summary Report",
+  "type": "executive_summary",
+  "period": "2026-08-25 to 2026-08-25",
+  "generated_at": "2026-08-25T10:41:46.405424",
+  "data": {
+    "period": {
+      "start_date": "2026-08-25",
+      "end_date": "2026-08-25"
+    },
+    "generated_at": "2026-08-25T10:41:46.356393",
+    "kpi_summary": {
+      "revenue": 0.0,
+      "net_revenue": 0.0,
+      "profit": 0.0,
+      "profit_margin_pct": 0.0,
+      "orders": 0,
+      "units_sold": 0,
+      "roas": 0.0,
+      "ad_spend": 0.0
+    },
+    "channel_data": [],
+    "product_by_platform": {},
+    "warehouse_operations": [],
+    "inventory_position": [],
+    "consolidated_sku": [],
+    "pnl": {
+      "line_items": [
+        {
+          "label": "Total Gross Sales Turnover (GMV)",
+          "amount": 0.0,
+          "pct_of_revenue": 0.0,
+          "note": "Total invoiced sales value across all active channels before deductions."
+        },
+        {
+          "label": "Less: Returns & Customer Refunds",
+          "amount": -0.0,
+          "pct_of_revenue": 0.0,
+          "note": "Value of units returned and refunded to customers."
+        },
+        {
+          "label": "Net Realized Sales Turnover",
+          "amount": 0.0,
+          "pct_of_revenue": 0.0,
+          "note": "Net sales after discounts (net sales) and customer refunds."
+        },
+        {
+          "label": "Less: COGS",
+          "amount": -0.0,
+          "pct_of_revenue": 0.0,
+          "note": "Direct product cost of goods sold."
+        },
+        {
+          "label": "Less: Total Marketing & Ad Spend",
+          "amount": -0.0,
+          "pct_of_revenue": 0.0,
+          "note": "Total advertising spend across all platforms."
+        },
+        {
+          "label": "Less: Marketplace Commission & Logistics",
+          "amount": -0.0,
+          "pct_of_revenue": 0.0,
+          "note": "Platform fees, shipping, and payment-processing costs."
+        },
+        {
+          "label": "GRAND NET OPERATING PROFIT (EBITDA)",
+          "amount": 0.0,
+          "pct_of_revenue": 0.0,
+          "note": "Operating profit before interest, tax, depreciation and amortization."
+        }
+      ],
+      "gmv": 0.0,
+      "ebitda": 0.0,
+      "ebitda_margin_pct": 0.0
+    },
+    "audit_notes": [],
+    "audit_notes_source": "agents (no data in period)"
+  }
+}

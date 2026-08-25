@@ -9,6 +9,7 @@ import ErrorState from '../components/common/ErrorState';
 import RevenueChart from '../components/charts/RevenueChart';
 import BarChart from '../components/charts/BarChart';
 import DonutChart from '../components/charts/DonutChart';
+import { getPlatformColor } from '../utils/platformColors';
 import {
   TrendingUp,
   DollarSign,
@@ -44,8 +45,8 @@ export default function Dashboard() {
           analyticsApi.getKPIs(filters),
           analyticsApi.getRevenueChart(filters),
           analyticsApi.getPlatformPerformance(filters),
-          analyticsApi.getTopProducts(filters),
-          analyticsApi.getBottomProducts(filters),
+          analyticsApi.getTopProducts(filters, 3),
+          analyticsApi.getBottomProducts(filters, 3),
           analyticsApi.getAlerts(filters),
         ]);
         const backendKpis = kpiRes?.kpis || kpiRes?.data?.kpis || kpiRes;
@@ -55,6 +56,12 @@ export default function Dashboard() {
           profitMargin: Number(backendKpis?.profitMargin ?? backendKpis?.profit_margin_pct ?? 0),
           unitsSold: Number(backendKpis?.unitsSold ?? backendKpis?.units_sold ?? 0),
           orders: Number(backendKpis?.orders || 0),
+          adSpend: Number(backendKpis?.adSpend ?? backendKpis?.ad_spend ?? 0),
+          roas: backendKpis?.roas != null ? Number(backendKpis.roas) : null,
+          returnRate: Number(backendKpis?.returnRate ?? backendKpis?.return_rate_pct ?? 0),
+          cancellationRate: Number(backendKpis?.cancellationRate ?? backendKpis?.cancellation_rate_pct ?? 0),
+          organicSales: Number(backendKpis?.organicSales ?? backendKpis?.organic_sales ?? 0),
+          adAttributedSales: Number(backendKpis?.adAttributedSales ?? backendKpis?.ad_attributed_sales ?? 0),
         });
         setRevenueData(revenueRes);
         setPlatformData(platformRes);
@@ -183,7 +190,7 @@ export default function Dashboard() {
             data={platformData}
             dataKey="revenue"
             name="Revenue"
-            color="#4a9fbd"
+            colorFor={(entry) => getPlatformColor(entry.name)}
           />
         </ChartCard>
         <ChartCard title="Platform Profitability" subtitle="Contribution by platform">
@@ -191,29 +198,33 @@ export default function Dashboard() {
             data={platformData}
             dataKey="margin"
             name="Margin %"
-            color="#10b981"
+            colorFor={(entry) => getPlatformColor(entry.name)}
           />
         </ChartCard>
       </div>
 
       {/* Charts Row 3 */}
       <div className="grid grid-cols-2 gap-6">
-        <ChartCard title="Top 10 Products by Revenue">
+        <ChartCard title="Top 3 Products by Revenue" subtitle="Best performers this period">
           <BarChart
             data={topProducts}
             dataKey="revenue"
             name="Revenue"
             color="#4a9fbd"
             horizontal={true}
+            height={220}
+            showValueLabels={true}
           />
         </ChartCard>
-        <ChartCard title="Bottom 5 Products" subtitle="Lowest contribution">
+        <ChartCard title="Bottom 3 Products" subtitle="Lowest contribution">
           <BarChart
             data={bottomProducts}
             dataKey="revenue"
             name="Revenue"
             color="#ef4444"
             horizontal={true}
+            height={220}
+            showValueLabels={true}
           />
         </ChartCard>
       </div>

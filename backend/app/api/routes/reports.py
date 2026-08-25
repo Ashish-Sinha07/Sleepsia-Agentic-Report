@@ -6,9 +6,9 @@ from typing import Optional, List
 from pydantic import BaseModel
 from io import BytesIO
 
-from backend.app.database import get_db
-from backend.app.services.report_service import ReportService
-from backend.app.services.comprehensive_report_service import ComprehensiveReportService
+from app.database import get_db
+from app.services.report_service import ReportService
+from app.services.comprehensive_report_service import ComprehensiveReportService
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
@@ -231,11 +231,12 @@ async def email_report(
     email_to: str = Query(...),
     cc: Optional[str] = Query(None),
     bcc: Optional[str] = Query(None),
+    format: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ) -> dict:
     """Email a report to recipients."""
     try:
-        result = ReportService.email_report(db, report_id, email_to, cc, bcc)
+        result = ReportService.email_report(db, report_id, email_to, cc, bcc, format)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,0 +1,85 @@
+{
+  "report_id": "REP-0C1F33D7",
+  "title": "Platform Performance Analysis",
+  "type": "platform_analysis",
+  "period": "2026-07-25 to 2026-08-03",
+  "generated_at": "2026-08-24T16:57:41.329509",
+  "data": {
+    "period": {
+      "start_date": "2026-07-25",
+      "end_date": "2026-08-03"
+    },
+    "generated_at": "2026-08-24T16:57:41.317928",
+    "kpi_summary": {
+      "revenue": 282350.0,
+      "net_revenue": 267892.58,
+      "profit": 76545.57,
+      "profit_margin_pct": 28.573232599424742,
+      "orders": 240,
+      "units_sold": 250,
+      "roas": 4.656131397965028,
+      "ad_spend": 23205.23
+    },
+    "channel_data": [
+      {
+        "platform_id": "FLP",
+        "platform": "Flipkart",
+        "orders": 240,
+        "units": 250,
+        "gross_sales": 282350.0,
+        "returns_amount": 10841.83,
+        "net_revenue": 257050.75000000003,
+        "ad_spend": 23205.23,
+        "tacos_pct": 8.218604568797591,
+        "profit": 76545.57,
+        "margin_pct": 28.573232599424742
+      }
+    ],
+    "product_by_platform": {
+      "Flipkart": [
+        {
+          "sku": "SLP-1001",
+          "product": "Contour Memory Foam Cervical Pillow",
+          "units": 84,
+          "gross_sales": 125916.0,
+          "returns_pct": 3.571428571428571,
+          "organic_units": 52,
+          "paid_units": 32,
+          "ad_spend": 9320.79,
+          "tacos_pct": 7.40238730582293,
+          "profit": 35975.71,
+          "margin_pct": 30.12452676746886
+        },
+        {
+          "sku": "SLP-1002",
+          "product": "Travel Neck Memory Foam Pillow",
+          "units": 94,
+          "gross_sales": 84506.0,
+          "returns_pct": 0.0,
+          "organic_units": 53,
+          "paid_units": 41,
+          "ad_spend": 6959.33,
+          "tacos_pct": 8.235308735474405,
+          "profit": 26845.07,
+          "margin_pct": 33.46574989824419
+        },
+        {
+          "sku": "SLP-1003",
+          "product": "Alpha Kids Memory Foam Pillow",
+          "units": 72,
+          "gross_sales": 71928.0,
+          "returns_pct": 9.722222222222223,
+          "organic_units": 43,
+          "paid_units": 29,
+          "ad_spend": 6925.11,
+          "tacos_pct": 9.627836169502837,
+          "profit": 13724.79,
+          "margin_pct": 20.108783958908006
+        }
+      ]
+    }
+  },
+  "recommendations": [
+    "Focus on Flipkart - it has the highest gross sales"
+  ]
+}

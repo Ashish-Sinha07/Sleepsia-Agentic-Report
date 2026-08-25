@@ -13,7 +13,7 @@ body {
 
 @layer components {
   .page-container {
-    @apply p-8 max-w-7xl;
+    @apply p-4 sm:p-6 lg:p-8 max-w-7xl;
   }
 
   .card {
@@ -66,5 +66,191 @@ body {
 
   .text-change-negative {
     @apply text-red-600 font-medium;
+  }
+
+  .badge-atrisk {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800;
+  }
+}
+
+/* Warehouse map status markers: a soft pulsing ring behind a solid dot,
+   color-coded by health so critical sites draw the eye first. */
+@keyframes map-marker-pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.map-marker {
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+
+.map-marker__pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: map-marker-pulse 2.2s ease-out infinite;
+}
+
+.map-marker__dot {
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+/* Toast notifications: slide in from the right, settle in place. */
+@keyframes toast-enter {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast-enter {
+  animation: toast-enter 0.25s ease-out;
+}
+
+/* Advanced UI Animations & Effects */
+
+/* Animated Blobs - Floating background shapes */
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Shimmer Effect - Light sweep across cards/buttons */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+/* Fade In Up - Entrance animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+/* Staggered animation helper */
+.animate-stagger-1 { animation-delay: 0.1s; }
+.animate-stagger-2 { animation-delay: 0.2s; }
+.animate-stagger-3 { animation-delay: 0.3s; }
+.animate-stagger-4 { animation-delay: 0.4s; }
+.animate-stagger-5 { animation-delay: 0.5s; }
+
+/* Slide In Right - 3D perspective */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-40px) rotateY(10deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotateY(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Enhanced Card Styles with Animations */
+@layer components {
+  /* Enhanced card with glassmorphism */
+  .card-enhanced {
+    @apply bg-gradient-to-br from-white via-gray-50/50 to-white rounded-2xl border-2 border-gray-200/50 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2 backdrop-blur-sm relative;
+  }
+
+  /* KPI Card with gradient backgrounds */
+  .kpi-card-animated {
+    @apply bg-gradient-to-br p-8 rounded-2xl shadow-xl hover:shadow-2xl border-2 transition-all duration-500 transform hover:scale-110 hover:-translate-y-4 cursor-pointer relative overflow-hidden backdrop-blur-sm;
+  }
+
+  .kpi-card-blue {
+    @apply from-blue-50 via-cyan-50 to-blue-50 hover:from-blue-100 hover:via-cyan-100 hover:to-blue-100 border-blue-300/60 hover:border-blue-500 shadow-blue-200/50 hover:shadow-blue-400/60;
+  }
+
+  .kpi-card-green {
+    @apply from-green-50 via-emerald-50 to-green-50 hover:from-green-100 hover:via-emerald-100 hover:to-green-100 border-green-300/60 hover:border-green-500 shadow-green-200/50 hover:shadow-green-400/60;
+  }
+
+  .kpi-card-purple {
+    @apply from-purple-50 via-pink-50 to-purple-50 hover:from-purple-100 hover:via-pink-100 hover:to-purple-100 border-purple-300/60 hover:border-purple-500 shadow-purple-200/50 hover:shadow-purple-400/60;
+  }
+
+  .kpi-card-orange {
+    @apply from-orange-50 via-amber-50 to-orange-50 hover:from-orange-100 hover:via-amber-100 hover:to-orange-100 border-orange-300/60 hover:border-orange-500 shadow-orange-200/50 hover:shadow-orange-400/60;
+  }
+
+  /* Button animations */
+  .btn-animated {
+    @apply relative overflow-hidden transition-all duration-300 transform hover:scale-105 active:scale-95;
+  }
+
+  /* Enhanced button with shimmer */
+  .btn-shimmer {
+    @apply relative overflow-hidden transition-all duration-300 transform hover:scale-105 active:scale-95;
+  }
+
+  /* Icon animation on hover */
+  .icon-animated {
+    @apply transition-all duration-300;
+  }
+
+  .group:hover .icon-animated {
+    @apply scale-125 rotate-12;
+  }
+
+  /* Glassmorphic effect */
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20;
+  }
+
+  /* Smooth transitions for all text elements */
+  .text-animated {
+    @apply transition-colors duration-300;
   }
 }

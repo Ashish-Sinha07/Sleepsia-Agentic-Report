@@ -102,6 +102,7 @@ class ReportEmailService:
         attachments: Optional[Dict[str, bytes]] = None,
         cc: Optional[List[str]] = None,
         bcc: Optional[List[str]] = None,
+        html_body: Optional[str] = None,
     ) -> bool:
         """
         Send a report email to recipients.
@@ -113,6 +114,7 @@ class ReportEmailService:
             attachments: Dict of filename -> file bytes (e.g., {"report.pdf": pdf_bytes})
             cc: Optional list of CC recipients
             bcc: Optional list of BCC recipients
+            html_body: Optional HTML version of the email body
 
         Returns:
             True if sent successfully, False otherwise
@@ -126,6 +128,10 @@ class ReportEmailService:
                 logger.info(f"  BCC: {bcc}")
             if attachments:
                 logger.info(f"  Attachments: {list(attachments.keys())}")
+            if html_body:
+                logger.info(f"  HTML Body: {len(html_body)} characters")
+            else:
+                logger.info("  HTML Body: None (plain text only)")
 
             msg = ProviderEmailMessage(
                 subject=subject,
@@ -134,6 +140,7 @@ class ReportEmailService:
                 cc_recipients=cc or [],
                 bcc_recipients=bcc or [],
                 attachments=attachments or {},
+                html_body=html_body,
             )
 
             # Send to each recipient

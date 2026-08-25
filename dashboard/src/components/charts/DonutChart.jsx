@@ -1,7 +1,9 @@
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import { formatCurrency } from '../../utils/formatting';
 
-const COLORS = ['#4a9fbd', '#a5cfe1'];
+// Two genuinely distinct categories (not degrees of the same thing), so two
+// different hues rather than two tints of one - easier to tell apart at a glance.
+const COLORS = ['#2a78d6', '#eda100'];
 
 function CustomTooltip({ active, payload, total }) {
   if (active && payload && payload.length) {

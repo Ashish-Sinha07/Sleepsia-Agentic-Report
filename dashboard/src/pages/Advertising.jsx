@@ -9,6 +9,7 @@ import KpiCard from '../components/common/KpiCard';
 import ChartCard from '../components/common/ChartCard';
 import BarChart from '../components/charts/BarChart';
 import { formatCurrency, formatNumber, formatROAS } from '../utils/formatting';
+import { getPlatformColor } from '../utils/platformColors';
 
 export default function Advertising() {
   const { filters } = useContext(FilterContext);
@@ -55,7 +56,7 @@ export default function Advertising() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <ChartCard title="Ad spend by platform" subtitle="Total advertising investment"><BarChart data={advertisingSummary.platforms} dataKey="spend" name="Ad Spend" color="#7c3aed" /></ChartCard>
+        <ChartCard title="Ad spend by platform" subtitle="Total advertising investment"><BarChart data={advertisingSummary.platforms} dataKey="spend" name="Ad Spend" colorFor={(entry) => getPlatformColor(entry.name)} /></ChartCard>
         <div className="card p-6"><h2 className="font-semibold text-gray-900">Campaign funnel</h2><div className="mt-6 space-y-5"><div className="flex justify-between"><span className="text-gray-600 flex gap-2"><Eye className="w-5 h-5" />Impressions</span><strong>{formatNumber(advertisingSummary.impressions)}</strong></div><div className="flex justify-between"><span className="text-gray-600 flex gap-2"><MousePointerClick className="w-5 h-5" />Clicks (CTR {advertisingSummary.ctr}%)</span><strong>{formatNumber(advertisingSummary.clicks)}</strong></div><div className="flex justify-between"><span className="text-gray-600">Attributed orders</span><strong>{formatNumber(advertisingSummary.orders)}</strong></div><div className="flex justify-between border-t pt-5"><span className="text-gray-600">ACOS</span><strong>{advertisingSummary.acos}%</strong></div></div></div>
       </div>
 

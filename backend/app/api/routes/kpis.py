@@ -4,13 +4,13 @@ from datetime import date, timedelta
 from typing import Optional
 import logging
 
-from backend.app.database import get_db
-from backend.app.config import settings
-from backend.app.services.kpi_service import KpiService
-from backend.app.services.kpi_orchestrator import KpiOrchestrator
-from backend.app.schemas.kpi_schemas import KpiResponse, DailyKpisResponse
-from backend.app.schemas.common import ApiResponse
-from backend.app.api.dependencies import get_date_range
+from app.database import get_db
+from app.config import settings
+from app.services.kpi_service import KpiService
+from app.services.kpi_orchestrator import KpiOrchestrator
+from app.schemas.kpi_schemas import KpiResponse, DailyKpisResponse
+from app.schemas.common import ApiResponse
+from app.api.dependencies import get_date_range
 
 logger = logging.getLogger(__name__)
 

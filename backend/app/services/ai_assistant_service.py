@@ -1,10 +1,20 @@
-"""Service for AI-powered business assistant."""
+"""Service for AI-powered business assistant with Groq integration."""
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from typing import Optional, Dict, List, Any
 import json
-import re
+import logging
+from app.config import settings
+
+logger = logging.getLogger(__name__)
+
+# Try to import Groq client
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = bool(settings.GROQ_API_KEY)
+except ImportError:
+    GROQ_AVAILABLE = False
 
 
 class AIAssistantService:
@@ -93,68 +103,206 @@ class AIAssistantService:
         },
     ]
 
+    # Conversation history for multi-turn support
+    _conversation_history = {}
+
     @staticmethod
     def answer_question(
         db: Session,
         question: str,
-        context: Optional[Dict[str, Any]] = None
+        context: Optional[Dict[str, Any]] = None,
+        session_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """
-        Answer a business question using data from the database.
+        Answer a business question using Groq AI and database queries.
 
         Process:
-        1. Parse the question to understand intent
-        2. Identify relevant metrics and dimensions
-        3. Query the database
-        4. Generate insights
-        5. Provide recommendations
+        1. Use Groq to understand intent and identify required tools
+        2. Execute appropriate database queries
+        3. Use Groq to synthesize insights
+        4. Provide recommendations based on data
         """
+        try:
+            if GROQ_AVAILABLE:
+                return AIAssistantService._answer_with_groq(db, question, context, session_id)
+            else:
+                logger.warning("Groq API not available, using fallback keyword matching")
+                return AIAssistantService._answer_with_fallback(db, question, context)
+        except Exception as e:
+            logger.error(f"Error answering question: {str(e)}", exc_info=True)
+            return {
+                "question": question,
+                "answer": f"I encountered an error while processing your question: {str(e)}",
+                "confidence": 0.0,
+                "data_sources": [],
+                "recommendations": []
+            }
+
+    @staticmethod
+    def _answer_with_groq(
+        db: Session,
+        question: str,
+        context: Optional[Dict[str, Any]],
+        session_id: Optional[str]
+    ) -> Dict[str, Any]:
+        """Answer question using Groq AI."""
+        client = Groq(api_key=settings.GROQ_API_KEY)
+
+        # Initialize or get conversation history
+        if session_id and session_id in AIAssistantService._conversation_history:
+            messages = AIAssistantService._conversation_history[session_id]
+        else:
+            messages = []
+
+        # System prompt with database schema information
+        system_prompt = """You are a business intelligence analyst for Sleepsia, an e-commerce analytics platform.
+
+You have access to the following business data:
+- Sales data from Amazon, Flipkart, Blinkit, Myntra, and JioMart
+- Product performance and profitability metrics
+- Advertising spend and ROI metrics (ROAS, ACOS)
+- Inventory levels across 5 warehouses (Delhi NCR, Jaipur, Mumbai, Bengaluru, Hyderabad)
+- Return and cancellation rates
+- Daily KPI summaries
+
+Your responsibilities:
+1. Understand the user's business question
+2. Identify what metrics and data are needed
+3. Request specific tool calls to fetch data
+4. Analyze the data and provide insights
+5. Give actionable recommendations
+6. Always cite data sources when making claims
+7. Be honest about data limitations
+
+Available tools:
+- get_platform_metrics: Get performance data for specific platforms
+- get_product_metrics: Get product sales and profitability
+- get_profitability_analysis: Analyze profit margins and costs
+- get_advertising_metrics: Get ROAS, ACOS, ad spend
+- get_inventory_status: Check warehouse inventory levels
+- get_quality_metrics: Return and cancellation rates
+- get_kpi_summary: Overall business KPI summary
+
+Respond in natural, conversational language. When you need data, request it clearly."""
+
+        # Add user message
+        messages.append({"role": "user", "content": question})
+
+        # Get tool definitions
+        tools = AIAssistantService._get_groq_tool_definitions()
+
+        # Call Groq with tools for intent understanding
+        response = client.chat.completions.create(
+            model=settings.GROQ_MODEL,
+            messages=messages,
+            tools=tools,
+            tool_choice="auto",
+            max_tokens=2000
+        )
+
+        # Process Groq's response
+        final_answer = ""
+        confidence = 0.8
+        tool_results = []
+
+        # Extract text and tool calls from response
+        if response.choices[0].message.content:
+            final_answer = response.choices[0].message.content
+
+        # Handle tool calls if present
+        if response.choices[0].message.tool_calls:
+            for tool_call in response.choices[0].message.tool_calls:
+                tool_name = tool_call.function.name
+                tool_input = json.loads(tool_call.function.arguments)
+
+                try:
+                    result = AIAssistantService._execute_tool(db, tool_name, tool_input)
+                    tool_results.append({
+                        "type": "tool",
+                        "name": tool_name,
+                        "result": json.dumps(result)
+                    })
+                except Exception as e:
+                    logger.error(f"Tool execution error for {tool_name}: {str(e)}")
+                    tool_results.append({
+                        "type": "tool",
+                        "name": tool_name,
+                        "result": json.dumps({"error": str(e)})
+                    })
+
+            # If tools were executed, get Groq's final analysis
+            if tool_results:
+                # Add assistant response and tool results
+                messages.append({"role": "assistant", "content": response.choices[0].message.content})
+
+                # Format tool results for Groq
+                tool_result_text = "\n".join([
+                    f"Tool: {tr['name']}\nResult: {tr['result']}"
+                    for tr in tool_results
+                ])
+                messages.append({"role": "user", "content": f"Here are the tool results:\n{tool_result_text}\n\nPlease analyze this data and provide insights and recommendations."})
+
+                # Get final analysis from Groq
+                final_response = client.chat.completions.create(
+                    model=settings.GROQ_MODEL,
+                    messages=messages,
+                    max_tokens=2000
+                )
+
+                final_answer = final_response.choices[0].message.content
+
+        # Store conversation history
+        if session_id:
+            AIAssistantService._conversation_history[session_id] = messages[-10:]  # Keep last 10 messages
+
+        # Extract recommendations from Groq's response
+        recommendations = AIAssistantService._extract_recommendations(final_answer)
+
+        return {
+            "question": question,
+            "answer": final_answer,
+            "confidence": confidence,
+            "data_sources": ["Sleepsia Analytics Database"],
+            "recommendations": recommendations
+        }
+
+    @staticmethod
+    def _answer_with_fallback(
+        db: Session,
+        question: str,
+        context: Optional[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """Fallback keyword-based answer when Claude is not available."""
         question_lower = question.lower()
         answer = ""
         data_sources = []
         recommendations = []
         confidence = 0.0
 
-        # Intent detection - simplified pattern matching
         if any(word in question_lower for word in ["platform", "channel", "amazon", "flipkart", "blinkit", "myntra", "jiomart"]):
             answer, sources, recs = AIAssistantService._answer_platform_question(db, question)
-            data_sources.extend(sources)
-            recommendations.extend(recs)
             confidence = 0.8
-
         elif any(word in question_lower for word in ["product", "sku", "item"]):
             answer, sources, recs = AIAssistantService._answer_product_question(db, question)
-            data_sources.extend(sources)
-            recommendations.extend(recs)
             confidence = 0.85
-
         elif any(word in question_lower for word in ["profit", "margin", "cost", "expense"]):
             answer, sources, recs = AIAssistantService._answer_profitability_question(db, question)
-            data_sources.extend(sources)
-            recommendations.extend(recs)
             confidence = 0.9
-
         elif any(word in question_lower for word in ["ad", "advertising", "roas", "acos", "spend", "impression"]):
             answer, sources, recs = AIAssistantService._answer_advertising_question(db, question)
-            data_sources.extend(sources)
-            recommendations.extend(recs)
             confidence = 0.85
-
         elif any(word in question_lower for word in ["inventory", "stock", "warehouse", "restock", "replenish"]):
             answer, sources, recs = AIAssistantService._answer_inventory_question(db, question)
-            data_sources.extend(sources)
-            recommendations.extend(recs)
             confidence = 0.8
-
         elif any(word in question_lower for word in ["return", "cancel", "quality", "issue"]):
             answer, sources, recs = AIAssistantService._answer_quality_question(db, question)
-            data_sources.extend(sources)
-            recommendations.extend(recs)
             confidence = 0.75
-
         else:
             answer = "I'm not sure how to answer that question. Try asking about platforms, products, profitability, advertising, inventory, or quality metrics."
             confidence = 0.2
+
+        data_sources = sources if answer else []
+        recommendations = recs if answer else []
 
         return {
             "question": question,
@@ -444,3 +592,335 @@ class AIAssistantService:
             }
 
         return None
+
+    @staticmethod
+    def _get_groq_tool_definitions() -> List[Dict]:
+        """Get Groq tool definitions for business queries (OpenAI format)."""
+        return [
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_platform_metrics",
+                    "description": "Get performance metrics for specific e-commerce platforms (Amazon, Flipkart, Blinkit, Myntra, JioMart)",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "platform": {
+                                "type": "string",
+                                "description": "Platform name or 'all' for all platforms"
+                            },
+                            "metric": {
+                                "type": "string",
+                                "description": "Specific metric to retrieve (revenue, profit, profit_margin, orders, units)"
+                            }
+                        },
+                        "required": ["platform"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_product_metrics",
+                    "description": "Get product performance metrics including sales, profit, and profitability by product",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "metric": {
+                                "type": "string",
+                                "description": "Metric to retrieve (profit, revenue, margin, platforms)"
+                            },
+                            "limit": {
+                                "type": "integer",
+                                "description": "Number of products to return (default 10)"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_profitability_analysis",
+                    "description": "Get profit margin analysis and cost breakdown",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "analysis_type": {
+                                "type": "string",
+                                "description": "Type of analysis: margin_trend, cost_breakdown, or overall"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_advertising_metrics",
+                    "description": "Get advertising performance metrics including ROAS, ACOS, and ad spend",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "platform": {
+                                "type": "string",
+                                "description": "Platform name or 'all' for all platforms"
+                            },
+                            "metric": {
+                                "type": "string",
+                                "description": "Specific metric: roas, acos, spend, or all"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_inventory_status",
+                    "description": "Get inventory status across warehouses including stock levels and health",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "warehouse": {
+                                "type": "string",
+                                "description": "Warehouse city or 'all' for all warehouses"
+                            },
+                            "include_health": {
+                                "type": "boolean",
+                                "description": "Include warehouse health status"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_quality_metrics",
+                    "description": "Get product quality metrics including return rates and cancellation rates",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "metric": {
+                                "type": "string",
+                                "description": "Metric to retrieve: return_rate, cancel_rate, or both"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_kpi_summary",
+                    "description": "Get overall business KPI summary for the current period",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "include_trends": {
+                                "type": "boolean",
+                                "description": "Include trend information"
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+
+    @staticmethod
+    def _execute_tool(db: Session, tool_name: str, tool_input: Dict) -> Dict:
+        """Execute the requested tool and return results."""
+        try:
+            if tool_name == "get_platform_metrics":
+                return AIAssistantService._get_platform_metrics(db, tool_input)
+            elif tool_name == "get_product_metrics":
+                return AIAssistantService._get_product_metrics(db, tool_input)
+            elif tool_name == "get_profitability_analysis":
+                return AIAssistantService._get_profitability_analysis(db, tool_input)
+            elif tool_name == "get_advertising_metrics":
+                return AIAssistantService._get_advertising_metrics(db, tool_input)
+            elif tool_name == "get_inventory_status":
+                return AIAssistantService._get_inventory_status(db, tool_input)
+            elif tool_name == "get_quality_metrics":
+                return AIAssistantService._get_quality_metrics(db, tool_input)
+            elif tool_name == "get_kpi_summary":
+                return AIAssistantService._get_kpi_summary(db, tool_input)
+            else:
+                return {"error": f"Unknown tool: {tool_name}"}
+        except Exception as e:
+            logger.error(f"Tool execution error: {str(e)}", exc_info=True)
+            return {"error": str(e)}
+
+    @staticmethod
+    def _get_platform_metrics(db: Session, tool_input: Dict) -> Dict:
+        """Get platform metrics."""
+        platform = tool_input.get("platform", "all")
+        try:
+            query = """
+            SELECT platform_name, SUM(gross_sales) as revenue, SUM(contribution) as profit,
+                   SUM(contribution) / NULLIF(SUM(gross_sales), 0) * 100 as profit_margin
+            FROM vw_platform_performance
+            """
+            if platform != "all":
+                query += f" WHERE platform_name ILIKE '%{platform}%'"
+            query += " GROUP BY platform_name ORDER BY revenue DESC"
+
+            results = db.execute(text(query)).fetchall()
+            return {
+                "platforms": [
+                    {"name": r[0], "revenue": float(r[1] or 0), "profit": float(r[2] or 0), "profit_margin": float(r[3] or 0)}
+                    for r in results
+                ]
+            }
+        except Exception as e:
+            logger.error(f"Platform metrics error: {str(e)}")
+            return {"error": str(e)}
+
+    @staticmethod
+    def _get_product_metrics(db: Session, tool_input: Dict) -> Dict:
+        """Get product performance metrics."""
+        limit = tool_input.get("limit", 10)
+        try:
+            query = f"""
+            SELECT product_name, SUM(contribution) as profit, SUM(gross_sales) as revenue
+            FROM vw_product_performance
+            GROUP BY product_name
+            ORDER BY profit DESC
+            LIMIT {limit}
+            """
+            results = db.execute(text(query)).fetchall()
+            return {
+                "products": [
+                    {"name": r[0], "profit": float(r[1] or 0), "revenue": float(r[2] or 0)}
+                    for r in results
+                ]
+            }
+        except Exception as e:
+            logger.error(f"Product metrics error: {str(e)}")
+            return {"error": str(e)}
+
+    @staticmethod
+    def _get_profitability_analysis(db: Session, tool_input: Dict) -> Dict:
+        """Get profitability analysis."""
+        try:
+            query = """
+            SELECT AVG(overall_profit_margin_pct) as avg_margin,
+                   MAX(overall_profit_margin_pct) as max_margin,
+                   MIN(overall_profit_margin_pct) as min_margin,
+                   SUM(total_revenue) as total_revenue,
+                   SUM(total_profit) as total_profit
+            FROM vw_daily_kpi_summary
+            """
+            result = db.execute(text(query)).fetchone()
+            return {
+                "average_margin_pct": float(result[0] or 0),
+                "max_margin_pct": float(result[1] or 0),
+                "min_margin_pct": float(result[2] or 0),
+                "total_revenue": float(result[3] or 0),
+                "total_profit": float(result[4] or 0)
+            }
+        except Exception as e:
+            logger.error(f"Profitability analysis error: {str(e)}")
+            return {"error": str(e)}
+
+    @staticmethod
+    def _get_advertising_metrics(db: Session, tool_input: Dict) -> Dict:
+        """Get advertising performance metrics."""
+        try:
+            query = """
+            SELECT AVG(overall_roas) as avg_roas,
+                   SUM(total_ad_spend) as total_spend,
+                   SUM(total_ad_sales) as ad_sales,
+                   AVG(overall_acos_pct) as avg_acos
+            FROM vw_daily_kpi_summary
+            """
+            result = db.execute(text(query)).fetchone()
+            return {
+                "average_roas": float(result[0] or 0),
+                "total_ad_spend": float(result[1] or 0),
+                "ad_attributed_sales": float(result[2] or 0),
+                "average_acos_pct": float(result[3] or 0)
+            }
+        except Exception as e:
+            logger.error(f"Advertising metrics error: {str(e)}")
+            return {"error": str(e)}
+
+    @staticmethod
+    def _get_inventory_status(db: Session, tool_input: Dict) -> Dict:
+        """Get inventory status."""
+        try:
+            query = """
+            SELECT city, COUNT(*) as sku_count, SUM(closing_stock) as total_stock,
+                   AVG(days_of_cover) as avg_days_cover
+            FROM vw_inventory_health
+            GROUP BY city
+            ORDER BY total_stock ASC
+            """
+            results = db.execute(text(query)).fetchall()
+            return {
+                "warehouses": [
+                    {"city": r[0], "sku_count": int(r[1]), "total_stock": float(r[2] or 0), "days_of_cover": float(r[3] or 0)}
+                    for r in results
+                ]
+            }
+        except Exception as e:
+            logger.error(f"Inventory status error: {str(e)}")
+            return {"error": str(e)}
+
+    @staticmethod
+    def _get_quality_metrics(db: Session, tool_input: Dict) -> Dict:
+        """Get quality metrics."""
+        try:
+            query = """
+            SELECT AVG(CASE WHEN total_units_sold > 0 THEN (total_units_returned / total_units_sold * 100) ELSE 0 END) as return_rate,
+                   AVG(CASE WHEN total_orders > 0 THEN (total_units_cancelled / total_orders * 100) ELSE 0 END) as cancel_rate
+            FROM vw_daily_kpi_summary
+            """
+            result = db.execute(text(query)).fetchone()
+            return {
+                "return_rate_pct": float(result[0] or 0),
+                "cancellation_rate_pct": float(result[1] or 0)
+            }
+        except Exception as e:
+            logger.error(f"Quality metrics error: {str(e)}")
+            return {"error": str(e)}
+
+    @staticmethod
+    def _get_kpi_summary(db: Session, tool_input: Dict) -> Dict:
+        """Get KPI summary."""
+        try:
+            query = """
+            SELECT COUNT(*) as record_count,
+                   SUM(total_revenue) as total_revenue,
+                   SUM(total_profit) as total_profit,
+                   SUM(total_orders) as total_orders,
+                   SUM(total_units_sold) as total_units
+            FROM vw_daily_kpi_summary
+            """
+            result = db.execute(text(query)).fetchone()
+            return {
+                "total_revenue": float(result[1] or 0),
+                "total_profit": float(result[2] or 0),
+                "total_orders": int(result[3] or 0),
+                "total_units": int(result[4] or 0),
+                "record_count": int(result[0] or 0)
+            }
+        except Exception as e:
+            logger.error(f"KPI summary error: {str(e)}")
+            return {"error": str(e)}
+
+    @staticmethod
+    def _extract_recommendations(text: str) -> List[str]:
+        """Extract recommendations from Claude's response."""
+        recommendations = []
+        lines = text.split('\n')
+        for line in lines:
+            line = line.strip()
+            if any(keyword in line.lower() for keyword in ['recommend', 'suggest', 'should', 'consider', 'improve', 'focus', 'increase', 'decrease', 'optimize']):
+                if len(line) > 10 and not line.startswith('#'):
+                    # Clean up bullet points and numbering
+                    line = line.lstrip('•-*123456789. ')
+                    if line and line[0].isupper():
+                        recommendations.append(line)
+        return recommendations[:5]  # Return top 5 recommendations

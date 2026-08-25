@@ -1,16 +1,29 @@
 import { useContext } from 'react';
 import { FilterContext } from '../../context/FilterContext';
-import { format } from 'date-fns';
+import { format, subDays, startOfMonth, endOfMonth, startOfDay, endOfDay, isSameDay } from 'date-fns';
 import { ChevronDown, RotateCcw } from 'lucide-react';
 
 // value must match the platform_id codes seeded in the platforms table (sql/schema.sql)
-const PLATFORMS = [
+export const PLATFORMS = [
   { id: 'all', label: 'All Platforms' },
   { id: 'AMZ', label: 'Amazon' },
   { id: 'FLP', label: 'Flipkart' },
   { id: 'MTR', label: 'Myntra' },
   { id: 'BLK', label: 'Blinkit' },
   { id: 'JMT', label: 'JioMart' },
+];
+
+const DATE_PRESETS = [
+  { label: '7D', range: () => ({ startDate: startOfDay(subDays(new Date(), 6)), endDate: endOfDay(new Date()) }) },
+  { label: '30D', range: () => ({ startDate: startOfDay(subDays(new Date(), 29)), endDate: endOfDay(new Date()) }) },
+  { label: 'This month', range: () => ({ startDate: startOfDay(startOfMonth(new Date())), endDate: endOfDay(new Date()) }) },
+  {
+    label: 'Last month',
+    range: () => {
+      const lastMonthEnd = endOfDay(subDays(startOfMonth(new Date()), 1));
+      return { startDate: startOfDay(startOfMonth(lastMonthEnd)), endDate: lastMonthEnd };
+    },
+  },
 ];
 
 export default function FilterBar() {
@@ -24,9 +37,32 @@ export default function FilterBar() {
     updateFilters({ platform: value });
   };
 
+  const applyPreset = (preset) => updateFilters(preset.range());
+
+  const isActivePreset = (preset) => {
+    const { startDate, endDate } = preset.range();
+    return isSameDay(startDate, filters.startDate) && isSameDay(endDate, filters.endDate);
+  };
+
   return (
     <div className="card mb-6">
-      <div className="card-body">
+      <div className="card-body space-y-4">
+        <div className="flex items-center gap-2 flex-wrap">
+          {DATE_PRESETS.map((preset) => (
+            <button
+              key={preset.label}
+              onClick={() => applyPreset(preset)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                isActivePreset(preset)
+                  ? 'bg-sleepsia-600 text-white border-sleepsia-600'
+                  : 'bg-white text-gray-600 border-gray-300 hover:border-sleepsia-400 hover:text-sleepsia-600'
+              }`}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+
         <div className="flex items-end gap-4 flex-wrap">
           <div className="flex-1 min-w-max">
             <label className="text-label block mb-2">From Date</label>

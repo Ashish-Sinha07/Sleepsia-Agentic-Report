@@ -1,0 +1,584 @@
+{
+  "report_id": "REP-58DF6019",
+  "title": "Executive Summary Report",
+  "type": "executive_summary",
+  "period": "2026-08-18 to 2026-08-21",
+  "generated_at": "2026-08-24T16:42:33.350345",
+  "data": {
+    "period": {
+      "start_date": "2026-08-18",
+      "end_date": "2026-08-21"
+    },
+    "generated_at": "2026-08-24T16:42:33.327434",
+    "kpi_summary": {
+      "revenue": 434307.0,
+      "net_revenue": 410997.53,
+      "profit": 111173.83,
+      "profit_margin_pct": 27.04975623576132,
+      "orders": 379,
+      "units_sold": 393,
+      "roas": 4.522720265422261,
+      "ad_spend": 38369.05
+    },
+    "channel_data": [
+      {
+        "platform_id": "AMZ",
+        "platform": "Amazon",
+        "orders": 120,
+        "units": 127,
+        "gross_sales": 140673.0,
+        "returns_amount": 1793.97,
+        "net_revenue": 132204.46,
+        "ad_spend": 12315.35,
+        "tacos_pct": 8.754593987474497,
+        "profit": 39774.74,
+        "margin_pct": 29.6829895693554
+      },
+      {
+        "platform_id": "FLP",
+        "platform": "Flipkart",
+        "orders": 112,
+        "units": 116,
+        "gross_sales": 126284.0,
+        "returns_amount": 3715.14,
+        "net_revenue": 115307.02,
+        "ad_spend": 11767.94,
+        "tacos_pct": 9.318631022140572,
+        "profit": 33588.09,
+        "margin_pct": 28.22003062286888
+      },
+      {
+        "platform_id": "BLK",
+        "platform": "Blinkit",
+        "orders": 82,
+        "units": 84,
+        "gross_sales": 95316.0,
+        "returns_amount": 4210.83,
+        "net_revenue": 86016.41,
+        "ad_spend": 8661.68,
+        "tacos_pct": 9.087330563598977,
+        "profit": 21437.26,
+        "margin_pct": 23.75918846680891
+      },
+      {
+        "platform_id": "MTR",
+        "platform": "Myntra",
+        "orders": 65,
+        "units": 66,
+        "gross_sales": 72034.0,
+        "returns_amount": 4433.32,
+        "net_revenue": 63316.38,
+        "ad_spend": 5624.08,
+        "tacos_pct": 7.807535330538356,
+        "profit": 16373.74,
+        "margin_pct": 24.16798893574437
+      }
+    ],
+    "product_by_platform": {
+      "Amazon": [
+        {
+          "sku": "SLP-1001",
+          "product": "Contour Memory Foam Cervical Pillow",
+          "units": 37,
+          "gross_sales": 55463.0,
+          "returns_pct": 0.0,
+          "organic_units": 22,
+          "paid_units": 15,
+          "ad_spend": 5261.01,
+          "tacos_pct": 9.485621044660403,
+          "profit": 16675.06,
+          "margin_pct": 31.210263207789605
+        },
+        {
+          "sku": "SLP-1003",
+          "product": "Alpha Kids Memory Foam Pillow",
+          "units": 43,
+          "gross_sales": 42957.0,
+          "returns_pct": 2.3255813953488373,
+          "organic_units": 27,
+          "paid_units": 16,
+          "ad_spend": 2788.0,
+          "tacos_pct": 6.490211141373932,
+          "profit": 12343.24,
+          "margin_pct": 30.077352094335247
+        },
+        {
+          "sku": "SLP-1002",
+          "product": "Travel Neck Memory Foam Pillow",
+          "units": 47,
+          "gross_sales": 42253.0,
+          "returns_pct": 2.127659574468085,
+          "organic_units": 24,
+          "paid_units": 23,
+          "ad_spend": 4266.34,
+          "tacos_pct": 10.097129197926774,
+          "profit": 10756.44,
+          "margin_pct": 27.209464337480693
+        }
+      ],
+      "Blinkit": [
+        {
+          "sku": "SLP-1001",
+          "product": "Contour Memory Foam Cervical Pillow",
+          "units": 29,
+          "gross_sales": 43471.0,
+          "returns_pct": 3.4482758620689653,
+          "organic_units": 17,
+          "paid_units": 12,
+          "ad_spend": 4510.25,
+          "tacos_pct": 10.375307676381956,
+          "profit": 9400.89,
+          "margin_pct": 22.965038306454563
+        },
+        {
+          "sku": "SLP-1002",
+          "product": "Travel Neck Memory Foam Pillow",
+          "units": 31,
+          "gross_sales": 27869.0,
+          "returns_pct": 3.225806451612903,
+          "organic_units": 17,
+          "paid_units": 14,
+          "ad_spend": 2545.72,
+          "tacos_pct": 9.134593993325916,
+          "profit": 7083.99,
+          "margin_pct": 26.60128988650125
+        },
+        {
+          "sku": "SLP-1003",
+          "product": "Alpha Kids Memory Foam Pillow",
+          "units": 24,
+          "gross_sales": 23976.0,
+          "returns_pct": 8.333333333333332,
+          "organic_units": 15,
+          "paid_units": 9,
+          "ad_spend": 1605.71,
+          "tacos_pct": 6.697155488822156,
+          "profit": 4952.38,
+          "margin_pct": 21.853880597475964
+        }
+      ],
+      "Flipkart": [
+        {
+          "sku": "SLP-1002",
+          "product": "Travel Neck Memory Foam Pillow",
+          "units": 56,
+          "gross_sales": 50344.0,
+          "returns_pct": 0.0,
+          "organic_units": 36,
+          "paid_units": 20,
+          "ad_spend": 3920.41,
+          "tacos_pct": 7.787243762911171,
+          "profit": 16445.15,
+          "margin_pct": 34.36257841732151
+        },
+        {
+          "sku": "SLP-1001",
+          "product": "Contour Memory Foam Cervical Pillow",
+          "units": 32,
+          "gross_sales": 47968.0,
+          "returns_pct": 6.25,
+          "organic_units": 15,
+          "paid_units": 17,
+          "ad_spend": 4967.16,
+          "tacos_pct": 10.355153435623748,
+          "profit": 10410.54,
+          "margin_pct": 23.272934891249943
+        },
+        {
+          "sku": "SLP-1003",
+          "product": "Alpha Kids Memory Foam Pillow",
+          "units": 28,
+          "gross_sales": 27972.0,
+          "returns_pct": 3.571428571428571,
+          "organic_units": 14,
+          "paid_units": 14,
+          "ad_spend": 2880.37,
+          "tacos_pct": 10.297333047333048,
+          "profit": 6732.4,
+          "margin_pct": 25.470603101387557
+        }
+      ],
+      "Myntra": [
+        {
+          "sku": "SLP-1001",
+          "product": "Contour Memory Foam Cervical Pillow",
+          "units": 19,
+          "gross_sales": 28481.0,
+          "returns_pct": 0.0,
+          "organic_units": 12,
+          "paid_units": 7,
+          "ad_spend": 2070.55,
+          "tacos_pct": 7.269934342193042,
+          "profit": 8511.53,
+          "margin_pct": 31.79833393232469
+        },
+        {
+          "sku": "SLP-1002",
+          "product": "Travel Neck Memory Foam Pillow",
+          "units": 34,
+          "gross_sales": 30566.0,
+          "returns_pct": 8.823529411764707,
+          "organic_units": 21,
+          "paid_units": 13,
+          "ad_spend": 2260.18,
+          "tacos_pct": 7.394425178302688,
+          "profit": 6600.31,
+          "margin_pct": 22.88592526223958
+        },
+        {
+          "sku": "SLP-1003",
+          "product": "Alpha Kids Memory Foam Pillow",
+          "units": 13,
+          "gross_sales": 12987.0,
+          "returns_pct": 15.384615384615385,
+          "organic_units": 8,
+          "paid_units": 5,
+          "ad_spend": 1293.35,
+          "tacos_pct": 9.958804958804958,
+          "profit": 1261.9,
+          "margin_pct": 10.392474659129466
+        }
+      ]
+    },
+    "warehouse_operations": [
+      {
+        "warehouse_id": "WH-BLR",
+        "warehouse": "Bengaluru",
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "opening_stock": 171,
+        "inbound_qty": 0,
+        "outbound_qty": 31,
+        "closing_stock": 140,
+        "reorder_level": 70,
+        "dos": 20.0,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-BLR",
+        "warehouse": "Bengaluru",
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "opening_stock": 278,
+        "inbound_qty": 80,
+        "outbound_qty": 37,
+        "closing_stock": 321,
+        "reorder_level": 80,
+        "dos": 40.1,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-BLR",
+        "warehouse": "Bengaluru",
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "opening_stock": 475,
+        "inbound_qty": 0,
+        "outbound_qty": 20,
+        "closing_stock": 455,
+        "reorder_level": 50,
+        "dos": 91.0,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-NCR",
+        "warehouse": "Delhi NCR",
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "opening_stock": 215,
+        "inbound_qty": 80,
+        "outbound_qty": 24,
+        "closing_stock": 271,
+        "reorder_level": 70,
+        "dos": 38.7,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-NCR",
+        "warehouse": "Delhi NCR",
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "opening_stock": 335,
+        "inbound_qty": 60,
+        "outbound_qty": 24,
+        "closing_stock": 371,
+        "reorder_level": 80,
+        "dos": 46.4,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-NCR",
+        "warehouse": "Delhi NCR",
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "opening_stock": 660,
+        "inbound_qty": 0,
+        "outbound_qty": 11,
+        "closing_stock": 649,
+        "reorder_level": 50,
+        "dos": 129.8,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-HYD",
+        "warehouse": "Hyderabad",
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "opening_stock": 248,
+        "inbound_qty": 60,
+        "outbound_qty": 29,
+        "closing_stock": 279,
+        "reorder_level": 70,
+        "dos": 39.9,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-HYD",
+        "warehouse": "Hyderabad",
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "opening_stock": 235,
+        "inbound_qty": 30,
+        "outbound_qty": 32,
+        "closing_stock": 233,
+        "reorder_level": 80,
+        "dos": 29.1,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-HYD",
+        "warehouse": "Hyderabad",
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "opening_stock": 578,
+        "inbound_qty": 60,
+        "outbound_qty": 21,
+        "closing_stock": 617,
+        "reorder_level": 50,
+        "dos": 123.4,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-JPR",
+        "warehouse": "Jaipur",
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "opening_stock": 215,
+        "inbound_qty": 0,
+        "outbound_qty": 26,
+        "closing_stock": 189,
+        "reorder_level": 70,
+        "dos": 27.0,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-JPR",
+        "warehouse": "Jaipur",
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "opening_stock": 43,
+        "inbound_qty": 30,
+        "outbound_qty": 39,
+        "closing_stock": 34,
+        "reorder_level": 80,
+        "dos": 4.2,
+        "stock_status": "Low Stock"
+      },
+      {
+        "warehouse_id": "WH-JPR",
+        "warehouse": "Jaipur",
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "opening_stock": 607,
+        "inbound_qty": 50,
+        "outbound_qty": 18,
+        "closing_stock": 639,
+        "reorder_level": 50,
+        "dos": 127.8,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-MUM",
+        "warehouse": "Mumbai",
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "opening_stock": 343,
+        "inbound_qty": 30,
+        "outbound_qty": 37,
+        "closing_stock": 336,
+        "reorder_level": 70,
+        "dos": 48.0,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-MUM",
+        "warehouse": "Mumbai",
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "opening_stock": 248,
+        "inbound_qty": 100,
+        "outbound_qty": 28,
+        "closing_stock": 320,
+        "reorder_level": 80,
+        "dos": 40.0,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-MUM",
+        "warehouse": "Mumbai",
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "opening_stock": 510,
+        "inbound_qty": 0,
+        "outbound_qty": 24,
+        "closing_stock": 486,
+        "reorder_level": 50,
+        "dos": 97.2,
+        "stock_status": "Healthy"
+      }
+    ],
+    "inventory_position": [
+      {
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "all_units": 117,
+        "gross_sales": 175383.0,
+        "stock": 1215,
+        "dos": 34.72
+      },
+      {
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "all_units": 168,
+        "gross_sales": 151032.0,
+        "stock": 1279,
+        "dos": 31.96
+      },
+      {
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "all_units": 108,
+        "gross_sales": 107892.0,
+        "stock": 2846,
+        "dos": 113.84
+      }
+    ],
+    "consolidated_sku": [
+      {
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "all_units": 117,
+        "gross_sales": 175383.0,
+        "returns_pct": 2.564102564102564,
+        "organic_units": 66,
+        "paid_units": 51,
+        "ad_spend": 16808.97,
+        "tacos_pct": 9.584150117172133,
+        "profit": 44998.02,
+        "margin_pct": 27.12956565462905,
+        "dos": 34.72
+      },
+      {
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "all_units": 168,
+        "gross_sales": 151032.0,
+        "returns_pct": 2.976190476190476,
+        "organic_units": 98,
+        "paid_units": 70,
+        "ad_spend": 12992.65,
+        "tacos_pct": 8.602580910005827,
+        "profit": 40885.89,
+        "margin_pct": 28.619550608987822,
+        "dos": 31.96
+      },
+      {
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "all_units": 108,
+        "gross_sales": 107892.0,
+        "returns_pct": 5.555555555555555,
+        "organic_units": 64,
+        "paid_units": 44,
+        "ad_spend": 8567.43,
+        "tacos_pct": 7.940746301857413,
+        "profit": 25289.92,
+        "margin_pct": 24.727582625244523,
+        "dos": 113.84
+      }
+    ],
+    "pnl": {
+      "line_items": [
+        {
+          "label": "Total Gross Sales Turnover (GMV)",
+          "amount": 434307.0,
+          "pct_of_revenue": 100.0,
+          "note": "Total invoiced sales value across all active channels before deductions."
+        },
+        {
+          "label": "Less: Returns & Customer Refunds",
+          "amount": -14153.26,
+          "pct_of_revenue": -3.2588146173098758,
+          "note": "Value of units returned and refunded to customers."
+        },
+        {
+          "label": "Net Realized Sales Turnover",
+          "amount": 396844.27,
+          "pct_of_revenue": 91.3741362676632,
+          "note": "Net sales after discounts (net sales) and customer refunds."
+        },
+        {
+          "label": "Less: COGS",
+          "amount": -151800.0,
+          "pct_of_revenue": -34.95223424904503,
+          "note": "Direct product cost of goods sold."
+        },
+        {
+          "label": "Less: Total Marketing & Ad Spend",
+          "amount": -38369.05,
+          "pct_of_revenue": -8.83454560944217,
+          "note": "Total advertising spend across all platforms."
+        },
+        {
+          "label": "Less: Marketplace Commission & Logistics",
+          "amount": -95501.39,
+          "pct_of_revenue": -21.989373876083047,
+          "note": "Platform fees, shipping, and payment-processing costs."
+        },
+        {
+          "label": "GRAND NET OPERATING PROFIT (EBITDA)",
+          "amount": 111173.83,
+          "pct_of_revenue": 25.59798253309295,
+          "note": "Operating profit before interest, tax, depreciation and amortization."
+        }
+      ],
+      "gmv": 434307.0,
+      "ebitda": 111173.83,
+      "ebitda_margin_pct": 25.59798253309295
+    },
+    "audit_notes": [
+      {
+        "observation": "Alpha Kids Memory Foam Pillow has high return rate of 15.38%",
+        "action_owner": "Investigate root cause of returns and implement quality improvement (Owner: Quality/Product Manager)",
+        "due_date": "2026-09-23",
+        "status": "Open",
+        "priority": "high"
+      },
+      {
+        "observation": "Statistical outlier: SLP-1003 profit margin (10.39%) deviates significantly from average (25.87%)",
+        "action_owner": "Investigate statistical anomaly (Owner: Data Analyst)",
+        "due_date": "2026-08-27",
+        "status": "Open",
+        "priority": "medium"
+      },
+      {
+        "observation": "Statistical outlier: SLP-1003 profit margin (10.39%) deviates significantly from average (25.87%)",
+        "action_owner": "Investigate statistical anomaly (Owner: Data Analyst)",
+        "due_date": "2026-08-27",
+        "status": "Open",
+        "priority": "medium"
+      }
+    ],
+    "audit_notes_source": "agents (DataAnalysisAgent + InsightRecommendationAgent)"
+  }
+}

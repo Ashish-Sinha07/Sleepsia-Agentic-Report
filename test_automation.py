@@ -16,6 +16,16 @@ import sys
 from datetime import date
 from pathlib import Path
 
+# On Windows, stdout defaults to the cp1252 console encoding, which cannot
+# encode the checkmark (u2713) characters used in this script's output and
+# crashes with UnicodeEncodeError. Force UTF-8 so the summary prints cleanly.
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 # Setup logging
 logging.basicConfig(
     level=logging.INFO,

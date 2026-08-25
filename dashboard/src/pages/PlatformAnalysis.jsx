@@ -6,7 +6,17 @@ import LoadingState from '../components/common/LoadingState';
 import ErrorState from '../components/common/ErrorState';
 import ChartCard from '../components/common/ChartCard';
 import BarChart from '../components/charts/BarChart';
+import StatusBadge from '../components/common/StatusBadge';
 import { formatCurrency, formatPercentage, formatROAS } from '../utils/formatting';
+import { getPlatformColor } from '../utils/platformColors';
+
+const STATUS_LABELS = {
+  EXCELLENT: 'Excellent',
+  HEALTHY: 'Healthy',
+  LOW_MARGIN: 'Low Margin',
+  LOSS: 'Loss',
+  REVIEW: 'Review',
+};
 
 export default function PlatformAnalysis() {
   const { filters } = useContext(FilterContext);
@@ -45,10 +55,10 @@ export default function PlatformAnalysis() {
 
       <div className="grid grid-cols-2 gap-6">
         <ChartCard title="Revenue by Platform">
-          <BarChart data={data} dataKey="revenue" name="Revenue" color="#4a9fbd" />
+          <BarChart data={data} dataKey="revenue" name="Revenue" colorFor={(entry) => getPlatformColor(entry.name)} />
         </ChartCard>
         <ChartCard title="Profit Margin by Platform">
-          <BarChart data={data} dataKey="margin" name="Margin %" color="#10b981" />
+          <BarChart data={data} dataKey="margin" name="Margin %" colorFor={(entry) => getPlatformColor(entry.name)} />
         </ChartCard>
       </div>
 
@@ -72,20 +82,19 @@ export default function PlatformAnalysis() {
             <tbody>
               {data?.map((platform, idx) => (
                 <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-900">{platform.name}</td>
+                  <td className="px-4 py-3 font-medium text-gray-900">
+                    <span className="inline-flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: getPlatformColor(platform.name) }} />
+                      {platform.name}
+                    </span>
+                  </td>
                   <td className="px-4 py-3 text-gray-700">{formatCurrency(platform.revenue)}</td>
                   <td className="px-4 py-3 text-gray-700">{platform.units.toLocaleString()}</td>
                   <td className="px-4 py-3 text-gray-700">{formatCurrency(platform.adSpend)}</td>
                   <td className="px-4 py-3 text-gray-700">{formatROAS(platform.roas)}</td>
                   <td className="px-4 py-3 text-gray-700">{formatPercentage(platform.margin)}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      platform.status === 'HEALTHY' ? 'bg-green-100 text-green-800' :
-                      platform.status === 'LOW_MARGIN' ? 'bg-amber-100 text-amber-800' :
-                      'bg-blue-100 text-blue-800'
-                    }`}>
-                      {platform.status}
-                    </span>
+                    <StatusBadge status={platform.status} label={STATUS_LABELS[platform.status] || platform.status} />
                   </td>
                 </tr>
               ))}

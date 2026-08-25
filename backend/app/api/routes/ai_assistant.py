@@ -2,10 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from pydantic import BaseModel
+import logging
 
-from backend.app.database import get_db
-from backend.app.services.ai_assistant_service import AIAssistantService
+from app.database import get_db
+from app.services.ai_assistant_service import AIAssistantService
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/ai", tags=["AI Assistant"])
 
 
@@ -13,6 +15,7 @@ class AskQuestionRequest(BaseModel):
     """Request to ask the AI assistant a question."""
     question: str
     context: Optional[dict] = None
+    session_id: Optional[str] = None
 
 
 class ExplainMetricRequest(BaseModel):
@@ -53,20 +56,28 @@ async def ask_question(
     Ask the AI assistant a business question.
 
     The assistant will:
-    1. Understand the question intent
+    1. Understand the question intent using Groq AI
     2. Identify required data and metrics
     3. Query the database
     4. Provide insights and recommendations
+    5. Support multi-turn conversations with session_id
     """
     try:
+        if not request.question or not request.question.strip():
+            raise HTTPException(status_code=400, detail="Question cannot be empty")
+
         response = AIAssistantService.answer_question(
             db=db,
             question=request.question,
-            context=request.context
+            context=request.context,
+            session_id=request.session_id
         )
         return response
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Error processing question: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error processing your question: {str(e)}")
 
 
 @router.get("/suggestions", response_model=List[SuggestedQuestion])

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
 from decimal import Decimal
-from backend.app.schemas.product_schemas import (
+from app.schemas.product_schemas import (
     ProductPerformanceResponse,
     ProductMetric,
     TopProductsResponse,
