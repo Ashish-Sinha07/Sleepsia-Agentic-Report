@@ -219,8 +219,8 @@ export default function Dashboard() {
         <ChartCard title="Bottom 3 Products" subtitle="Lowest contribution">
           <BarChart
             data={bottomProducts}
-            dataKey="revenue"
-            name="Revenue"
+            dataKey="contribution"
+            name="Contribution"
             color="#ef4444"
             horizontal={true}
             height={220}
