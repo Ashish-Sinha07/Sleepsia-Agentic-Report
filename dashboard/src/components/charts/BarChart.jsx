@@ -27,6 +27,9 @@ export default function BarChart({ data, dataKey, name, color = '#4a9fbd', color
     : null;
 
   if (horizontal) {
+    // Calculate dynamic height: 50px per item minimum, at least 250px
+    const chartHeight = Math.max(250, (data?.length || 0) * 50);
+
     return (
       <ResponsiveContainer width="100%" height={height}>
         <RechartBarChart
