@@ -113,11 +113,11 @@ const Dashboard = () => {
         <div className="mb-12 group">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-1 h-8 bg-gradient-to-b from-blue-600 to-cyan-600 rounded-full"></div>
-            <h1 className="text-5xl font-black bg-gradient-to-r from-blue-700 via-cyan-600 to-blue-800 bg-clip-text text-transparent group-hover:from-blue-800 group-hover:via-cyan-700 group-hover:to-blue-900 transition-all duration-300">
+            <h1 className="text-3xl font-black bg-gradient-to-r from-blue-700 via-cyan-600 to-blue-800 bg-clip-text text-transparent group-hover:from-blue-800 group-hover:via-cyan-700 group-hover:to-blue-900 transition-all duration-300">
               Executive Dashboard
             </h1>
           </div>
-          <p className="text-gray-600 mt-3 group-hover:text-gray-800 transition-colors text-lg font-medium ml-4">📊 Overview of key business metrics and performance indicators</p>
+          <p className="text-gray-600 mt-3 group-hover:text-gray-800 transition-colors text-sm ml-4">📊 Overview of key business metrics and performance indicators</p>
         </div>
 
         {error && (
@@ -166,7 +166,7 @@ const Dashboard = () => {
               >
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-1 h-6 bg-gradient-to-b from-blue-600 to-cyan-600 rounded-full"></div>
-                  <h2 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-cyan-700 bg-clip-text text-transparent">📈 Daily Sales Trend</h2>
+                  <h2 className="text-lg font-bold bg-gradient-to-r from-blue-700 to-cyan-700 bg-clip-text text-transparent">📈 Daily Sales Trend</h2>
                 </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={dailyKpis}>

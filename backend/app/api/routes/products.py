@@ -4,14 +4,14 @@ from datetime import date
 from typing import Optional
 from pydantic import BaseModel
 
-from backend.app.database import get_db
-from backend.app.services.product_service import ProductService
-from backend.app.schemas.product_schemas import (
+from app.database import get_db
+from app.services.product_service import ProductService
+from app.schemas.product_schemas import (
     ProductPerformanceResponse,
     TopProductsResponse,
     ProductMetric,
 )
-from backend.app.api.dependencies import get_date_range
+from app.api.dependencies import get_date_range
 
 # Import agent service for orchestrated analysis
 try:

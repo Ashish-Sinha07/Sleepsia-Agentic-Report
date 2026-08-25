@@ -1,0 +1,248 @@
+{
+  "report_id": "REP-26D2D753",
+  "title": "Warehouse & Inventory Analysis",
+  "type": "inventory",
+  "period": "2026-07-26 to 2026-08-25",
+  "generated_at": "2026-08-25T11:19:39.036843",
+  "data": {
+    "period": {
+      "start_date": "2026-07-26",
+      "end_date": "2026-08-25"
+    },
+    "generated_at": "2026-08-25T11:19:38.992250",
+    "kpi_summary": {
+      "revenue": 3011233.0,
+      "net_revenue": 2846294.27,
+      "profit": 753116.42,
+      "profit_margin_pct": 26.45954172545905,
+      "orders": 2533,
+      "units_sold": 2667,
+      "roas": 4.526347691137776,
+      "ad_spend": 259795.06
+    },
+    "warehouse_operations": [
+      {
+        "warehouse_id": "WH-BLR",
+        "warehouse": "Bengaluru",
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "opening_stock": 258,
+        "inbound_qty": 50,
+        "outbound_qty": 168,
+        "closing_stock": 140,
+        "reorder_level": 70,
+        "dos": 20.0,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-BLR",
+        "warehouse": "Bengaluru",
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "opening_stock": 320,
+        "inbound_qty": 210,
+        "outbound_qty": 209,
+        "closing_stock": 321,
+        "reorder_level": 80,
+        "dos": 40.1,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-BLR",
+        "warehouse": "Bengaluru",
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "opening_stock": 311,
+        "inbound_qty": 290,
+        "outbound_qty": 146,
+        "closing_stock": 455,
+        "reorder_level": 50,
+        "dos": 91.0,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-NCR",
+        "warehouse": "Delhi NCR",
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "opening_stock": 231,
+        "inbound_qty": 230,
+        "outbound_qty": 190,
+        "closing_stock": 271,
+        "reorder_level": 70,
+        "dos": 38.7,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-NCR",
+        "warehouse": "Delhi NCR",
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "opening_stock": 166,
+        "inbound_qty": 390,
+        "outbound_qty": 185,
+        "closing_stock": 371,
+        "reorder_level": 80,
+        "dos": 46.4,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-NCR",
+        "warehouse": "Delhi NCR",
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "opening_stock": 460,
+        "inbound_qty": 310,
+        "outbound_qty": 121,
+        "closing_stock": 649,
+        "reorder_level": 50,
+        "dos": 129.8,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-HYD",
+        "warehouse": "Hyderabad",
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "opening_stock": 311,
+        "inbound_qty": 170,
+        "outbound_qty": 202,
+        "closing_stock": 279,
+        "reorder_level": 70,
+        "dos": 39.9,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-HYD",
+        "warehouse": "Hyderabad",
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "opening_stock": 261,
+        "inbound_qty": 190,
+        "outbound_qty": 218,
+        "closing_stock": 233,
+        "reorder_level": 80,
+        "dos": 29.1,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-HYD",
+        "warehouse": "Hyderabad",
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "opening_stock": 372,
+        "inbound_qty": 400,
+        "outbound_qty": 155,
+        "closing_stock": 617,
+        "reorder_level": 50,
+        "dos": 123.4,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-JPR",
+        "warehouse": "Jaipur",
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "opening_stock": 285,
+        "inbound_qty": 110,
+        "outbound_qty": 206,
+        "closing_stock": 189,
+        "reorder_level": 70,
+        "dos": 27.0,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-JPR",
+        "warehouse": "Jaipur",
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "opening_stock": 154,
+        "inbound_qty": 110,
+        "outbound_qty": 230,
+        "closing_stock": 34,
+        "reorder_level": 80,
+        "dos": 4.2,
+        "stock_status": "Low Stock"
+      },
+      {
+        "warehouse_id": "WH-JPR",
+        "warehouse": "Jaipur",
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "opening_stock": 522,
+        "inbound_qty": 250,
+        "outbound_qty": 133,
+        "closing_stock": 639,
+        "reorder_level": 50,
+        "dos": 127.8,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-MUM",
+        "warehouse": "Mumbai",
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "opening_stock": 276,
+        "inbound_qty": 250,
+        "outbound_qty": 190,
+        "closing_stock": 336,
+        "reorder_level": 70,
+        "dos": 48.0,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-MUM",
+        "warehouse": "Mumbai",
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "opening_stock": 244,
+        "inbound_qty": 290,
+        "outbound_qty": 214,
+        "closing_stock": 320,
+        "reorder_level": 80,
+        "dos": 40.0,
+        "stock_status": "Healthy"
+      },
+      {
+        "warehouse_id": "WH-MUM",
+        "warehouse": "Mumbai",
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "opening_stock": 364,
+        "inbound_qty": 270,
+        "outbound_qty": 148,
+        "closing_stock": 486,
+        "reorder_level": 50,
+        "dos": 97.2,
+        "stock_status": "Healthy"
+      }
+    ],
+    "inventory_position": [
+      {
+        "sku": "SLP-1001",
+        "product": "Contour Memory Foam Cervical Pillow",
+        "all_units": 914,
+        "gross_sales": 1370086.0,
+        "stock": 1215,
+        "dos": 34.72
+      },
+      {
+        "sku": "SLP-1002",
+        "product": "Travel Neck Memory Foam Pillow",
+        "all_units": 1101,
+        "gross_sales": 989799.0,
+        "stock": 1279,
+        "dos": 31.96
+      },
+      {
+        "sku": "SLP-1003",
+        "product": "Alpha Kids Memory Foam Pillow",
+        "all_units": 652,
+        "gross_sales": 651348.0,
+        "stock": 2846,
+        "dos": 113.84
+      }
+    ]
+  },
+  "recommendations": []
+}

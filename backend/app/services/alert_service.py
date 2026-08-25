@@ -2,7 +2,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
-from backend.app.schemas.alert_schemas import AlertsResponse, Alert
+from app.schemas.alert_schemas import AlertsResponse, Alert
 
 
 class AlertService:
@@ -11,13 +11,31 @@ class AlertService:
     @staticmethod
     def get_alerts(
         db: Session,
-        filter_date: Optional[date] = None,
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
         priority: Optional[str] = None,
         limit: int = 100,
     ) -> AlertsResponse:
-        """Get active alerts from replenishment_alerts table."""
-        if filter_date is None:
-            filter_date = date.today()
+        """Get active alerts from replenishment_alerts table within a date range.
+
+        Alerts are sparse, sporadic events (not a daily snapshot for every
+        SKU), so filtering to a single exact day - as this used to do - misses
+        real alerts that fall on nearby dates within the user's selected
+        range. Matching the range-based filtering used by every other
+        endpoint (KPIs, platforms, products, ...) fixes that.
+        """
+        if start_date is None or end_date is None:
+            try:
+                bounds = db.execute(
+                    text("SELECT MIN(alert_date), MAX(alert_date) FROM replenishment_alerts")
+                ).first()
+                min_date, max_date = (bounds[0], bounds[1]) if bounds else (None, None)
+            except Exception:
+                min_date, max_date = None, None
+            if start_date is None:
+                start_date = min_date or date.today()
+            if end_date is None:
+                end_date = max_date or date.today()
 
         query = """
         SELECT
@@ -33,10 +51,10 @@ class AlertService:
             recommended_action,
             alert_date
         FROM replenishment_alerts
-        WHERE alert_date = :filter_date
+        WHERE alert_date BETWEEN :start_date AND :end_date
         """
 
-        params = {"filter_date": filter_date}
+        params = {"start_date": start_date, "end_date": end_date}
 
         if priority:
             query += " AND priority = :priority"

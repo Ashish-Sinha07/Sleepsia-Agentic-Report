@@ -19,6 +19,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from automation.email_service import ReportEmailService
+from automation.email_templates import generate_daily_report_html
 from backend.app.config import settings
 from backend.app.database import SessionLocal
 from backend.app.services.report_service import ReportService
@@ -82,9 +83,21 @@ class ReportScheduler:
 
             logger.info("\n[2/2] Sending report via email...")
             report_path = Path(ReportService.REPORTS_DIR) / f"{report['report_id']}.json"
-            email_success = self.email_service.send_report(
-                subject=f"Sleepsia Daily Report - {report_date}",
-                body="""
+
+            # Fetch KPI data for email
+            kpi_data = self._fetch_kpi_data(db=SessionLocal(), report_date=report_date)
+
+            # Generate HTML email
+            html_body = generate_daily_report_html(
+                report_id=report['report_id'],
+                report_date=report_date,
+                kpi_data=kpi_data,
+            )
+
+            # Plain text fallback
+            plain_text = f"""
+Sleepsia Daily Report - {report_date}
+
 Dear Recipient,
 
 Please find attached your daily business report for Sleepsia.
@@ -96,11 +109,19 @@ Report includes:
 - Profitability analysis
 - Key recommendations
 
+Report ID: {report['report_id']}
+Date: {report_date}
+
 If you have any questions, please reach out.
 
 Best regards,
 Sleepsia Analytics System
-                """.strip(),
+            """.strip()
+
+            email_success = self.email_service.send_report(
+                subject=f"📊 Sleepsia Daily Report - {report_date}",
+                body=plain_text,
+                html_body=html_body,
                 recipients=[settings.REPORT_RECIPIENT_EMAIL],
                 cc=settings.REPORT_CC_EMAILS.split(",") if settings.REPORT_CC_EMAILS else None,
                 bcc=settings.REPORT_BCC_EMAILS.split(",") if settings.REPORT_BCC_EMAILS else None,
@@ -193,6 +214,34 @@ Sleepsia Analytics System
         if job:
             return job.next_run_time
         return None
+
+    def _fetch_kpi_data(self, db: Session, report_date: date) -> dict:
+        """Fetch KPI data for email preview."""
+        try:
+            query = """
+            SELECT
+                SUM(total_gross_sales) as revenue,
+                SUM(total_orders) as orders,
+                SUM(total_contribution) as profit,
+                AVG(overall_profit_margin_pct) as profit_margin,
+                AVG(overall_roas) as roas
+            FROM vw_daily_kpi_summary
+            WHERE date = :report_date
+            """
+            result = db.execute(text(query), {"report_date": report_date}).fetchone()
+
+            if result:
+                return {
+                    "revenue": float(result[0]) if result[0] else 0,
+                    "orders": int(result[1]) if result[1] else 0,
+                    "profit": float(result[2]) if result[2] else 0,
+                    "profit_margin": float(result[3]) if result[3] else 0,
+                    "roas": float(result[4]) if result[4] else 0,
+                }
+            return {}
+        except Exception as e:
+            logger.warning(f"Failed to fetch KPI data: {str(e)}")
+            return {}
 
 
 # Module-level scheduler instance

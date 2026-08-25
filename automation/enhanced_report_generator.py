@@ -19,6 +19,7 @@ from sqlalchemy import text
 from backend.app.config import settings
 from backend.app.services.report_service import ReportService
 from automation.email_service import ReportEmailService
+from automation.email_templates import generate_comprehensive_report_html
 
 logger = logging.getLogger(__name__)
 
@@ -641,6 +642,7 @@ class EnhancedReportGenerator:
             logger.warning(f"Failed to fetch product data: {str(e)}")
             return []
 
+
     def send_report_via_email(
         self,
         report_id: str,
@@ -677,10 +679,20 @@ class EnhancedReportGenerator:
                 logger.error("No report files found to attach")
                 return False
 
-            # Send via email service
-            success = self.email_service.send_report(
-                subject=f"Sleepsia Business Report - {report_id}",
-                body=f"""
+            # Generate HTML email body
+            report_date = date.today()
+            kpi_data = self._fetch_kpi_data(report_date, report_date)
+            html_body = generate_comprehensive_report_html(
+                report_id=report_id,
+                start_date=report_date,
+                end_date=report_date,
+                kpi_data=kpi_data,
+            )
+
+            # Plain text fallback
+            plain_text = f"""
+Sleepsia Business Report - {report_id}
+
 Dear Recipient,
 
 Please find attached your comprehensive business report for Sleepsia.
@@ -704,7 +716,13 @@ If you have any questions or need additional analysis, please reach out.
 
 Best regards,
 Sleepsia Analytics System
-                """.strip(),
+            """.strip()
+
+            # Send via email service
+            success = self.email_service.send_report(
+                subject=f"📊 Sleepsia Business Report - {report_id}",
+                body=plain_text,
+                html_body=html_body,
                 recipients=recipients,
                 cc=cc,
                 bcc=bcc,

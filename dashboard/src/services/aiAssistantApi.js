@@ -4,14 +4,16 @@ export const aiAssistantApi = {
   /**
    * Ask the AI assistant a business question
    * @param {string} question - The business question
-   * @param {object} context - Optional context data
+   * @param {object} context - Optional context data (date range, platform)
+   * @param {string} sessionId - Optional session ID for conversation context
    * @returns {Promise} Response with answer, confidence, data sources, and recommendations
    */
-  askQuestion: async (question, context = null) => {
+  askQuestion: async (question, context = null, sessionId = null) => {
     try {
       const response = await apiClient.post('/api/ai/ask', {
         question,
         context,
+        session_id: sessionId,
       });
       return response;
     } catch (error) {

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
 from decimal import Decimal
-from backend.app.schemas.warehouse_schemas import WarehouseListResponse, WarehouseInfo
+from app.schemas.warehouse_schemas import WarehouseListResponse, WarehouseInfo
 
 
 class WarehouseService:

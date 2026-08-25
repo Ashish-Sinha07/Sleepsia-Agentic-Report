@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
-from backend.app.database import get_db
-from backend.app.services.warehouse_service import WarehouseService
-from backend.app.schemas.warehouse_schemas import WarehouseListResponse
+from app.database import get_db
+from app.services.warehouse_service import WarehouseService
+from app.schemas.warehouse_schemas import WarehouseListResponse
 
 router = APIRouter(prefix="/warehouses", tags=["Warehouses"])
 

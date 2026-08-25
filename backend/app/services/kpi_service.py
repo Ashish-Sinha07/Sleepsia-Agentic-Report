@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from datetime import date
 from typing import Dict, List, Any, Optional
 from decimal import Decimal
-from backend.app.schemas.kpi_schemas import KpiResponse, DailyKpiResponse, KpiMetrics, DailyKpisResponse
-from backend.app.schemas.common import DateRange
+from app.schemas.kpi_schemas import KpiResponse, DailyKpiResponse, KpiMetrics, DailyKpisResponse
+from app.schemas.common import DateRange
 
 
 class KpiService:

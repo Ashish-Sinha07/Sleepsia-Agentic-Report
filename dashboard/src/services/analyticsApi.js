@@ -40,6 +40,17 @@ const mapFiltersToParams = (filters) => {
   return params;
 };
 
+// Derive a platform's health status from its own financials (margin is the
+// primary signal; a very low ROAS demotes an otherwise-healthy margin, since
+// that means ad spend is inefficient even though the platform is profitable).
+const derivePlatformStatus = (margin, roas) => {
+  if (margin == null) return 'REVIEW';
+  if (margin < 0) return 'LOSS';
+  if (margin < 15 || (roas != null && roas < 3)) return 'LOW_MARGIN';
+  if (margin >= 25) return 'EXCELLENT';
+  return 'HEALTHY';
+};
+
 export const analyticsApi = {
   /**
    * Get aggregate KPIs for selected date range
@@ -51,7 +62,7 @@ export const analyticsApi = {
     }
     const params = mapFiltersToParams(filters);
     const response = await apiClient.get('/api/kpis', { params });
-    const kpi = response.kpis;
+    const kpi = response.metrics || response.kpis || response.data || response;
 
     // Transform backend KpiMetrics to frontend format
     return {
@@ -63,9 +74,9 @@ export const analyticsApi = {
       contributionChange: 0,
       profitMargin: kpi.profit_margin_pct ? Number(kpi.profit_margin_pct) : 0,
       profitMarginChange: 0,
-      unitsSold: kpi.units_sold || 0,
+      unitsSold: kpi.units_sold || kpi.total_units || 0,
       unitsSoldChange: 0,
-      orders: kpi.orders || 0,
+      orders: kpi.orders || kpi.total_orders || 0,
       ordersChange: 0,
       adSpend: kpi.ad_spend ? Number(kpi.ad_spend) : 0,
       adSpendChange: 0,
@@ -82,7 +93,7 @@ export const analyticsApi = {
 
   /**
    * Get daily KPI timeseries for revenue/sales trend chart
-   * Maps to: GET /api/kpis/by-date
+   * Maps to: GET /api/kpis
    */
   getRevenueChart: async (filters) => {
     if (USE_MOCK) {
@@ -90,19 +101,21 @@ export const analyticsApi = {
     }
     const params = mapFiltersToParams(filters);
     const response = await apiClient.get('/api/kpis/by-date', { params });
+    const dailyData = response.daily_data || response.daily_kpis || response.data || [];
+    const dailyArray = Array.isArray(dailyData) ? dailyData : [];
     // Transform DailyKpiResponse[] to chart-ready format
-    return response.data.map((item) => ({
-      date: item.date,
-      revenue: Number(item.total_revenue),
-      contribution: Number(item.total_profit),
-      units: item.units_sold,
-      orders: item.orders,
+    return dailyArray.map((item) => ({
+      date: item.date || item.sale_date,
+      revenue: Number(item.total_revenue || item.net_sales || 0),
+      contribution: Number(item.total_profit || 0),
+      units: item.units_sold || 0,
+      orders: item.orders || 0,
     }));
   },
 
   /**
    * Get platform performance metrics
-   * Maps to: GET /api/platform-performance
+   * Maps to: GET /api/platforms
    */
   getPlatformPerformance: async (filters) => {
     if (USE_MOCK) {
@@ -110,24 +123,30 @@ export const analyticsApi = {
     }
     const params = mapFiltersToParams(filters);
     const response = await apiClient.get('/api/platform-performance', { params });
+    const platforms = response.platforms || (Array.isArray(response) ? response : response.data) || [];
     // Transform backend response to frontend format
-    return response.platforms.map((p) => ({
-      name: p.platform_name,
-      revenue: Number(p.revenue),
-      units: p.units_sold,
-      orders: p.orders,
-      adSpend: Number(p.ad_spend),
-      roas: p.roas ? Number(p.roas) : null,
-      acos: p.acos_pct ? Number(p.acos_pct) : null,
-      margin: p.profit_margin_pct ? Number(p.profit_margin_pct) : null,
-      contribution: Number(p.contribution),
-      returnRate: p.return_rate_pct ? Number(p.return_rate_pct) : null,
-    }));
+    return platforms.map((p) => {
+      const margin = p.profit_margin_pct ? Number(p.profit_margin_pct) : null;
+      const roas = p.roas ? Number(p.roas) : null;
+      return {
+        name: p.platform_name,
+        revenue: Number(p.total_sales || p.revenue || 0),
+        units: p.total_units || p.units_sold || 0,
+        orders: p.total_orders || p.orders || 0,
+        adSpend: Number(p.ad_spend || 0),
+        roas,
+        acos: p.acos_pct ? Number(p.acos_pct) : null,
+        margin,
+        contribution: Number(p.profit || p.contribution || 0),
+        returnRate: p.return_rate_pct ? Number(p.return_rate_pct) : null,
+        status: derivePlatformStatus(margin, roas),
+      };
+    });
   },
 
   /**
    * Get all product performance
-   * Maps to: GET /api/product-performance
+   * Maps to: GET /api/products
    */
   getProductPerformance: async (filters) => {
     if (USE_MOCK) {
@@ -135,19 +154,20 @@ export const analyticsApi = {
     }
     const params = mapFiltersToParams(filters);
     const response = await apiClient.get('/api/product-performance', { params });
+    const products = response.products || (Array.isArray(response) ? response : response.data) || [];
     // Transform backend response to frontend format
-    return response.products.map((p) => ({
+    return products.map((p) => ({
       sku: p.sku,
       name: p.product_name,
       platform: p.platform || p.platform_id,
-      revenue: Number(p.revenue),
-      units: p.units_sold,
-      orders: p.orders,
-      profit: Number(p.contribution),
+      revenue: Number(p.total_sales || p.revenue || 0),
+      units: p.total_units || p.units_sold || 0,
+      orders: p.total_orders || p.orders || 0,
+      profit: Number(p.profit || p.contribution || 0),
       margin: p.profit_margin_pct ? Number(p.profit_margin_pct) : null,
       roas: p.roas ? Number(p.roas) : null,
       acos: p.acos_pct ? Number(p.acos_pct) : null,
-      adSpend: Number(p.ad_spend),
+      adSpend: Number(p.ad_spend || 0),
       returns: 0, // Backend doesn't provide this per product
       cancellations: 0, // Backend doesn't provide this per product
       status: 'HEALTHY', // Derived from margin if needed
@@ -156,7 +176,7 @@ export const analyticsApi = {
 
   /**
    * Get top products by metric
-   * Maps to: GET /api/product-performance/top
+   * Maps to: GET /api/products
    */
   getTopProducts: async (filters, limit = 10, sortBy = 'revenue') => {
     if (USE_MOCK) {
@@ -166,19 +186,19 @@ export const analyticsApi = {
     params.limit = limit;
     params.sort_by = sortBy;
     const response = await apiClient.get('/api/product-performance/top', { params });
-    return response.products.map((p) => ({
+    const products = response.products || (Array.isArray(response) ? response : response.data) || [];
+    return products.slice(0, limit).map((p) => ({
       id: p.sku,
       name: p.product_name,
-      revenue: Number(p.revenue),
-      units: p.units_sold,
-      contribution: Number(p.contribution) || 0,
+      revenue: Number(p.total_sales || p.revenue || 0),
+      units: p.total_units || p.units_sold || 0,
       margin: p.profit_margin_pct ? Number(p.profit_margin_pct) : null,
     }));
   },
 
   /**
    * Get bottom/unprofitable products
-   * Maps to: GET /api/product-performance/bottom
+   * Maps to: GET /api/products
    */
   getBottomProducts: async (filters, limit = 10) => {
     if (USE_MOCK) {
@@ -187,14 +207,18 @@ export const analyticsApi = {
     const params = mapFiltersToParams(filters);
     params.limit = limit;
     const response = await apiClient.get('/api/product-performance/bottom', { params });
-    return response.products.map((p) => ({
-      id: p.sku,
-      name: p.product_name,
-      revenue: Number(p.revenue),
-      units: p.units_sold,
-      contribution: Number(p.contribution) || 0,
-      margin: p.profit_margin_pct ? Number(p.profit_margin_pct) : null,
-    }));
+    const products = response.products || (Array.isArray(response) ? response : response.data) || [];
+    // Sort by margin and get bottom performers
+    return products
+      .sort((a, b) => (a.profit_margin_pct || 0) - (b.profit_margin_pct || 0))
+      .slice(0, limit)
+      .map((p) => ({
+        id: p.sku,
+        name: p.product_name,
+        revenue: Number(p.total_sales || p.revenue || 0),
+        units: p.total_units || p.units_sold || 0,
+        margin: p.profit_margin_pct ? Number(p.profit_margin_pct) : null,
+      }));
   },
 
   /**
@@ -209,10 +233,11 @@ export const analyticsApi = {
     const params = mapFiltersToParams(filters);
     const response = await apiClient.get('/api/alerts', { params });
 
-    const alerts = response.alerts.map((a) => ({
-      id: a.alert_id,
+    const alertData = Array.isArray(response) ? response : response.data || response.alerts || [];
+    const alerts = alertData.map((a) => ({
+      id: a.alert_id || a.id,
       severity: a.severity,
-      type: a.alert_type,
+      type: a.alert_type || a.type,
       entity: a.entity,
       platform: a.platform,
       metric: a.metric,
@@ -222,10 +247,17 @@ export const analyticsApi = {
       createdAt: a.created_at,
     }));
 
+    // Count by severity
+    const severityCounts = {
+      critical: alerts.filter(a => a.severity === 'CRITICAL').length,
+      high: alerts.filter(a => a.severity === 'HIGH').length,
+      medium: alerts.filter(a => a.severity === 'MEDIUM').length,
+    };
+
     // Return array but attach counts as properties for Dashboard compatibility
-    alerts.critical = response.critical_count || 0;
-    alerts.high = response.high_count || 0;
-    alerts.medium = response.medium_count || 0;
+    alerts.critical = severityCounts.critical;
+    alerts.high = severityCounts.high;
+    alerts.medium = severityCounts.medium;
 
     return alerts;
   },
@@ -253,20 +285,25 @@ export const analyticsApi = {
 
     return response.warehouses.map((w) => {
       const coords = cityCoordinates[w.city] || { lat: 22.8, lng: 78.5 }; // India center as fallback
+      const healthySkus = w.healthy_skus || 0;
+      const lowStockSkus = w.low_stock_skus || w.lowStockSkus || 0;
+      const criticalSkus = w.critical_skus || 0;
+      // Backend has no capacity/days-of-cover per warehouse - don't fabricate them.
       return {
         id: w.warehouse_id,
         name: w.warehouse_name,
         city: w.city,
         region: w.region,
+        zone: w.zone,
         lat: w.latitude ? Number(w.latitude) : coords.lat,
         lng: w.longitude ? Number(w.longitude) : coords.lng,
         totalInventory: w.totalInventory || w.total_stock_units || 0,
-        capacity: 5000,
-        skuCount: w.healthy_skus || 0,
-        lowStockSkus: w.low_stock_skus || w.lowStockSkus || 0,
+        totalSkus: healthySkus + lowStockSkus + criticalSkus,
+        healthySkus,
+        lowStockSkus,
+        criticalSkus,
         stockoutSkus: w.stockout_skus || w.stockoutSkus || 0,
-        daysOfCover: 30,
-        status: w.warehouse_health || w.health_status || 'HEALTHY',
+        status: w.warehouse_health || w.health_status || 'Healthy',
       };
     });
   },

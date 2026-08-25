@@ -1,0 +1,251 @@
+{
+  "report_id": "REP-0C8D3306",
+  "title": "Detailed Profitability Analysis",
+  "type": "profitability",
+  "period": "2026-07-25 to 2026-08-21",
+  "generated_at": "2026-08-24T16:44:00.904163",
+  "data": {
+    "period": {
+      "start_date": "2026-07-25",
+      "end_date": "2026-08-21"
+    },
+    "generated_at": "2026-08-24T16:44:00.879655",
+    "kpi_summary": {
+      "revenue": 3122333.0,
+      "net_revenue": 2952310.52,
+      "profit": 783216.43,
+      "profit_margin_pct": 26.528931313092365,
+      "orders": 2628,
+      "units_sold": 2767,
+      "roas": 4.517676727759005,
+      "ad_spend": 270126.07
+    },
+    "pnl": {
+      "line_items": [
+        {
+          "label": "Total Gross Sales Turnover (GMV)",
+          "amount": 3122333.0,
+          "pct_of_revenue": 100.0,
+          "note": "Total invoiced sales value across all active channels before deductions."
+        },
+        {
+          "label": "Less: Returns & Customer Refunds",
+          "amount": -122710.45,
+          "pct_of_revenue": -3.930088494724938,
+          "note": "Value of units returned and refunded to customers."
+        },
+        {
+          "label": "Net Realized Sales Turnover",
+          "amount": 2829600.07,
+          "pct_of_revenue": 90.62454485155811,
+          "note": "Net sales after discounts (net sales) and customer refunds."
+        },
+        {
+          "label": "Less: COGS",
+          "amount": -1090120.0,
+          "pct_of_revenue": -34.91363669410021,
+          "note": "Direct product cost of goods sold."
+        },
+        {
+          "label": "Less: Total Marketing & Ad Spend",
+          "amount": -270126.07,
+          "pct_of_revenue": -8.651417705926946,
+          "note": "Total advertising spend across all platforms."
+        },
+        {
+          "label": "Less: Marketplace Commission & Logistics",
+          "amount": -686137.57,
+          "pct_of_revenue": -21.975156717749194,
+          "note": "Platform fees, shipping, and payment-processing costs."
+        },
+        {
+          "label": "GRAND NET OPERATING PROFIT (EBITDA)",
+          "amount": 783216.43,
+          "pct_of_revenue": 25.08433373378176,
+          "note": "Operating profit before interest, tax, depreciation and amortization."
+        }
+      ],
+      "gmv": 3122333.0,
+      "ebitda": 783216.43,
+      "ebitda_margin_pct": 25.08433373378176
+    },
+    "profitability_data": {
+      "daily_trends": [
+        {
+          "date": "2026-07-25",
+          "revenue": 111100.0,
+          "profit": 30100.01,
+          "margin": 28.3919
+        },
+        {
+          "date": "2026-07-26",
+          "revenue": 99712.0,
+          "profit": 25826.84,
+          "margin": 27.4206
+        },
+        {
+          "date": "2026-07-27",
+          "revenue": 123289.0,
+          "profit": 34368.0,
+          "margin": 29.2172
+        },
+        {
+          "date": "2026-07-28",
+          "revenue": 113900.0,
+          "profit": 28594.89,
+          "margin": 26.5082
+        },
+        {
+          "date": "2026-07-29",
+          "revenue": 99410.0,
+          "profit": 21371.65,
+          "margin": 22.7166
+        },
+        {
+          "date": "2026-07-30",
+          "revenue": 109207.0,
+          "profit": 28847.2,
+          "margin": 27.837
+        },
+        {
+          "date": "2026-07-31",
+          "revenue": 97013.0,
+          "profit": 23645.49,
+          "margin": 25.7465
+        },
+        {
+          "date": "2026-08-01",
+          "revenue": 89921.0,
+          "profit": 22771.61,
+          "margin": 26.5396
+        },
+        {
+          "date": "2026-08-02",
+          "revenue": 111305.0,
+          "profit": 27196.82,
+          "margin": 26.0535
+        },
+        {
+          "date": "2026-08-03",
+          "revenue": 123192.0,
+          "profit": 27838.51,
+          "margin": 23.9177
+        },
+        {
+          "date": "2026-08-04",
+          "revenue": 100213.0,
+          "profit": 23679.81,
+          "margin": 24.9256
+        },
+        {
+          "date": "2026-08-05",
+          "revenue": 126691.0,
+          "profit": 31191.44,
+          "margin": 26.1001
+        },
+        {
+          "date": "2026-08-06",
+          "revenue": 110504.0,
+          "profit": 26599.23,
+          "margin": 25.7257
+        },
+        {
+          "date": "2026-08-07",
+          "revenue": 108605.0,
+          "profit": 24393.99,
+          "margin": 23.799
+        },
+        {
+          "date": "2026-08-08",
+          "revenue": 132383.0,
+          "profit": 32934.71,
+          "margin": 26.535
+        },
+        {
+          "date": "2026-08-09",
+          "revenue": 119799.0,
+          "profit": 31617.23,
+          "margin": 28.3717
+        },
+        {
+          "date": "2026-08-10",
+          "revenue": 118493.0,
+          "profit": 32338.51,
+          "margin": 28.5649
+        },
+        {
+          "date": "2026-08-11",
+          "revenue": 102111.0,
+          "profit": 23130.72,
+          "margin": 23.9871
+        },
+        {
+          "date": "2026-08-12",
+          "revenue": 136579.0,
+          "profit": 39433.74,
+          "margin": 30.4449
+        },
+        {
+          "date": "2026-08-13",
+          "revenue": 106404.0,
+          "profit": 23503.45,
+          "margin": 23.3953
+        },
+        {
+          "date": "2026-08-14",
+          "revenue": 114197.0,
+          "profit": 27216.51,
+          "margin": 24.9792
+        },
+        {
+          "date": "2026-08-15",
+          "revenue": 97212.0,
+          "profit": 26343.61,
+          "margin": 28.951
+        },
+        {
+          "date": "2026-08-16",
+          "revenue": 115298.0,
+          "profit": 29739.15,
+          "margin": 27.1227
+        },
+        {
+          "date": "2026-08-17",
+          "revenue": 121488.0,
+          "profit": 29359.48,
+          "margin": 25.6885
+        },
+        {
+          "date": "2026-08-18",
+          "revenue": 97012.0,
+          "profit": 26120.48,
+          "margin": 28.1993
+        },
+        {
+          "date": "2026-08-19",
+          "revenue": 105105.0,
+          "profit": 24738.14,
+          "margin": 24.91
+        },
+        {
+          "date": "2026-08-20",
+          "revenue": 118693.0,
+          "profit": 32221.44,
+          "margin": 28.4992
+        },
+        {
+          "date": "2026-08-21",
+          "revenue": 113497.0,
+          "profit": 28093.77,
+          "margin": 26.5039
+        }
+      ],
+      "summary": {
+        "avg_margin": 26.466139285714288,
+        "total_profit": 783216.43,
+        "total_revenue": 3122333.0
+      }
+    }
+  },
+  "recommendations": []
+}

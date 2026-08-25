@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useContext } from 'react';
-import FilterBar from '../components/filters/FilterBar';
-import { Send, AlertCircle, Loader } from 'lucide-react';
+import { Send, AlertCircle, Loader, Trash2, Copy } from 'lucide-react';
 import { aiAssistantApi } from '../services/aiAssistantApi';
 import { FilterContext } from '../context/FilterContext';
 
@@ -11,7 +10,10 @@ export default function AIAssistant() {
   const [suggestedQuestions, setSuggestedQuestions] = useState([]);
   const [suggestionsLoading, setSuggestionsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const [copiedIndex, setCopiedIndex] = useState(null);
   const abortControllerRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
   // Get filters from context
   const { filters } = useContext(FilterContext);
@@ -28,10 +30,14 @@ export default function AIAssistant() {
     'Summarize business performance.',
   ];
 
-  // Load suggested questions on mount
+  // Load suggested questions on mount and scroll to bottom on new messages
   useEffect(() => {
     loadSuggestions();
   }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, loading]);
 
   const loadSuggestions = async () => {
     setSuggestionsLoading(true);
@@ -81,7 +87,7 @@ export default function AIAssistant() {
         platform: filters.platform !== 'all' ? filters.platform : null,
       } : null;
 
-      const response = await aiAssistantApi.askQuestion(question, context);
+      const response = await aiAssistantApi.askQuestion(question, context, sessionId);
 
       // Handle different response formats
       const answerText = response?.answer || response?.data?.answer || 'Unable to generate response';
@@ -154,6 +160,20 @@ export default function AIAssistant() {
     }
   };
 
+  const handleCopy = (text, index) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  };
+
+  const handleClearChat = () => {
+    if (window.confirm('Clear all messages? This cannot be undone.')) {
+      setMessages([]);
+      setError(null);
+      setInput('');
+    }
+  };
+
   // Cleanup abort controller on unmount
   useEffect(() => {
     return () => {
@@ -165,12 +185,22 @@ export default function AIAssistant() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">AI Business Assistant</h1>
-        <p className="text-gray-600 mt-1">Ask questions about your business performance. Real-time data from your analytics backend.</p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">AI Business Assistant</h1>
+          <p className="text-gray-600 mt-1">Ask questions about your business performance. Powered by Groq AI for intelligent analysis.</p>
+        </div>
+        {messages.length > 0 && (
+          <button
+            onClick={handleClearChat}
+            className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg border border-red-200 transition-colors"
+            title="Clear conversation"
+          >
+            <Trash2 className="w-4 h-4" />
+            Clear Chat
+          </button>
+        )}
       </div>
-
-      <FilterBar />
 
       {error && (
         <div className="flex gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -230,7 +260,7 @@ export default function AIAssistant() {
             messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} group`}
               >
                 <div
                   className={`max-w-2xl px-4 py-3 rounded-lg ${
@@ -241,22 +271,35 @@ export default function AIAssistant() {
                         : 'bg-gray-100 text-gray-900'
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                  <div className="flex flex-col gap-1 mt-2">
-                    {msg.confidence > 0 && msg.role === 'assistant' && !msg.isError && (
-                      <p className="text-xs opacity-70">
-                        Confidence: {(msg.confidence * 100).toFixed(0)}%
-                      </p>
-                    )}
-                    {msg.sources && msg.sources.length > 0 && msg.role === 'assistant' && (
-                      <p className="text-xs opacity-70">
-                        Sources: {msg.sources.join(', ')}
-                      </p>
-                    )}
-                    {msg.timestamp && (
-                      <p className="text-xs opacity-50">
-                        {msg.timestamp}
-                      </p>
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="flex-1">
+                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                      <div className="flex flex-col gap-1 mt-2">
+                        {msg.confidence > 0 && msg.role === 'assistant' && !msg.isError && (
+                          <p className="text-xs opacity-70">
+                            Confidence: {(msg.confidence * 100).toFixed(0)}%
+                          </p>
+                        )}
+                        {msg.sources && msg.sources.length > 0 && msg.role === 'assistant' && (
+                          <p className="text-xs opacity-70">
+                            Sources: {msg.sources.join(', ')}
+                          </p>
+                        )}
+                        {msg.timestamp && (
+                          <p className="text-xs opacity-50">
+                            {msg.timestamp}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    {msg.role === 'assistant' && (
+                      <button
+                        onClick={() => handleCopy(msg.content, idx)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-white/20 rounded"
+                        title="Copy message"
+                      >
+                        <Copy className="w-3 h-3" />
+                      </button>
                     )}
                   </div>
                 </div>
@@ -272,6 +315,7 @@ export default function AIAssistant() {
               </div>
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
 
         <div className="border-t border-gray-200 p-4">

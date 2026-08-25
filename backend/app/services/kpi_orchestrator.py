@@ -8,9 +8,9 @@ from decimal import Decimal
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from backend.app.services.kpi_service import KpiService
-from backend.app.schemas.kpi_schemas import KpiResponse, DailyKpisResponse, KpiMetrics
-from backend.app.schemas.common import DateRange
+from app.services.kpi_service import KpiService
+from app.schemas.kpi_schemas import KpiResponse, DailyKpisResponse, KpiMetrics
+from app.schemas.common import DateRange
 from analytics.business_rules import BusinessRules
 from analytics.metrics_engine import MetricsEngine
 from analytics.insight_engine import InsightEngine
@@ -98,7 +98,7 @@ class KpiOrchestrator:
                 "start_date": start_date.isoformat(),
                 "end_date": end_date.isoformat(),
             },
-            "kpis": kpi_response.kpis.model_dump(use_enum_values=True),
+            "kpis": kpi_response.kpis.model_dump(),
             "metrics_analysis": metrics_analysis,
             "validation": {
                 "passed": validation_passed,

@@ -72,9 +72,9 @@ class Settings(BaseSettings):
     AUTOMATION_TIMEZONE: str = os.getenv("AUTOMATION_TIMEZONE", "Asia/Kolkata")
     SEND_REPORT_EMAIL: bool = os.getenv("SEND_REPORT_EMAIL", "false").lower() == "true"
 
-    # Groq API
-    GROQ_API_KEY: str = ""
-    GROQ_MODEL: str = "openai/gpt-oss-120b"
+    # Groq API for AI Business Assistant
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "mixtral-8x7b-32768")
 
     @property
     def DATABASE_URL(self) -> str:

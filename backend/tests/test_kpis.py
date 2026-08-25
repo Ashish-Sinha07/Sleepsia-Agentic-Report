@@ -21,9 +21,9 @@ def test_get_kpis_by_date(client, sample_date_range):
     assert response.status_code == 200
     data = response.json()
     assert "period" in data
-    assert "data" in data
-    assert "total" in data
-    assert isinstance(data["data"], list)
+    assert "daily_data" in data
+    assert "total_days" in data
+    assert isinstance(data["daily_data"], list)
 
 
 def test_get_kpis_invalid_date_range(client):

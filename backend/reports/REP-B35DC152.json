@@ -1,0 +1,59 @@
+{
+  "report_id": "REP-B35DC152",
+  "title": "Warehouse & Inventory Analysis",
+  "type": "inventory",
+  "period": "2026-07-25 to 2026-08-24",
+  "generated_at": "2026-08-24T14:53:13.444431",
+  "data": {
+    "period": {
+      "start_date": "2026-07-25",
+      "end_date": "2026-08-24"
+    },
+    "generated_at": "2026-08-24T14:53:13.430752",
+    "kpi_summary": {
+      "revenue": 3122333.0,
+      "net_revenue": 2952310.52,
+      "profit": 783216.43,
+      "profit_margin_pct": 26.46613929,
+      "orders": 2628,
+      "units_sold": 2767,
+      "roas": 4.53276786,
+      "ad_spend": 270126.07
+    },
+    "inventory_data": {
+      "warehouses": [
+        {
+          "warehouse": "Bengaluru",
+          "sku_count": 186,
+          "total_stock": 46432
+        },
+        {
+          "warehouse": "Jaipur",
+          "sku_count": 186,
+          "total_stock": 49699
+        },
+        {
+          "warehouse": "Hyderabad",
+          "sku_count": 186,
+          "total_stock": 52968
+        },
+        {
+          "warehouse": "Gurugram",
+          "sku_count": 186,
+          "total_stock": 53263
+        },
+        {
+          "warehouse": "Mumbai",
+          "sku_count": 186,
+          "total_stock": 53584
+        }
+      ],
+      "summary": {
+        "total_warehouses": 5,
+        "total_skus": 930,
+        "total_inventory": 255946
+      }
+    }
+  },
+  "recommendations": []
+}

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
 from decimal import Decimal
-from backend.app.schemas.platform_schemas import (
+from app.schemas.platform_schemas import (
     PlatformPerformanceResponse,
     PlatformMetric,
     PlatformProfitabilityResponse,
@@ -11,7 +11,7 @@ from backend.app.schemas.platform_schemas import (
     PlatformAdvertisingResponse,
     PlatformAdvertising,
 )
-from backend.app.schemas.common import DateRange
+from app.schemas.common import DateRange
 
 
 class PlatformService:

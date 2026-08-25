@@ -34,9 +34,16 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 # Start backend in background
+# NOTE: backend/app/main.py uses absolute imports (e.g. "from app.config import ..."),
+# so uvicorn must be launched with cwd=backend and module path "app.main:app" -
+# running "backend.app.main:app" from the project root raises
+# "ModuleNotFoundError: No module named 'app'". Some services (e.g.
+# app/services/kpi_orchestrator.py) also import the top-level "analytics"
+# package from the project root, so PYTHONPATH must include the project root
+# too, even though uvicorn itself runs with cwd=backend.
 echo ""
 echo "Starting Backend (FastAPI) on http://localhost:8000..."
-python -m uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000 &
+(cd backend && PYTHONPATH="$(pwd)/.." python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000) &
 BACKEND_PID=$!
 
 # Start the daily report scheduler. Email remains disabled unless explicitly enabled in .env.

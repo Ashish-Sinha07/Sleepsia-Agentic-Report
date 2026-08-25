@@ -2,14 +2,14 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional
-from backend.app.database import get_db
-from backend.app.services.platform_service import PlatformService
-from backend.app.schemas.platform_schemas import (
+from app.database import get_db
+from app.services.platform_service import PlatformService
+from app.schemas.platform_schemas import (
     PlatformPerformanceResponse,
     PlatformProfitabilityResponse,
     PlatformAdvertisingResponse,
 )
-from backend.app.api.dependencies import get_date_range
+from app.api.dependencies import get_date_range
 
 router = APIRouter(prefix="/platform-performance", tags=["Platforms"])
 

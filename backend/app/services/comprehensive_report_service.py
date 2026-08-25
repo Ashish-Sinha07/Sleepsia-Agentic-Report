@@ -16,7 +16,7 @@ from pathlib import Path
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from backend.app.config import settings
+from app.config import settings
 from analytics.business_rules import BusinessRules
 from analytics.insight_engine import InsightEngine
 from analytics.recommendation_engine import RecommendationEngine

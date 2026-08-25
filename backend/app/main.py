@@ -3,10 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from datetime import datetime
 import logging
+import sys
+from pathlib import Path
 from sqlalchemy import text
 from app.config import settings
 from app.api.errors import SleepsiaException
-from app.api.routes import kpis, platforms, products, warehouses, inventory, alerts, advertising
+
+# Add parent directory to Python path for analytics module
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+from app.api.routes import kpis, platforms, products, warehouses, inventory, alerts, advertising, ai_assistant, reports
 
 # Configure logging
 logging.basicConfig(
@@ -19,7 +25,7 @@ logger = logging.getLogger(__name__)
 def create_app() -> FastAPI:
     """Create and configure FastAPI application."""
     # Initialize database
-    from backend.app.database import init_db
+    from app.database import init_db
     init_db()
 
     app = FastAPI(
@@ -77,7 +83,7 @@ def create_app() -> FastAPI:
     async def readiness_check(request: Request):
         """Readiness check endpoint - verify database connectivity."""
         try:
-            from backend.app.database import SessionLocal
+            from app.database import SessionLocal
 
             db = SessionLocal()
             # Simple query to verify database connection
@@ -106,6 +112,8 @@ def create_app() -> FastAPI:
     app.include_router(inventory.router, prefix="/api")
     app.include_router(alerts.router, prefix="/api")
     app.include_router(advertising.router, prefix="/api")
+    app.include_router(ai_assistant.router, prefix="/api")
+    app.include_router(reports.router, prefix="/api")
 
     logger.info(f"FastAPI app created with {len(app.routes)} routes")
     return app
