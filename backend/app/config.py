@@ -76,6 +76,44 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
     GROQ_MODEL: str = os.getenv("GROQ_MODEL", "mixtral-8x7b-32768")
 
+    # --- Hybrid SQL + RAG AI Assistant ---
+
+    # SQL execution guardrails
+    SQL_MAX_ROWS: int = int(os.getenv("SQL_MAX_ROWS", "200"))
+    SQL_TIMEOUT_MS: int = int(os.getenv("SQL_TIMEOUT_MS", "5000"))
+
+    # RAG vector store (ChromaDB, local/embedded persistence).
+    # Stored as given, but resolved to an absolute path below - the app is
+    # launched with different working directories depending on how it's
+    # started (uvicorn from backend/, scripts from the project root), so a
+    # relative path here must not silently point at two different
+    # directories depending on cwd.
+    VECTOR_STORE_PATH: str = os.getenv("VECTOR_STORE_PATH", "backend/data/chroma_store")
+    RAG_COLLECTION_NAME: str = os.getenv("RAG_COLLECTION_NAME", "sleepsia_knowledge")
+
+    @property
+    def VECTOR_STORE_PATH_ABS(self) -> str:
+        """VECTOR_STORE_PATH resolved to an absolute path, anchored to the project root."""
+        path = Path(self.VECTOR_STORE_PATH)
+        if not path.is_absolute():
+            project_root = Path(__file__).resolve().parents[2]
+            path = project_root / path
+        return str(path)
+
+    # Embeddings - local, no external API call, no business data leaves the server
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "chromadb-default-onnx-minilm-l6-v2")
+
+    # Retrieval tuning
+    RAG_TOP_K: int = int(os.getenv("RAG_TOP_K", "5"))
+    RAG_MIN_SIMILARITY: float = float(os.getenv("RAG_MIN_SIMILARITY", "0.2"))
+    RAG_MAX_CONTEXT_TOKENS: int = int(os.getenv("RAG_MAX_CONTEXT_TOKENS", "1500"))
+
+    # Knowledge base admin endpoints (upload/delete/reindex) - shared-secret header,
+    # since this project has no authentication system to hang a real permission
+    # check off. Empty by default => admin endpoints refuse all requests until set.
+    KNOWLEDGE_ADMIN_API_KEY: str = os.getenv("KNOWLEDGE_ADMIN_API_KEY", "")
+    KNOWLEDGE_MAX_UPLOAD_MB: int = int(os.getenv("KNOWLEDGE_MAX_UPLOAD_MB", "10"))
+
     @property
     def DATABASE_URL(self) -> str:
         """Build SQLAlchemy database URL."""

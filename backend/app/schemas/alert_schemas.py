@@ -9,11 +9,18 @@ class Alert(BaseModel):
     alert_id: str
     severity: str  # CRITICAL, HIGH, MEDIUM, LOW
     alert_type: str
-    entity: str
-    platform: Optional[str] = None
+    entity: str  # SKU
+    product_name: Optional[str] = None
+    warehouse: Optional[str] = None
+    region: Optional[str] = None
     metric: str
-    current_value: str
-    threshold: str
+    current_value: int
+    threshold: int
+    gap: int
+    avg_daily_demand: int
+    days_of_cover: float
+    recommended_reorder_qty: int = 0
+    stock_status: Optional[str] = None
     recommendation: str
     created_at: date
 
@@ -22,12 +29,19 @@ class Alert(BaseModel):
             "example": {
                 "alert_id": "ALR-001",
                 "severity": "CRITICAL",
-                "alert_type": "Stockout",
+                "alert_type": "Replenishment",
                 "entity": "SLP-1001",
-                "platform": "Gurgaon",
+                "warehouse": "WAR-001",
+                "region": "Mumbai",
                 "metric": "Stock",
-                "current_value": "0",
-                "recommendation": "Replenish immediately",
+                "current_value": 9,
+                "threshold": 20,
+                "gap": -11,
+                "avg_daily_demand": 5,
+                "days_of_cover": 1.8,
+                "stock_status": "Low Stock",
+                "recommendation": "Create replenishment order immediately",
+                "created_at": "2024-08-21"
             }
         }
 

@@ -1,16 +1,21 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { FilterContext } from '../context/FilterContext';
 import { analyticsApi } from '../services/analyticsApi';
 import FilterBar from '../components/filters/FilterBar';
 import LoadingState from '../components/common/LoadingState';
 import ErrorState from '../components/common/ErrorState';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, ArrowDown } from 'lucide-react';
 
 export default function Alerts() {
   const { filters } = useContext(FilterContext);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeSection, setActiveSection] = useState(null);
+
+  const criticalRef = useRef(null);
+  const highRef = useRef(null);
+  const mediumRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,12 +34,31 @@ export default function Alerts() {
     fetchData();
   }, [filters]);
 
+  const scrollToSection = (ref, sectionName) => {
+    setActiveSection(sectionName);
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   if (loading) return <LoadingState />;
   if (error) return <ErrorState message={error} />;
 
   const criticalAlerts = data?.filter(a => a.severity === 'CRITICAL') || [];
   const highAlerts = data?.filter(a => a.severity === 'HIGH') || [];
   const mediumAlerts = data?.filter(a => a.severity === 'MEDIUM') || [];
+
+  // Every alert already carries its own gap/days-of-cover/reorder-qty from the
+  // DB (they genuinely differ row to row) - build the recommendation from
+  // those instead of just echoing the source sheet's one static action string.
+  const buildRecommendation = (alert) => {
+    const qty = alert.recommended_reorder_qty;
+    const dos = alert.days_of_cover;
+    const urgency = alert.severity === 'CRITICAL' ? 'Urgent — ' : alert.severity === 'HIGH' ? 'High priority — ' : '';
+    const qtyPart = qty ? `Reorder ${qty} units` : (alert.recommendation || 'Create replenishment order');
+    const dosPart = dos != null && dos > 0 ? ` (~${dos.toFixed(1)}d cover left)` : '';
+    return `${urgency}${qtyPart}${dosPart}`;
+  };
 
   const AlertRow = ({ alert, index }) => (
     <tr className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50 transition-all duration-300 transform hover:scale-102 hover:shadow-md group relative overflow-hidden"
@@ -55,19 +79,50 @@ export default function Alerts() {
         </div>
       </td>
       <td className="px-4 py-3 text-sm font-semibold text-gray-900 group-hover:text-gray-800 transition-colors">{alert.type}</td>
-      <td className="px-4 py-3 text-sm text-gray-700 group-hover:text-gray-800 transition-colors">{alert.entity}</td>
+      <td className="px-4 py-3">
+        <div className="space-y-1">
+          <p className="text-sm font-bold text-gray-900">{alert.product_name || 'Unknown'}</p>
+          <p className="text-xs text-gray-600">{alert.entity}</p>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <div className="space-y-1">
+          <p className="text-sm font-semibold text-gray-900">{alert.warehouse || 'N/A'}</p>
+          {alert.region && <p className="text-xs text-gray-600">{alert.region}</p>}
+        </div>
+      </td>
       <td className="px-4 py-3 text-sm text-gray-700 group-hover:text-gray-800 transition-colors">{alert.metric}</td>
-      <td className="px-4 py-3 text-sm font-bold text-gray-900 group-hover:text-gray-800 transition-colors">{alert.currentValue}</td>
-      <td className="px-4 py-3 text-sm text-gray-600 group-hover:text-gray-700 transition-colors italic">{alert.recommendation}</td>
-      <td className="px-4 py-3 text-xs text-gray-500 group-hover:text-gray-600 transition-colors font-medium">{alert.createdAt}</td>
+      <td className="px-4 py-3">
+        <div className="space-y-1">
+          <p className="text-sm font-bold text-gray-900">{alert.current_value} units</p>
+          <p className="text-xs text-red-600 font-semibold">
+            {Math.abs(alert.gap ?? (alert.threshold - alert.current_value))} below threshold ({alert.threshold})
+          </p>
+          {alert.days_of_cover != null && (
+            <p className="text-xs text-gray-500">{alert.days_of_cover.toFixed(1)}d cover left</p>
+          )}
+        </div>
+      </td>
+      <td className="px-4 py-3 text-sm text-gray-600 group-hover:text-gray-700 transition-colors italic">{buildRecommendation(alert)}</td>
+      <td className="px-4 py-3 text-xs text-gray-500 group-hover:text-gray-600 transition-colors font-medium">{alert.created_at}</td>
     </tr>
   );
 
-  const AlertSection = ({ title, alerts, color }) => (
-    <div className={`card-enhanced border-l-4 ${color === 'red' ? 'border-l-red-600' : color === 'amber' ? 'border-l-amber-600' : 'border-l-blue-600'} group animate-fade-in-up`}>
-      <div className={`card-header bg-gradient-to-r ${color === 'red' ? 'from-red-50 to-orange-50' : color === 'amber' ? 'from-amber-50 to-yellow-50' : 'from-blue-50 to-cyan-50'} border-b-2 border-gray-200`}>
-        <h3 className={`font-bold text-lg bg-gradient-to-r ${color === 'red' ? 'from-red-700 to-red-900' : color === 'amber' ? 'from-amber-700 to-amber-900' : 'from-blue-700 to-blue-900'} bg-clip-text text-transparent`}>
+  const AlertSection = ({ title, alerts, color, sectionRef, onClick, isActive }) => (
+    <div
+      ref={sectionRef}
+      className={`card-enhanced border-l-4 ${color === 'red' ? 'border-l-red-600' : color === 'amber' ? 'border-l-amber-600' : 'border-l-blue-600'} group animate-fade-in-up transition-all duration-300 ${isActive ? 'shadow-lg shadow-blue-300/50 scale-102' : ''}`}
+    >
+      <div
+        onClick={onClick}
+        className={`card-header bg-gradient-to-r ${color === 'red' ? 'from-red-50 to-orange-50' : color === 'amber' ? 'from-amber-50 to-yellow-50' : 'from-blue-50 to-cyan-50'} border-b-2 border-gray-200 cursor-pointer transition-all duration-300 hover:shadow-md hover:scale-105 transform origin-left`}
+        style={{ transformOrigin: 'left center' }}
+      >
+        <h3 className={`font-bold text-lg bg-gradient-to-r ${color === 'red' ? 'from-red-700 to-red-900' : color === 'amber' ? 'from-amber-700 to-amber-900' : 'from-blue-700 to-blue-900'} bg-clip-text text-transparent group-hover:from-opacity-100 transition-all duration-300`}>
           {title} ({alerts.length})
+          <span className="ml-2 inline-block text-gray-400 group-hover:text-gray-600 transition-colors text-sm">
+            ↓ Click to focus
+          </span>
         </h3>
       </div>
       <div className="card-body overflow-x-auto">
@@ -76,11 +131,12 @@ export default function Alerts() {
             <tr className="border-b-2 border-gray-300 bg-gray-50">
               <th className="px-4 py-3 text-left font-bold text-gray-900">Severity</th>
               <th className="px-4 py-3 text-left font-bold text-gray-900">Type</th>
-              <th className="px-4 py-3 text-left font-bold text-gray-900">Entity</th>
+              <th className="px-4 py-3 text-left font-bold text-gray-900">Product</th>
+              <th className="px-4 py-3 text-left font-bold text-gray-900">Warehouse</th>
               <th className="px-4 py-3 text-left font-bold text-gray-900">Metric</th>
-              <th className="px-4 py-3 text-left font-bold text-gray-900">Current</th>
+              <th className="px-4 py-3 text-left font-bold text-gray-900">Stock Level</th>
               <th className="px-4 py-3 text-left font-bold text-gray-900">Recommendation</th>
-              <th className="px-4 py-3 text-left font-bold text-gray-900">Time</th>
+              <th className="px-4 py-3 text-left font-bold text-gray-900">Date</th>
             </tr>
           </thead>
           <tbody>
@@ -112,11 +168,79 @@ export default function Alerts() {
           <p className="text-sm text-gray-700 font-medium ml-4">⚡ Action center for critical business issues and opportunities</p>
         </div>
 
+        {/* Quick Navigation */}
+        <div className="mb-6 flex flex-wrap gap-3 items-center">
+          <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Jump to:</span>
+          {criticalAlerts.length > 0 && (
+            <button
+              onClick={() => scrollToSection(criticalRef, 'critical')}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-110 ${
+                activeSection === 'critical'
+                  ? 'bg-red-600 text-white shadow-lg shadow-red-300/50 scale-110'
+                  : 'bg-red-100 text-red-700 hover:bg-red-200 hover:shadow-md'
+              }`}
+            >
+              🚨 Critical ({criticalAlerts.length})
+            </button>
+          )}
+          {highAlerts.length > 0 && (
+            <button
+              onClick={() => scrollToSection(highRef, 'high')}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-110 ${
+                activeSection === 'high'
+                  ? 'bg-amber-600 text-white shadow-lg shadow-amber-300/50 scale-110'
+                  : 'bg-amber-100 text-amber-700 hover:bg-amber-200 hover:shadow-md'
+              }`}
+            >
+              ⚠️ High Priority ({highAlerts.length})
+            </button>
+          )}
+          {mediumAlerts.length > 0 && (
+            <button
+              onClick={() => scrollToSection(mediumRef, 'medium')}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-110 ${
+                activeSection === 'medium'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-300/50 scale-110'
+                  : 'bg-blue-100 text-blue-700 hover:bg-blue-200 hover:shadow-md'
+              }`}
+            >
+              ℹ️ Warnings ({mediumAlerts.length})
+            </button>
+          )}
+        </div>
+
         <FilterBar />
 
-        {criticalAlerts.length > 0 && <AlertSection title="🚨 Critical Alerts" alerts={criticalAlerts} color="red" />}
-        {highAlerts.length > 0 && <AlertSection title="⚠️ High Priority" alerts={highAlerts} color="amber" />}
-        {mediumAlerts.length > 0 && <AlertSection title="ℹ️ Warnings" alerts={mediumAlerts} color="blue" />}
+        {criticalAlerts.length > 0 && (
+          <AlertSection
+            title="🚨 Critical Alerts"
+            alerts={criticalAlerts}
+            color="red"
+            sectionRef={criticalRef}
+            onClick={() => scrollToSection(criticalRef, 'critical')}
+            isActive={activeSection === 'critical'}
+          />
+        )}
+        {highAlerts.length > 0 && (
+          <AlertSection
+            title="⚠️ High Priority"
+            alerts={highAlerts}
+            color="amber"
+            sectionRef={highRef}
+            onClick={() => scrollToSection(highRef, 'high')}
+            isActive={activeSection === 'high'}
+          />
+        )}
+        {mediumAlerts.length > 0 && (
+          <AlertSection
+            title="ℹ️ Warnings"
+            alerts={mediumAlerts}
+            color="blue"
+            sectionRef={mediumRef}
+            onClick={() => scrollToSection(mediumRef, 'medium')}
+            isActive={activeSection === 'medium'}
+          />
+        )}
 
         {!criticalAlerts.length && !highAlerts.length && !mediumAlerts.length && (
           <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-green-50 p-12 rounded-3xl shadow-2xl shadow-green-300/30 border-2 border-green-300/60 text-center text-green-700 hover:shadow-3xl hover:shadow-green-400/40 transition-all duration-500 group relative overflow-hidden backdrop-blur-sm animate-fade-in-up">

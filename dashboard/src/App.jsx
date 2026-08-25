@@ -13,6 +13,7 @@ import Inventory from './pages/Inventory';
 import Alerts from './pages/Alerts';
 import AIAssistant from './pages/AIAssistant';
 import Reports from './pages/Reports';
+import Knowledge from './pages/Knowledge';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
               <Route path="/alerts" element={<Alerts />} />
               <Route path="/assistant" element={<AIAssistant />} />
               <Route path="/reports" element={<Reports />} />
+              <Route path="/knowledge" element={<Knowledge />} />
             </Route>
           </Routes>
         </BrowserRouter>

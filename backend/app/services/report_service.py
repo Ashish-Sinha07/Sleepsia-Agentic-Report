@@ -1652,6 +1652,7 @@ class ReportService:
         document the user would have downloaded from the Reports page.
         """
         from automation.email_service import ReportEmailService
+        from automation.email_templates import generate_comprehensive_report_html
 
         try:
             # Get the report file - prefer PDF unless the caller asked otherwise.
@@ -1696,6 +1697,11 @@ Report ID: {report_id}
 Best regards,
 Sleepsia Analytics System
                 """.strip(),
+                html_body=generate_comprehensive_report_html(
+                    report_id=report_id,
+                    start_date=period_start,
+                    end_date=period_end,
+                ),
                 recipients=recipients,
                 cc=cc_list,
                 bcc=bcc_list,

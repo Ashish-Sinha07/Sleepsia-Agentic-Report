@@ -106,11 +106,23 @@ export default function Inventory() {
   if (!warehouses || !inventory || !totals) return <LoadingState message="Loading warehouse data..." />;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Inventory & Warehouse</h1>
-        <p className="text-gray-600 mt-1">Operational visibility into stock availability and warehouse health</p>
+    <div className="space-y-8 bg-gradient-to-br from-slate-50 via-white to-slate-50 min-h-screen p-0 -m-8 p-8">
+      {/* Animated background blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-300/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+        <div className="absolute -bottom-40 left-10 w-80 h-80 bg-blue-300/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
       </div>
+
+      <div className="relative z-10 space-y-6">
+        <div className="group mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-1 h-8 bg-gradient-to-b from-indigo-600 to-blue-600 rounded-full"></div>
+            <h1 className="text-3xl font-black bg-gradient-to-r from-indigo-700 via-blue-600 to-indigo-800 bg-clip-text text-transparent">
+              Inventory & Warehouse
+            </h1>
+          </div>
+          <p className="text-sm text-gray-700 font-medium ml-4">📦 Operational visibility into stock availability and warehouse health</p>
+        </div>
 
       <p className="text-xs text-gray-500">Warehouse snapshot from the latest report data.</p>
 
@@ -203,6 +215,7 @@ export default function Inventory() {
             <tbody>{inventory.filter((item) => (item.status || '').toLowerCase() !== 'healthy').map((item) => <tr key={`${item.warehouse}-${item.sku}`} className="border-t border-gray-100"><td className="p-4">{item.warehouse}</td><td className="p-4">{item.sku}</td><td className="p-4">{item.product}</td><td className="p-4 text-right">{item.currentStock}</td><td className="p-4 text-right">{item.daysOfCover}</td><td className="p-4"><span className={statusClass(item.status)}>{item.status}</span></td><td className="p-4 text-right font-medium">{item.recommendedReorderQty}</td></tr>)}</tbody>
           </table>
         </div>
+      </div>
       </div>
     </div>
   );

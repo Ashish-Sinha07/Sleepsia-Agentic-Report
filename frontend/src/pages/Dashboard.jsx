@@ -208,7 +208,7 @@ const Dashboard = () => {
               >
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-1 h-6 bg-gradient-to-b from-green-600 to-emerald-600 rounded-full"></div>
-                  <h2 className="text-xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">📊 Daily Orders</h2>
+                  <h2 className="text-lg font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">📊 Daily Orders</h2>
                 </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={dailyKpis}>

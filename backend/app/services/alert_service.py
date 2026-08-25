@@ -39,19 +39,25 @@ class AlertService:
 
         query = """
         SELECT
-            alert_id,
-            priority,
+            ra.alert_id,
+            ra.priority,
             'Replenishment' as alert_type,
-            sku,
-            warehouse_id,
-            stock_status,
+            ra.sku,
+            p.product_name,
+            ra.warehouse_id,
+            ra.region,
+            ra.stock_status,
             'Stock' as metric,
-            CAST(closing_stock AS CHAR) as current_value,
-            CAST(reorder_point AS CHAR) as threshold,
-            recommended_action,
-            alert_date
-        FROM replenishment_alerts
-        WHERE alert_date BETWEEN :start_date AND :end_date
+            ra.closing_stock as current_value,
+            ra.reorder_point as threshold,
+            COALESCE(ra.avg_daily_demand_7d, 0) as avg_daily_demand,
+            COALESCE(ra.days_of_cover, 0) as days_of_cover,
+            COALESCE(ra.recommended_reorder_qty, 0) as recommended_reorder_qty,
+            ra.recommended_action,
+            ra.alert_date
+        FROM replenishment_alerts ra
+        LEFT JOIN products p ON ra.sku = p.sku
+        WHERE ra.alert_date BETWEEN :start_date AND :end_date
         """
 
         params = {"start_date": start_date, "end_date": end_date}
@@ -79,12 +85,19 @@ class AlertService:
                 severity=priority_to_severity.get(row[1], "MEDIUM"),
                 alert_type=row[2],
                 entity=row[3],
-                platform=row[4],
-                metric=row[6],
-                current_value=row[7],
-                threshold=row[8],
-                recommendation=row[9],
-                created_at=row[10],
+                product_name=row[4],
+                warehouse=row[5],
+                region=row[6],
+                metric=row[8],
+                current_value=int(row[9]),
+                threshold=int(row[10]),
+                gap=int(row[9]) - int(row[10]),
+                avg_daily_demand=int(row[11]),
+                days_of_cover=float(row[12]),
+                recommended_reorder_qty=int(row[13]),
+                stock_status=row[7],
+                recommendation=row[14],
+                created_at=row[15],
             )
             for row in results
         ]

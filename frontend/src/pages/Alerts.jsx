@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { AlertCircle, CheckCircle, TrendingDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { AlertCircle, Clock, Package } from 'lucide-react';
 
 const Alerts = () => {
   const [alerts, setAlerts] = useState([]);
@@ -16,7 +16,7 @@ const Alerts = () => {
       const response = await fetch('http://localhost:8000/api/alerts');
       if (!response.ok) throw new Error('Failed to fetch alerts');
       const data = await response.json();
-      setAlerts(Array.isArray(data.data) ? data.data : []);
+      setAlerts(Array.isArray(data.alerts) ? data.alerts : []);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -26,178 +26,239 @@ const Alerts = () => {
     }
   };
 
-  if (loading) return <div className="p-6">Loading alerts...</div>;
+  if (loading) return <div className="p-6 text-center text-gray-600">Loading alerts...</div>;
 
-  const getAlertIcon = (severity) => {
-    switch (severity?.toLowerCase()) {
-      case 'critical':
-        return <AlertCircle className="w-5 h-5 text-red-500" />;
-      case 'warning':
-        return <AlertCircle className="w-5 h-5 text-yellow-500" />;
-      default:
-        return <CheckCircle className="w-5 h-5 text-blue-500" />;
-    }
+  const groupAlertsBySeverity = (alerts) => {
+    return {
+      critical: alerts.filter(a => a.severity === 'CRITICAL'),
+      high: alerts.filter(a => a.severity === 'HIGH'),
+      medium: alerts.filter(a => a.severity === 'MEDIUM'),
+      low: alerts.filter(a => a.severity === 'LOW'),
+    };
   };
 
-  const getAlertColor = (severity) => {
-    switch (severity?.toLowerCase()) {
-      case 'critical':
-        return 'bg-red-50 border-l-4 border-red-500';
-      case 'warning':
-        return 'bg-yellow-50 border-l-4 border-yellow-500';
-      default:
-        return 'bg-blue-50 border-l-4 border-blue-500';
-    }
+  const getSeverityConfig = (severity) => {
+    const config = {
+      'CRITICAL': {
+        bg: 'from-red-50 to-red-100',
+        border: 'border-red-400',
+        badge: 'bg-red-600 text-white',
+        text: 'text-red-900',
+        icon: 'text-red-600',
+        urgency: '⚠️ URGENT',
+      },
+      'HIGH': {
+        bg: 'from-orange-50 to-orange-100',
+        border: 'border-orange-400',
+        badge: 'bg-orange-600 text-white',
+        text: 'text-orange-900',
+        icon: 'text-orange-600',
+        urgency: '⚡ HIGH',
+      },
+      'MEDIUM': {
+        bg: 'from-yellow-50 to-yellow-100',
+        border: 'border-yellow-400',
+        badge: 'bg-yellow-600 text-white',
+        text: 'text-yellow-900',
+        icon: 'text-yellow-600',
+        urgency: '📋 MEDIUM',
+      },
+      'LOW': {
+        bg: 'from-blue-50 to-blue-100',
+        border: 'border-blue-400',
+        badge: 'bg-blue-600 text-white',
+        text: 'text-blue-900',
+        icon: 'text-blue-600',
+        urgency: 'ℹ️ LOW',
+      },
+    };
+    return config[severity] || config['MEDIUM'];
   };
 
-  return (
-    <div className="p-8 bg-gradient-to-br from-slate-50 via-white to-slate-50 min-h-screen relative overflow-hidden">
-      {/* Animated background blobs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -left-40 w-80 h-80 bg-red-300/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-        <div className="absolute -bottom-40 right-10 w-80 h-80 bg-orange-300/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-      </div>
+  const formatDate = (dateStr) => {
+    return new Date(dateStr).toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
 
-      <div className="relative z-10">
-        <div className="mb-12 group">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-1 h-8 bg-gradient-to-b from-red-600 to-orange-600 rounded-full"></div>
-            <h1 className="text-5xl font-black bg-gradient-to-r from-red-700 via-orange-600 to-red-800 bg-clip-text text-transparent group-hover:from-red-800 group-hover:via-orange-700 group-hover:to-red-900 transition-all duration-300">
-              Alerts & Opportunities
-            </h1>
-          </div>
-          <p className="text-gray-600 mt-3 group-hover:text-gray-800 transition-colors text-lg font-medium ml-4">⚡ Critical alerts and important action items</p>
-        </div>
+  const AlertCard = ({ alert }) => {
+    const config = getSeverityConfig(alert.severity);
+    const stockPercentage = Math.max(0, Math.min(100, (alert.current_value / alert.threshold) * 100));
 
-        {error && (
-          <div className="bg-gradient-to-r from-red-50 to-orange-50 p-6 rounded-2xl text-red-700 mb-8 border-2 border-red-300/60 animate-in shake duration-500 font-semibold flex items-center gap-3">
-            <span className="text-2xl">⚠️</span>
-            <span>{error}</span>
-          </div>
-        )}
-
-        <div className="space-y-5">
-          {alerts.length > 0 ? (
-            alerts.map((alert, i) => {
-              const severityColors = {
-                'critical': {
-                  bg: 'from-red-50 via-orange-50 to-red-50',
-                  border: 'border-red-400/80 hover:border-red-500',
-                  accent: 'bg-red-600'
-                },
-                'warning': {
-                  bg: 'from-yellow-50 via-amber-50 to-yellow-50',
-                  border: 'border-yellow-400/80 hover:border-yellow-500',
-                  accent: 'bg-yellow-600'
-                },
-                default: {
-                  bg: 'from-blue-50 via-cyan-50 to-blue-50',
-                  border: 'border-blue-400/80 hover:border-blue-500',
-                  accent: 'bg-blue-600'
-                }
-              };
-
-              const colors = severityColors[alert.severity?.toLowerCase()] || severityColors.default;
-
-              return (
-                <div
-                  key={i}
-                  className={`p-6 rounded-2xl flex items-start gap-4 border-l-4 border-t-2 bg-gradient-to-br ${colors.bg} hover:shadow-2xl hover:shadow-red-300/40 transition-all duration-400 transform hover:scale-105 hover:-translate-x-2 cursor-pointer group relative overflow-hidden backdrop-blur-sm ${colors.border}`}
-                  style={{
-                    animation: `slideInRight ${0.4 + i * 0.1}s cubic-bezier(0.34, 1.56, 0.64, 1) both`
-                  }}
-                >
-                  {/* Animated background glow */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 animate-shimmer"></div>
-
-                  <div className="flex-shrink-0 mt-1 transform group-hover:scale-150 group-hover:rotate-12 transition-all duration-400 relative z-10">
-                    <div className={`${colors.accent} rounded-lg p-2 text-white`}>
-                      {getAlertIcon(alert.severity)}
-                    </div>
-                  </div>
-                  <div className="flex-1 relative z-10">
-                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-gray-800 transition-colors">
-                      {alert.alert_type || 'Alert'}
-                    </h3>
-                    <p className="text-sm text-gray-700 mt-3 group-hover:text-gray-800 transition-colors leading-relaxed">
-                      {alert.message || alert.description || 'No details available'}
-                    </p>
-                    {alert.entity && (
-                      <p className="text-xs text-gray-600 mt-3 group-hover:text-gray-700 transition-colors font-semibold">
-                        <span className="opacity-60">Entity:</span> <span className="text-blue-600 font-bold">{alert.entity}</span>
-                      </p>
-                    )}
-                  </div>
-                  <div className="text-xs text-gray-600 flex-shrink-0 group-hover:text-gray-800 transition-colors font-bold bg-white/60 px-3 py-2 rounded-lg backdrop-blur-sm relative z-10">
-                    {alert.created_at ? new Date(alert.created_at).toLocaleDateString() : 'N/A'}
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-green-50 p-12 rounded-3xl shadow-2xl shadow-green-300/30 border-2 border-green-300/60 text-center text-green-700 hover:shadow-3xl hover:shadow-green-400/40 transition-all duration-500 group relative overflow-hidden backdrop-blur-sm"
-              style={{ animation: 'fadeInUp 0.6s ease-out' }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-green-400/5 to-emerald-400/5 opacity-0 group-hover:opacity-100 rounded-3xl"></div>
-              <div className="text-7xl mb-5 group-hover:scale-125 group-hover:-rotate-12 transition-all duration-500">✨</div>
-              <p className="font-black text-2xl text-green-800 group-hover:text-green-900">No alerts at this time</p>
-              <p className="text-sm mt-4 opacity-80 text-green-700">Everything looks great! All systems operating normally.</p>
-              <div className="mt-6 flex justify-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span>
-                <span className="w-2 h-2 rounded-full bg-green-600 animate-pulse animation-delay-200"></span>
-                <span className="w-2 h-2 rounded-full bg-green-600 animate-pulse animation-delay-400"></span>
+    return (
+      <div
+        className={`bg-gradient-to-br ${config.bg} border-l-4 ${config.border} p-6 rounded-xl hover:shadow-lg transition-all duration-300`}
+      >
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex items-start gap-3">
+            <div className={`p-2 rounded-lg ${config.badge}`}>
+              <AlertCircle className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className={`font-bold text-lg ${config.text}`}>{alert.alert_type}</h3>
+                <span className={`text-xs font-bold px-2 py-1 rounded ${config.badge}`}>
+                  {config.urgency}
+                </span>
+              </div>
+              <div className="bg-white/70 rounded-lg px-3 py-2 inline-block border border-gray-200/60 mb-2">
+                <p className="text-xs font-semibold text-gray-600 mb-1">PRODUCT</p>
+                <p className={`font-bold ${config.text}`}>
+                  {alert.product_name || 'Unknown Product'} ({alert.entity})
+                </p>
+              </div>
+              <div className="flex items-center gap-3 mt-2 text-sm text-gray-700">
+                <span className="font-semibold">📍 Warehouse:</span>
+                <span className={`px-2 py-1 rounded bg-white/60 border border-gray-200/60 font-bold`}>
+                  {alert.warehouse}
+                </span>
+                {alert.region && (
+                  <>
+                    <span className="font-semibold">🏙️ Region:</span>
+                    <span className={`px-2 py-1 rounded bg-white/60 border border-gray-200/60 font-bold`}>
+                      {alert.region}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
-          )}
+          </div>
+          <p className="text-xs font-semibold text-gray-500">{formatDate(alert.created_at)}</p>
+        </div>
+
+        {/* Main Issue Statement */}
+        <div className={`bg-white/60 rounded-lg p-4 mb-4 border ${config.border}/40`}>
+          <p className={`font-semibold ${config.text} leading-relaxed`}>
+            Stock for <span className="font-black">{alert.product_name || alert.entity}</span> ({alert.entity}) at{' '}
+            <span className="font-black">{alert.warehouse}</span> warehouse has fallen to{' '}
+            <span className="font-black text-lg">{alert.current_value}</span> units,
+            <span className="font-black"> {Math.abs(alert.gap)} below</span> the minimum threshold of{' '}
+            <span className="font-black">{alert.threshold}</span> units.
+          </p>
+        </div>
+
+        {/* Context Metrics */}
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          {/* Stock Gap */}
+          <div className="bg-white/70 rounded-lg p-3 border border-gray-200/60">
+            <p className="text-xs font-semibold text-gray-600 mb-1">STOCK GAP</p>
+            <div className="flex items-center gap-2">
+              <Package className={`w-4 h-4 ${config.icon}`} />
+              <p className={`font-black text-lg ${config.text}`}>{alert.gap}</p>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">Below threshold</p>
+          </div>
+
+          {/* Days of Cover */}
+          <div className="bg-white/70 rounded-lg p-3 border border-gray-200/60">
+            <p className="text-xs font-semibold text-gray-600 mb-1">DAYS OF COVER</p>
+            <div className="flex items-center gap-2">
+              <Clock className={`w-4 h-4 ${config.icon}`} />
+              <p className={`font-black text-lg ${config.text}`}>{alert.days_of_cover.toFixed(1)}</p>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">at current demand</p>
+          </div>
+
+          {/* Daily Demand */}
+          <div className="bg-white/70 rounded-lg p-3 border border-gray-200/60">
+            <p className="text-xs font-semibold text-gray-600 mb-1">DAILY DEMAND</p>
+            <div className="flex items-center gap-2">
+              <TrendingDown className={`w-4 h-4 ${config.icon}`} />
+              <p className={`font-black text-lg ${config.text}`}>{alert.avg_daily_demand}</p>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">units/day (7-day avg)</p>
+          </div>
+        </div>
+
+        {/* Stock Level Visualization */}
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-xs font-semibold text-gray-600">STOCK LEVEL vs THRESHOLD</p>
+            <p className="text-xs font-bold text-gray-700">{stockPercentage.toFixed(0)}% of threshold</p>
+          </div>
+          <div className="w-full h-2 bg-gray-300 rounded-full overflow-hidden">
+            <div
+              className={`h-full ${
+                alert.gap < 0
+                  ? 'bg-red-600'
+                  : alert.gap < alert.threshold * 0.2
+                    ? 'bg-orange-600'
+                    : 'bg-green-600'
+              } transition-all duration-300`}
+              style={{ width: `${stockPercentage}%` }}
+            ></div>
+          </div>
+        </div>
+
+        {/* Recommendation */}
+        <div className={`bg-white/60 border-l-4 ${config.border} rounded-lg p-3`}>
+          <p className="text-xs font-semibold text-gray-600 mb-1">RECOMMENDED ACTION</p>
+          <p className={`text-sm font-semibold ${config.text}`}>{alert.recommendation}</p>
         </div>
       </div>
+    );
+  };
 
-      <style>{`
-        @keyframes slideInRight {
-          from {
-            opacity: 0;
-            transform: translateX(-40px) rotateY(10deg);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0) rotateY(0);
-          }
-        }
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        @keyframes blob {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-200 {
-          animation-delay: 0.2s;
-        }
-        .animation-delay-400 {
-          animation-delay: 0.4s;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animate-shimmer {
-          animation: shimmer 2s infinite;
-        }
-      `}</style>
+  const groupedAlerts = groupAlertsBySeverity(alerts);
+  const allAlerts = [
+    ...groupedAlerts.critical,
+    ...groupedAlerts.high,
+    ...groupedAlerts.medium,
+    ...groupedAlerts.low,
+  ];
+
+  return (
+    <div className="p-8 bg-gradient-to-br from-slate-50 via-white to-slate-50 min-h-screen">
+      <div className="mb-8">
+        <h1 className="text-4xl font-black bg-gradient-to-r from-red-700 via-orange-600 to-red-800 bg-clip-text text-transparent mb-2">
+          Alerts & Opportunities
+        </h1>
+        <p className="text-gray-600 text-lg">⚡ Critical inventory and action alerts</p>
+      </div>
+
+      {error && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-6 flex items-center gap-3">
+          <span className="text-2xl">⚠️</span>
+          <span className="text-red-700 font-semibold">{error}</span>
+        </div>
+      )}
+
+      {allAlerts.length > 0 ? (
+        <div className="space-y-6">
+          {/* Summary Cards */}
+          <div className="grid grid-cols-4 gap-4 mb-8">
+            <div className="bg-red-50 border border-red-400 p-4 rounded-lg text-center">
+              <p className="text-3xl font-black text-red-600">{groupedAlerts.critical.length}</p>
+              <p className="text-xs text-red-700 font-semibold mt-2">Critical</p>
+            </div>
+            <div className="bg-orange-50 border border-orange-400 p-4 rounded-lg text-center">
+              <p className="text-3xl font-black text-orange-600">{groupedAlerts.high.length}</p>
+              <p className="text-xs text-orange-700 font-semibold mt-2">High</p>
+            </div>
+            <div className="bg-yellow-50 border border-yellow-400 p-4 rounded-lg text-center">
+              <p className="text-3xl font-black text-yellow-600">{groupedAlerts.medium.length}</p>
+              <p className="text-xs text-yellow-700 font-semibold mt-2">Medium</p>
+            </div>
+            <div className="bg-blue-50 border border-blue-400 p-4 rounded-lg text-center">
+              <p className="text-3xl font-black text-blue-600">{groupedAlerts.low.length}</p>
+              <p className="text-xs text-blue-700 font-semibold mt-2">Low</p>
+            </div>
+          </div>
+
+          {/* Alerts by Severity */}
+          {allAlerts.map((alert, i) => (
+            <AlertCard key={i} alert={alert} />
+          ))}
+        </div>
+      ) : (
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-12 rounded-xl text-center border-2 border-green-300">
+          <div className="text-6xl mb-4">✨</div>
+          <p className="text-2xl font-black text-green-800">No Alerts</p>
+          <p className="text-green-700 mt-2">All inventory levels are healthy!</p>
+        </div>
+      )}
     </div>
   );
 };

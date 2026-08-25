@@ -12,7 +12,7 @@ from app.api.errors import SleepsiaException
 # Add parent directory to Python path for analytics module
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from app.api.routes import kpis, platforms, products, warehouses, inventory, alerts, advertising, ai_assistant, reports
+from app.api.routes import kpis, platforms, products, warehouses, inventory, alerts, advertising, ai_assistant, reports, knowledge
 
 # Configure logging
 logging.basicConfig(
@@ -114,6 +114,7 @@ def create_app() -> FastAPI:
     app.include_router(advertising.router, prefix="/api")
     app.include_router(ai_assistant.router, prefix="/api")
     app.include_router(reports.router, prefix="/api")
+    app.include_router(knowledge.router, prefix="/api")
 
     logger.info(f"FastAPI app created with {len(app.routes)} routes")
     return app
